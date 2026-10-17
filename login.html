@@ -29,22 +29,22 @@
         <h1>Welcome <em>back!</em></h1>
         <p class="auth-subtitle">Login to your KLASIK CAFE account.</p>
         <form id="login-form" class="auth-form" novalidate>
-          <div class="form-field"><label for="login-identity">Email or username</label><input id="login-identity" name="identity" type="text" autocomplete="username" placeholder="you@example.com" aria-describedby="login-message"></div>
+          <div class="form-field"><label for="login-email">Email</label><input id="login-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" aria-describedby="login-message"></div>
           <div class="form-field"><label for="login-password">Password</label><div class="password-wrap"><input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" aria-describedby="login-message"><button class="password-toggle" type="button" data-password-toggle="login-password" aria-label="Show password" aria-pressed="false"><span aria-hidden="true">◉</span></button></div></div>
+          <div style="text-align: right; margin-bottom: 15px;">
+  <a href="forgot-password.html" style="font-size: 0.85rem; color: #1e3382; text-decoration: none;">Forgot password?</a>
+</div>
           <div class="form-options"><label class="check-label"><input type="checkbox" name="remember"><span class="custom-check"></span>Remember me</label><a class="form-link" href="#" data-demo-message="Password reset is not available in this demo.">Forgot password?</a></div>
           <p class="form-message" id="login-message" role="status" aria-live="polite"></p>
           <button class="button button-primary button-wide" type="submit">Login <span aria-hidden="true">→</span></button>
         </form>
-        <div class="demo-role-links" aria-label="Demo role access">
-          <a class="button button-outline button-small" href="index.html">Customer</a>
-          <a class="button button-outline button-small" href="admin.html">Admin</a>
-          <a class="button button-outline button-small" href="barista.html">Barista</a>
-        </div>
         <p class="auth-switch">Don't have an account? <a href="signup.html">Sign up</a></p>
         <p class="auth-home-link"><a href="index.html">Explore KLASIK CAFE <span aria-hidden="true">↗</span></a></p>
       </div>
       <p class="auth-footnote">KLASIK CAFE</p>
     </section>
   </main>
+  <script type="module" src="js/auth-check.js"></script>
+  <script type="module" src="js/login.js"></script>
 </body>
 </html>

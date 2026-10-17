@@ -12,7 +12,6 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/admin.css">
   <script src="js/script.js" defer></script>
-  <script src="js/admin.js" defer></script>
 </head>
 <body class="admin-body">
   <div class="admin-shell">
@@ -27,6 +26,7 @@
         <a href="#admin-reviews">Reviews</a>
         <a href="#admin-suggestions">Suggestions</a>
         <a href="#admin-customers">Customers</a>
+        <a href="#admin-staff">Invite staff</a>
         <a href="#admin-cafe-info">Café Information</a>
         <a href="#admin-settings">Settings</a>
       </nav>
@@ -135,6 +135,30 @@
         <p class="customer-empty-state">Customer account reporting is unavailable in this browser-only demo.</p>
       </section>
 
+      <!-- Staff Invitation Section Panel matching Café Info UI -->
+      <section id="admin-staff" class="panel admin-panel">
+        <div class="section-header compact-header">
+          <div>
+            <p class="eyebrow eyebrow-blue"><span></span> TEAM</p>
+            <h2>Invite Staff <em>Member</em></h2>
+          </div>
+        </div>
+        
+        <form id="invite-staff-form" class="admin-form">
+          <div class="form-grid-two">
+            <label>Staff Name<input type="text" id="invite-name" name="inviteName" placeholder="John Doe" required></label>
+            <label>Email Address<input type="email" id="invite-email" name="inviteEmail" placeholder="staff@klasikcafe.com" required></label>
+            <label class="full-width">Assign Role
+              <select id="invite-role" name="inviteRole">
+                <option value="barista">Barista</option>
+                <option value="admin">Admin</option>
+              </select>
+            </label>
+          </div>
+          <button type="submit" class="button button-primary">Send Invitation</button>
+        </form>
+      </section>
+
       <section id="admin-cafe-info" class="panel admin-panel">
         <div class="section-header compact-header">
           <div>
@@ -234,5 +258,7 @@
       </form>
     </div>
   </div>
+  <script type="module" src="js/auth-check.js"></script>
+  <script type="module" src="js/admin.js"></script>
 </body>
-</html>
+</html> 
