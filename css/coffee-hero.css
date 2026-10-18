@@ -26,7 +26,7 @@ body { transition: background-color .6s ease; }
 .coffee-hero-copy h2 { margin: 0; color: #172b50; font-family: var(--serif, "Playfair Display", Georgia, serif); font-size: clamp(56px, 7vw, 100px); font-weight: 500; letter-spacing: -.065em; line-height: .93; animation: coffee-title-arrive .9s .12s both cubic-bezier(.2,.7,.2,1); }
 .coffee-hero-copy h2 em { color: #8da2db; font-style: normal; }
 .coffee-hero-description { max-width: 330px; margin: 25px 0 26px; color: #46566f; font: 400 14px/1.8 var(--sans, "DM Sans", sans-serif); }
-.coffee-hero-menu-link { display: inline-flex; min-height: 52px; align-items: center; justify-content: center; gap: 28px; padding: 0 21px; background: #8da2db; color: #172b50; font: 700 12px/1 var(--sans, "DM Sans", sans-serif); text-decoration: none; transition: background .2s ease, transform .2s ease; }
+.coffee-hero-menu-link { display: flex; min-height: 52px; align-items: center; justify-content: center; gap: 8px; padding: 0 21px; background: #8da2db; color: #172b50; font: 700 12px/1 var(--sans, "DM Sans", sans-serif); text-decoration: none; transition: background .2s ease, transform .2s ease; }
 .coffee-hero-menu-link:hover { transform: translateY(-2px); background: #a5b5e4; }
 .coffee-hero-menu-link span { font-size: 17px; }
 .coffee-stage { position: relative; z-index: auto; min-width: 0; perspective: 1200px; }

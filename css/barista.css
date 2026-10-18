@@ -41,6 +41,8 @@
   margin-bottom: 24px;
 }
 
+.dashboard-menu-toggle { display: none; }
+
 .sidebar-nav {
   display: flex;
   flex-direction: column;
@@ -429,8 +431,8 @@
   }
 }
 .barista-menu-help { margin: -8px 0 18px; color: var(--admin-muted, #68716f); font-size: 13px; }
-.barista-menu-table-wrap { overflow-x: auto; }
-.barista-menu-table { width: 100%; border-collapse: collapse; }
+.barista-menu-table-wrap { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.barista-menu-table { width: 100%; min-width: 470px; border-collapse: collapse; }
 .barista-menu-table th, .barista-menu-table td { padding: 13px 12px; border-bottom: 1px solid #e8eaf0; text-align: left; }
 .barista-menu-table th { color: #1e3382; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
 .barista-menu-table td:first-child { min-width: 150px; font-weight: 600; }
@@ -501,3 +503,17 @@
 .barista-order-filters button[data-order-filter="Completed"].active { background:#737d8d; border-color:#737d8d; }
 .barista-order-filters button[data-order-filter].active { color:#fff; }
 @media (max-width: 700px) { .order-queue { grid-template-columns: 1fr; } }
+
+@media (max-width: 768px) {
+  .barista-sidebar { display: block; height: auto; max-height: none; overflow: visible; padding: 10px 16px; }
+  .barista-sidebar .sidebar-brand { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 0; }
+  .barista-sidebar .brand-logo { max-width: 150px; max-height: 42px; object-fit: contain; }
+  .barista-sidebar .dashboard-menu-toggle { display: inline-flex; align-items: center; gap: 10px; min-height: 42px; padding: 0 12px; border: 1px solid rgba(255,255,255,.35); border-radius: 6px; background: transparent; color: #fff; font: 700 13px/1 "DM Sans", sans-serif; }
+  .barista-sidebar .dashboard-menu-toggle span { font-size: 17px; }
+  .barista-sidebar .sidebar-nav, .barista-sidebar .barista-sidebar-menu-status, .barista-sidebar .sidebar-logout { display: none; }
+  .barista-sidebar.is-menu-open .sidebar-nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; margin-top: 10px; }
+  .barista-sidebar.is-menu-open .sidebar-nav a { padding: 10px; }
+  .barista-sidebar.is-menu-open .barista-sidebar-menu-status { display: block; max-height: 40vh; overflow-y: auto; margin-top: 10px; padding-top: 10px; }
+  .barista-sidebar.is-menu-open .barista-sidebar-menu-status .barista-menu-table-wrap { max-height: 200px; }
+  .barista-sidebar.is-menu-open .sidebar-logout { display: block; margin-top: 8px; padding: 10px; }
+}

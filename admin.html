@@ -12,14 +12,16 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/admin.css">
   <script src="js/script.js" defer></script>
+  <script src="js/dashboard-menu.js" defer></script>
 </head>
 <body class="admin-body">
   <div class="admin-shell">
     <aside class="admin-sidebar">
       <div class="sidebar-brand">
         <img class="brand-logo" src="klasik_cafe_logo_3_-removebg-preview.png" alt="KLASIK CAFE logo">
+        <button class="dashboard-menu-toggle" type="button" aria-expanded="false" aria-controls="admin-sidebar-navigation">Menu <span aria-hidden="true">☰</span></button>
       </div>
-      <nav class="sidebar-nav" aria-label="Admin navigation">
+      <nav class="sidebar-nav" id="admin-sidebar-navigation" aria-label="Admin navigation">
         <a href="#admin-dashboard" class="active">Dashboard</a>
         <a href="#menu-management">Menu Management</a>
         <a href="#admin-orders">Orders</a>

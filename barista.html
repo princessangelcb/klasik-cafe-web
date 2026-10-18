@@ -12,14 +12,16 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/barista.css">
   <script src="js/script.js" defer></script>
+  <script src="js/dashboard-menu.js" defer></script>
 </head>
 <body class="barista-body">
   <div class="barista-shell">
     <aside class="barista-sidebar">
       <div class="sidebar-brand">
         <img class="brand-logo" src="klasik_cafe_logo_3_-removebg-preview.png" alt="KLASIK CAFE logo">
+        <button class="dashboard-menu-toggle" type="button" aria-expanded="false" aria-controls="barista-sidebar-navigation">Menu <span aria-hidden="true">☰</span></button>
       </div>
-      <nav class="sidebar-nav" aria-label="Barista navigation">
+      <nav class="sidebar-nav" id="barista-sidebar-navigation" aria-label="Barista navigation">
         <a href="#barista-dashboard" class="active">Dashboard</a>
         <a href="#barista-orders" data-order-filter="Pending">Pending</a>
         <a href="#barista-orders" data-order-filter="Preparing">Preparing</a>
