@@ -184,8 +184,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     productForm.reset();
                     document.getElementById('product-id').value = item.id;
                     document.getElementById('product-name').value = item.item_name || '';
-                    document.getElementById('product-main-category').value = item.category || 'coffee';
-                    document.getElementById('product-subcategory').value = item.subcategory || 'iced-coffee';
+                    productMainCategory.value = normalizeProductCategory(item.category || 'coffee');
+                    populateSubcategories(productMainCategory.value, item.subcategory || '');
                     document.getElementById('product-description').value = item.description || '';
                     document.getElementById('product-price').value = item.price ?? '';
                     document.getElementById('product-availability').checked = item.is_available !== false;
@@ -220,6 +220,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     const cancelBtn = document.getElementById('cancel-product-modal');
     const productForm = document.getElementById('product-form');
     const productIdInput = document.getElementById('product-id');
+    const productMainCategory = document.getElementById('product-main-category');
+    const productSubcategory = document.getElementById('product-subcategory');
+    const subcategoriesByCategory = {
+        coffee: [['iced-coffee', 'Iced Coffee'], ['hot-coffee', 'Hot Coffee'], ['espesyal', 'Espesyal']],
+        'non-coffee': [['non-coffee', 'Non Coffee'], ['espesyal', 'Espesyal']],
+        matcha: [['matcha', 'Matcha Series']],
+        pastries: [['smores', 'Smores'], ['cookies', 'Cookies'], ['cheesecakes', 'Cheesecakes']],
+        'add-ons': [['add-ons', 'Add-ons']]
+    };
+    const normalizeProductCategory = value => {
+        const normalized = String(value || '').trim().toLowerCase().replace(/[\s_]+/g, '-');
+        return ({ noncoffee: 'non-coffee', 'matcha-series': 'matcha', addons: 'add-ons' })[normalized] || normalized;
+    };
+    const populateSubcategories = (category, selected = '') => {
+        if (!productSubcategory) return;
+        const choices = subcategoriesByCategory[category] || [];
+        const subcategoryValue = String(selected || '').trim().toLowerCase().replace(/[\s_]+/g, '-');
+        const normalizedSelected = ['espesyal2', 'espesyal-2'].includes(subcategoryValue) ? 'espesyal' : subcategoryValue;
+        productSubcategory.replaceChildren(new Option(choices.length ? 'Choose a subcategory' : 'No subcategory', ''));
+        choices.forEach(([value, label]) => productSubcategory.add(new Option(label, value)));
+        productSubcategory.disabled = choices.length === 0;
+        productSubcategory.value = choices.some(([value]) => value === normalizedSelected) ? normalizedSelected : '';
+    };
+    productMainCategory?.addEventListener('change', () => populateSubcategories(productMainCategory.value));
+    populateSubcategories(productMainCategory?.value || 'coffee');
     const imageInput = document.getElementById('product-image-file');
     const imageUrlInput = document.getElementById('product-image');
     const imageDropzone = document.getElementById('product-image-dropzone');
@@ -307,6 +332,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (addProductTrigger && productModal) {
         addProductTrigger.addEventListener('click', () => {
             productForm?.reset();
+            populateSubcategories(productMainCategory?.value || 'coffee');
             if (productIdInput) productIdInput.value = '';
             resetProductImage();
             document.getElementById('product-modal-title').textContent = 'Add Product';
@@ -350,7 +376,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const productData = {
                     item_name: document.getElementById('product-name').value.trim(),
                     category: document.getElementById('product-main-category').value,
-                    subcategory: document.getElementById('product-subcategory').value,
+                    subcategory: document.getElementById('product-subcategory').value || null,
                     description: document.getElementById('product-description').value.trim(),
                     price: parseFloat(document.getElementById('product-price').value),
                     is_available: document.getElementById('product-availability').checked,

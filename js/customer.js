@@ -150,7 +150,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const favoriteButton = document.createElement("button");
         favoriteButton.type = "button";
         favoriteButton.className = "product-favorite-toggle";
-        favoriteButton.textContent = "♡";
+        favoriteButton.innerHTML = '<svg class="heart-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.9a5.5 5.5 0 0 0-7.8 0L12 5.9l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.3 1-1a5.5 5.5 0 0 0 0-7.8Z"></path></svg>';
         imageFrame.append(favoriteButton);
       }
     });
@@ -205,7 +205,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.querySelectorAll(".product-favorite-toggle").forEach((button) => {
       const name = button.closest(".product-card")?.querySelector(".product-title h3")?.textContent.trim();
       const saved = Boolean(name && favoriteNames.has(name));
-      button.textContent = saved ? "♥" : "♡";
       button.classList.toggle("is-favorite", saved);
       button.setAttribute("aria-pressed", String(saved));
       button.setAttribute("aria-label", `${saved ? "Remove" : "Add"} ${name || "product"} ${saved ? "from" : "to"} Favorites`);

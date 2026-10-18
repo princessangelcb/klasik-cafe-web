@@ -183,9 +183,11 @@ h2 em { color: var(--blue); }
 .product-info p { min-height: 44px; margin: 8px 0 15px; color: var(--muted); font-size: 12px; }
 .product-link { display: inline-flex; align-items: center; gap: 9px; color: var(--blue-deep); font-size: 10px; font-weight: 700; }
 a.product-link:hover { color: var(--blue); }
-.product-favorite-toggle { position: absolute; z-index: 2; top: 12px; right: 12px; display: grid; width: 40px; height: 40px; place-items: center; padding: 0; border: 1px solid rgba(30, 51, 130, .18); border-radius: 50%; background: rgba(255, 255, 255, .95); color: var(--blue-deep); font-size: 25px; line-height: 1; cursor: pointer; box-shadow: 0 4px 14px rgba(15, 23, 42, .12); transition: transform .18s ease, color .18s ease; }
-.product-favorite-toggle:hover { transform: scale(1.08); }
-.product-favorite-toggle.is-favorite { color: #bd3346; }
+.product-favorite-toggle { position: absolute; z-index: 2; top: 12px; right: 12px; display: grid; width: 40px; height: 40px; place-items: center; padding: 0; border: 0; border-radius: 50%; background: rgba(255, 255, 255, .98); color: #d94868; cursor: pointer; box-shadow: 0 4px 14px rgba(15, 23, 42, .14); transition: transform .18s ease, color .18s ease, box-shadow .18s ease; }
+.product-favorite-toggle:hover { transform: scale(1.08); box-shadow: 0 6px 18px rgba(15, 23, 42, .18); }
+.product-favorite-toggle .heart-icon { display: block; width: 21px; height: 21px; overflow: visible; fill: transparent; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: fill .18s ease, transform .18s ease; }
+.product-favorite-toggle.is-favorite { color: #df496a; }
+.product-favorite-toggle.is-favorite .heart-icon { fill: currentColor; transform: scale(1.04); }
 .best-seller-label { position: absolute; z-index: 2; right: 0; bottom: 0; display: inline-flex; align-items: center; padding: 9px 12px; border: 0; border-radius: 0; background: rgba(0, 0, 0, .5); color: #fff; font-family: var(--sans); font-size: 10px; font-weight: 800; letter-spacing: .12em; line-height: 1.2; text-transform: uppercase; box-shadow: 0 3px 12px rgba(18, 31, 80, .22); }
 .product-availability { margin: 0 0 8px !important; min-height: 0 !important; color: #b42318 !important; font-size: 12px !important; font-weight: 700; }
 
