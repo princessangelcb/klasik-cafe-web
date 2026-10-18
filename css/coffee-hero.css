@@ -1,0 +1,83 @@
+/* Active product colors are set in js/coffee-hero.js; change the fallback here. */
+.coffee-hero-legacy { display: none; }
+body { transition: background-color .6s ease; }
+.coffee-hero {
+  --coffee-wave-color: #1e2a4f;
+  position: relative; isolation: isolate; display: flex; align-items: center; box-sizing: border-box;
+  min-height: 78vh; min-height: 78svh; overflow: hidden; padding: 18px 0 105px; background: transparent;
+}
+.coffee-hero::before { position: absolute; z-index: -1; inset: 0; content: ""; background: #fff; }
+.coffee-hero-wave {
+  position: absolute; z-index: 5; right: 0; bottom: -22px; left: 0; width: 100%; height: clamp(190px, 25vh, 250px);
+  overflow: visible; fill: #1e2a4f; pointer-events: none; transform-origin: center top;
+  animation: coffee-wave-flow 5s ease-in-out infinite;
+}
+.coffee-hero-wave path { transform-box: fill-box; transform-origin: center top; animation: coffee-wave-undulate 3.8s ease-in-out infinite alternate; }
+.coffee-hero-wave.is-moving { animation: coffee-wave-swell .9s cubic-bezier(.25,.65,.3,1); }
+.coffee-hero-inner {
+  position: relative; z-index: auto; width: min(1220px, calc(100% - 56px)); min-height: clamp(400px, 64svh, 620px); margin-inline: auto;
+  display: grid; grid-template-columns: minmax(250px, .72fr) minmax(0, 1.28fr); align-items: center; gap: clamp(16px, 3vw, 46px);
+}
+.coffee-active-name { position: absolute; z-index: 8; top: 8px; right: 0; max-width: 34%; min-height: 1.5em; margin: 0; color: #1e2a4f; font: 700 clamp(13px, 1.4vw, 18px)/1.3 var(--sans, "DM Sans", sans-serif); letter-spacing: .14em; text-align: right; text-transform: uppercase; }
+.coffee-hero-menu-link { position: absolute; z-index: 8; right: 0; bottom: -70px; }
+.coffee-hero-copy { position: relative; z-index: 6; }
+.coffee-hero-eyebrow { display: flex; align-items: center; gap: 11px; margin: 0 0 22px; color: #315f94; font: 700 10px/1.3 var(--sans, "DM Sans", sans-serif); letter-spacing: .2em; }
+.coffee-hero-eyebrow::before { width: 30px; height: 1px; background: currentColor; content: ""; }
+.coffee-hero-copy h2 { margin: 0; color: #172b50; font-family: var(--serif, "Playfair Display", Georgia, serif); font-size: clamp(56px, 7vw, 100px); font-weight: 500; letter-spacing: -.065em; line-height: .93; animation: coffee-title-arrive .9s .12s both cubic-bezier(.2,.7,.2,1); }
+.coffee-hero-copy h2 em { color: #8da2db; font-style: normal; }
+.coffee-hero-description { max-width: 330px; margin: 25px 0 26px; color: #46566f; font: 400 14px/1.8 var(--sans, "DM Sans", sans-serif); }
+.coffee-hero-menu-link { display: inline-flex; min-height: 52px; align-items: center; justify-content: center; gap: 28px; padding: 0 21px; background: #8da2db; color: #172b50; font: 700 12px/1 var(--sans, "DM Sans", sans-serif); text-decoration: none; transition: background .2s ease, transform .2s ease; }
+.coffee-hero-menu-link:hover { transform: translateY(-2px); background: #a5b5e4; }
+.coffee-hero-menu-link span { font-size: 17px; }
+.coffee-stage { position: relative; z-index: auto; min-width: 0; perspective: 1200px; }
+.coffee-carousel { position: relative; width: 100%; height: clamp(350px, 43vw, 500px); transform-style: preserve-3d; touch-action: pan-y; user-select: none; cursor: grab; transition: transform .25s ease-out; transform: translateX(var(--drag-offset, 0px)); }
+.coffee-carousel.is-dragging { cursor: grabbing; transition: none; }
+.coffee-slide { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0; pointer-events: none; transform: translate3d(36%, 0, -180px) scale(.34); transform-origin: center center; transition: transform .72s cubic-bezier(.2,.75,.25,1), filter .72s ease, opacity .65s ease; }
+.coffee-slide a { display: grid; width: 100%; height: 100%; place-items: center; outline-offset: 7px; }
+.coffee-slide img { display: block; width: min(84%, 490px); height: 98%; opacity: 1; object-fit: contain; pointer-events: none; -webkit-user-drag: none; filter: drop-shadow(0 20px 24px #263a4c2b); }
+.coffee-slide.is-active { z-index: 4; transform: translate3d(0,0,0) scale(1); filter: blur(0); opacity: 1; pointer-events: auto; }
+.coffee-slide.is-second { z-index: 3; transform: translate3d(13%, -1%, -55px) scale(.78); filter: blur(4px); opacity: .78; pointer-events: auto; }
+.coffee-slide.is-third { z-index: 2; transform: translate3d(22%, -2%, -95px) scale(.56); filter: blur(7px); opacity: .55; pointer-events: auto; }
+.coffee-slide.is-hidden { visibility: hidden; }
+.coffee-slide.is-leaving-next, .coffee-slide.is-leaving-prev { z-index: 6; visibility: visible; pointer-events: none; }
+.coffee-slide.is-leaving-next { animation: coffee-drop-out .72s cubic-bezier(.4,0,.7,.35) both; }
+.coffee-slide.is-leaving-prev { animation: coffee-back-out .72s cubic-bezier(.4,0,.7,.35) both; }
+.coffee-slide.is-entering-next { z-index: 5; animation: coffee-forward-in .72s cubic-bezier(.2,.75,.25,1) both; }
+.coffee-slide.is-entering-prev { z-index: 5; animation: coffee-rise-in .72s cubic-bezier(.2,.75,.25,1) both; }
+.coffee-carousel { margin-bottom: 36px; }
+.coffee-direction-controls { position: relative; z-index: 7; display: flex; align-items: center; justify-content: center; gap: clamp(18px, 4vw, 42px); }
+.coffee-direction { display: grid; width: 84px; min-height: 36px; place-items: center; padding: 8px; border: 0; background: transparent; cursor: pointer; }
+.coffee-direction::before { display: block; width: 100%; height: 6px; border-radius: 99px; background: #b9cbe0; content: ""; transition: background-color .25s ease, transform .25s ease; }
+.coffee-direction.is-selected::before, .coffee-direction:hover::before { background: #1e4b82; transform: scaleY(1.2); }
+.coffee-direction:focus-visible { outline: 1px solid #1e3382; outline-offset: 3px; }
+@keyframes coffee-title-arrive { from { opacity: 0; translate: 0 22px; } to { opacity: 1; translate: 0 0; } }
+@keyframes coffee-wave-flow { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+@keyframes coffee-wave-undulate { from { transform: translateY(0) scaleY(1); } to { transform: translateY(-12px) scaleY(1.1); } }
+@keyframes coffee-wave-swell { 0%,100% { transform: translateY(0) scaleY(1); } 48% { transform: translateY(-18px) scaleY(1.14); } }
+@keyframes coffee-drop-out { from { transform: translate3d(0,0,0) rotate(0) scale(1); opacity: 1; filter: blur(0); } to { transform: translate3d(-50px,100px,80px) rotate(-15deg) scale(.7); opacity: .18; filter: blur(4px); } }
+@keyframes coffee-back-out { from { transform: translate3d(0,0,0) scale(1); opacity: 1; filter: blur(0); } to { transform: translate3d(13%,-1%,-55px) rotate(12deg) scale(.78); opacity: .72; filter: blur(4px); } }
+@keyframes coffee-forward-in { from { transform: translate3d(24%,-10%,-125px) rotate(18deg) scale(.48); opacity: .3; filter: blur(9px); } to { transform: translate3d(0,0,0) rotate(0) scale(1); opacity: 1; filter: blur(0); } }
+@keyframes coffee-rise-in { from { transform: translate3d(-50px,100px,80px) rotate(-15deg) scale(.68); opacity: .2; filter: blur(5px); } to { transform: translate3d(0,0,0) rotate(0) scale(1); opacity: 1; filter: blur(0); } }
+@media (max-width: 760px) {
+  .coffee-hero { min-height: 78vh; min-height: 78svh; padding: 18px 0 95px; }
+  .coffee-hero-wave { height: 170px; bottom: -18px; }
+  .coffee-hero-inner { width: min(100% - 32px, 560px); min-height: 0; grid-template-columns: 1fr; grid-template-rows: auto 1fr; gap: 2px; }
+  .coffee-hero-copy { text-align: center; }
+  .coffee-active-name { top: 2px; right: 0; max-width: 48%; font-size: 11px; }
+  .coffee-hero-menu-link { right: 0; bottom: -66px; min-height: 46px; }
+  .coffee-hero-eyebrow { justify-content: center; margin-bottom: 12px; font-size: 9px; }
+  .coffee-hero-copy h2 { font-size: clamp(45px, 10vw, 68px); }
+  .coffee-hero-description { margin: 13px auto 15px; }
+  .coffee-hero-menu-link { min-height: 46px; }
+  .coffee-stage { width: 100%; }
+  .coffee-carousel { height: clamp(285px, 39svh, 370px); }
+  .coffee-slide img { width: min(82%, 380px); }
+  .coffee-slide.is-second { transform: translate3d(11%,-1%,-50px) scale(.72); }
+  .coffee-slide.is-third { transform: translate3d(19%,-2%,-88px) scale(.52); }
+  .coffee-stage { --coffee-back-x: 11%; --coffee-back-z: -50px; --coffee-back-scale: .72; --coffee-back-opacity: .78; --coffee-back-blur: 4px; }
+  .coffee-direction { width: 74px; min-height: 42px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .coffee-hero-copy h2, .coffee-hero-wave, .coffee-hero-wave path { animation: none !important; }
+  .coffee-slide { transition-duration: .01ms; }
+}

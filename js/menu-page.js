@@ -20,6 +20,7 @@ const normalizeSub = value => {
   const key = normalize(value);
   return ({ especial: 'espesyal', 'espesyal2': 'espesyal', 'espesyal-2': 'espesyal', 'iced': 'iced-coffee', 'hot': 'hot-coffee', 'noncoffee': 'non-coffee' })[key] || key;
 };
+const productSlug = value => String(value ?? '').normalize('NFKD').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 const money = value => `&#8369;${Number(value || 0).toLocaleString('en-PH', { minimumFractionDigits: 2 })}`;
 
@@ -111,7 +112,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
     root.querySelector('.menu-current-title').textContent = category?.label || 'Menu';
     root.querySelector('.menu-result-count').textContent = `${filtered.length} ${filtered.length === 1 ? 'item' : 'items'}`;
-    grid.innerHTML = filtered.length ? filtered.map(item => `<article class="product-card" data-product-id="${escapeHtml(item.id)}" data-product-name="${escapeHtml(item.item_name)}" data-category="${escapeHtml(item.category)}" data-subcategory="${escapeHtml(item.subcategory || '')}" data-best-seller="${item.is_best_seller === true}" data-available="${item.is_available !== false}">
+    grid.innerHTML = filtered.length ? filtered.map(item => `<article id="${escapeHtml(productSlug(item.item_name))}" class="product-card" data-product-id="${escapeHtml(item.id)}" data-product-name="${escapeHtml(item.item_name)}" data-category="${escapeHtml(item.category)}" data-subcategory="${escapeHtml(item.subcategory || '')}" data-best-seller="${item.is_best_seller === true}" data-available="${item.is_available !== false}">
       <div class="product-image">${item.is_best_seller ? '<span class="best-seller-label">BEST SELLER</span>' : ''}<img src="${escapeHtml(item.image_url || 'images/products/coffee/amerikano.jpg')}" alt="${escapeHtml(item.item_name)}" loading="lazy"></div>
       <div class="product-info"><div class="product-title"><h3>${escapeHtml(item.item_name)}</h3><span>${money(item.price)}</span></div><p>${escapeHtml(item.description || '')}</p></div>
     </article>`).join('') : query ? '' : '<p class="menu-empty-state">No items in this category yet. Please check back soon.</p>';
@@ -165,7 +166,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
   products = data || [];
+  const requestedSlug = decodeURIComponent(window.location.hash.slice(1));
+  const requestedProduct = requestedSlug && products.find(item => productSlug(item.item_name) === requestedSlug);
+  if (requestedProduct) {
+    const destination = getProductMenuCategory(requestedProduct);
+    activeMain = MENU_CATEGORIES.some(category => category.id === destination.main) ? destination.main : 'best-sellers';
+    activeSub = destination.sub;
+    expandedCategory = activeMain;
+    renderCategories();
+  }
   renderProducts();
+  if (requestedProduct) requestAnimationFrame(() => document.getElementById(requestedSlug)?.scrollIntoView({ behavior: 'smooth', block: 'center' }));
 
   supabase.channel('menu-items-live')
     .on('postgres_changes', { event: '*', schema: 'public', table: 'menu_items' }, async () => {
