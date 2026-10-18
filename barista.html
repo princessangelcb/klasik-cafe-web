@@ -12,7 +12,6 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/barista.css">
   <script src="js/script.js" defer></script>
-  <script src="js/barista.js" defer></script>
 </head>
 <body class="barista-body">
   <div class="barista-shell">
@@ -22,12 +21,16 @@
       </div>
       <nav class="sidebar-nav" aria-label="Barista navigation">
         <a href="#barista-dashboard" class="active">Dashboard</a>
-        <a href="#barista-orders">New Orders</a>
-        <a href="#barista-orders">Preparing</a>
-        <a href="#barista-orders">Ready for Pickup</a>
-        <a href="#barista-orders">Completed</a>
-        <a href="#barista-profile">Profile</a>
+        <a href="#barista-orders" data-order-filter="Pending">Pending</a>
+        <a href="#barista-orders" data-order-filter="Preparing">Preparing</a>
+        <a href="#barista-orders" data-order-filter="Ready for Pickup">Ready for Pickup</a>
+        <a href="#barista-orders" data-order-filter="Completed">Completed</a>
       </nav>
+      <section id="barista-menu-status" class="barista-sidebar-menu-status" aria-labelledby="barista-menu-status-title">
+        <div class="sidebar-menu-heading"><span>MENU STATUS</span><strong id="barista-menu-status-title">Product Availability</strong></div>
+        <p class="barista-menu-help">Changes sync with the live menu.</p>
+        <div class="barista-menu-table-wrap"><table class="barista-menu-table"><thead><tr><th>Product</th><th>Availability</th><th>Best Seller</th></tr></thead><tbody id="barista-menu-status-list"><tr><td colspan="3">Loading menu items...</td></tr></tbody></table></div>
+      </section>
       <a class="sidebar-logout" href="login.html">Log Out</a>
     </aside>
 
@@ -41,12 +44,8 @@
 
       <section id="barista-dashboard" class="stats-grid">
         <article class="stat-card">
-          <span>Awaiting Confirmation</span>
+          <span>Pending</span>
           <strong id="barista-awaiting-count">0</strong>
-        </article>
-        <article class="stat-card">
-          <span>Confirmed</span>
-          <strong id="barista-confirmed-count">0</strong>
         </article>
         <article class="stat-card">
           <span>Preparing</span>
@@ -75,8 +74,11 @@
           <aside id="barista-order-detail" class="detail-panel"></aside>
         </div>
       </section>
+
     </main>
   </div>
   <script type="module" src="js/auth-check.js"></script>
+  <script type="module" src="js/barista-menu.js"></script>
+  <script type="module" src="js/barista.js"></script>
 </body>
 </html>

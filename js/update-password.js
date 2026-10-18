@@ -18,11 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (error) {
-                alert("Error updating password: " + error.message);
+                window.klasikNotify?.("Error updating password: " + error.message, "error");
                 submitBtn.textContent = "Update Password";
                 submitBtn.disabled = false;
             } else {
-                alert("Password successfully updated! You can now log in.");
+                window.klasikNotify?.("Password updated. You can now log in.");
                 window.location.href = 'login.html';
             }
         });

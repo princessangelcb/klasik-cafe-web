@@ -25,10 +25,8 @@
         <a href="#admin-orders">Orders</a>
         <a href="#admin-reviews">Reviews</a>
         <a href="#admin-suggestions">Suggestions</a>
-        <a href="#admin-customers">Customers</a>
         <a href="#admin-staff">Invite staff</a>
         <a href="#admin-cafe-info">Café Information</a>
-        <a href="#admin-settings">Settings</a>
       </nav>
       <a class="sidebar-logout" href="login.html">Log Out</a>
     </aside>
@@ -125,17 +123,6 @@
         <div id="admin-suggestion-list" class="admin-suggestion-list"></div>
       </section>
 
-      <section id="admin-customers" class="panel admin-panel">
-        <div class="section-header compact-header">
-          <div>
-            <p class="eyebrow eyebrow-blue"><span></span> LOYALTY</p>
-            <h2>Customer <em>Acquisition</em></h2>
-          </div>
-        </div>
-        <p class="customer-empty-state">Customer account reporting is unavailable in this browser-only demo.</p>
-      </section>
-
-      <!-- Staff Invitation Section Panel matching Café Info UI -->
       <section id="admin-staff" class="panel admin-panel">
         <div class="section-header compact-header">
           <div>
@@ -159,6 +146,7 @@
         </form>
       </section>
 
+      <!-- UPDATED CAFE INFO SECTION -->
       <section id="admin-cafe-info" class="panel admin-panel">
         <div class="section-header compact-header">
           <div>
@@ -167,34 +155,19 @@
           </div>
         </div>
 
-        <form id="cafe-info-form" class="admin-form">
+        <form id="cafe-info-form" class="admin-form" onsubmit="event.preventDefault();">
           <div class="form-grid-two">
-            <label>Café Name<input type="text" id="cafe-name" name="cafeName"></label>
-            <label>Address<input type="text" id="cafe-address" name="address"></label>
-            <label>Opening Hours<input type="text" id="cafe-hours" name="hours"></label>
-            <label>Contact Number<input type="tel" id="cafe-phone" name="phone"></label>
-            <label>Facebook<input type="text" id="cafe-facebook" name="facebook"></label>
-            <label>Instagram<input type="text" id="cafe-instagram" name="instagram"></label>
-            <label>TikTok<input type="text" id="cafe-tiktok" name="tiktok"></label>
-            <label class="full-width">Description<textarea id="cafe-description" name="description" rows="4"></textarea></label>
+            <label>Address<input type="text" id="admin-address" name="address"></label>
+            <label>Opening Hours<input type="text" id="admin-hours" name="hours"></label>
+            <label>Contact Number<input type="tel" id="admin-phone" name="phone"></label>
+            <label>Email Address<input type="email" id="admin-email" name="email"></label>
+            <label class="full-width">About Us Text<textarea id="admin-about-text" name="description" rows="4"></textarea></label>
           </div>
-          <button type="submit" class="button button-primary">Save Changes</button>
+          <button type="button" id="save-cafe-settings" class="button button-primary">Save Changes</button>
+          <p id="admin-settings-message" style="margin-top: 15px; font-weight: bold;"></p>
         </form>
       </section>
 
-      <section id="admin-settings" class="panel admin-panel">
-        <div class="section-header compact-header">
-          <div>
-            <p class="eyebrow eyebrow-blue"><span></span> SYSTEM</p>
-            <h2>Store <em>Settings</em></h2>
-          </div>
-        </div>
-        <ul class="mini-list">
-          <li><span>Theme</span><strong>Royal Blue</strong></li>
-          <li><span>Mobile Menu</span><strong>Enabled</strong></li>
-          <li><span>Auto Save</span><strong>On</strong></li>
-        </ul>
-      </section>
     </main>
   </div>
 
@@ -248,7 +221,7 @@
           <span class="availability-switch">
             <input type="checkbox" id="product-best-seller" role="switch">
             <span class="availability-switch-track"></span>
-            <span class="availability-label">Not a Best Seller</span>
+            <span class="availability-label">Not Best Seller</span>
           </span>
         </label>
         <div class="modal-actions">
@@ -261,4 +234,4 @@
   <script type="module" src="js/auth-check.js"></script>
   <script type="module" src="js/admin.js"></script>
 </body>
-</html> 
+</html>

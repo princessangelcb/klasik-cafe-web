@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1e3382">
+  <title>Your receipt | KLASIK CAFE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/customer.css">
+  <script type="module" src="js/auth-check.js"></script>
+  <script type="module" src="js/receipt.js"></script>
+</head>
+<body>
+  <header class="site-header"><div class="nav-wrap">
+    <a class="brand" href="index.html" aria-label="KLASIK CAFE home"><img class="brand-logo" src="klasik_cafe_logovid_trans.gif" alt="KLASIK CAFE logo"></a>
+    <span id="nav-welcome-msg" class="nav-welcome-msg" hidden></span>
+    <nav class="primary-nav" aria-label="Main navigation"><a class="nav-link" href="menu.html">Menu</a><a class="nav-link" href="placed-orders.html">Placed Orders</a></nav>
+  </div></header>
+  <main class="customer-order-page"><section class="page-width customer-order-shell">
+    <div id="receipt-status" class="customer-panel" role="status">Loading your receipt…</div>
+    <article id="digital-receipt" class="digital-receipt" hidden></article>
+  </section></main>
+</body>
+</html>

@@ -12,12 +12,12 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/customer.css">
   <script src="js/script.js" defer></script>
-  <script src="js/customer.js" defer></script>
+  <script type="module" src="js/customer.js"></script>
 </head>
 <body>
   <header class="site-header">
     <div class="nav-wrap">
-      <a class="brand" href="index.html" aria-label="KLASIK CAFE home"><img class="brand-logo" src="klasik_cafe_logo_3_-removebg-preview.png" alt="KLASIK CAFE logo"></a>
+      <a class="brand" href="index.html" aria-label="KLASIK CAFE home"><img class="brand-logo" src="klasik_cafe_logovid_trans.gif" alt="KLASIK CAFE logo"></a>
       <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="primary-nav"><span></span><span></span><span></span></button>
       <nav id="primary-nav" class="primary-nav" aria-label="Main navigation">
         <a class="nav-link" href="index.html#home">Home</a><a class="nav-link" href="menu.html">Menu</a><a class="nav-link" href="index.html#story">About Us</a><a class="nav-link" href="index.html#location">Location</a>
@@ -34,9 +34,10 @@
       <div class="customer-tool-grid">
         <section class="customer-panel" aria-labelledby="review-panel-title">
           <div class="customer-panel-header"><h2 id="review-panel-title">Customer <em>Reviews</em></h2></div>
-          <div class="customer-stars" id="customer-star-picker" aria-label="Select a rating">
+          <div class="customer-stars" id="customer-star-picker" role="radiogroup" aria-label="Select a rating from one to five stars">
             <button type="button" class="customer-star" data-rating="1" aria-label="1 star">★</button><button type="button" class="customer-star" data-rating="2" aria-label="2 stars">★</button><button type="button" class="customer-star" data-rating="3" aria-label="3 stars">★</button><button type="button" class="customer-star" data-rating="4" aria-label="4 stars">★</button><button type="button" class="customer-star" data-rating="5" aria-label="5 stars">★</button>
           </div>
+          <p id="customer-rating-label" class="customer-rating-label" aria-live="polite">No rating selected</p>
           <input type="hidden" id="customer-review-rating" value="0">
           <label class="customer-field-label" for="customer-review-comment">Your review</label>
           <textarea id="customer-review-comment" rows="4" placeholder="Tell us about your experience..."></textarea>
@@ -46,7 +47,6 @@
         </section>
         <section class="customer-panel" aria-labelledby="suggestion-panel-title">
           <div class="customer-panel-header"><h2 id="suggestion-panel-title">Send Us a <em>Suggestion</em></h2></div>
-          <label class="customer-field-label" for="customer-suggestion-subject">Subject</label><input id="customer-suggestion-subject" type="text" placeholder="Subject">
           <label class="customer-field-label" for="customer-suggestion-message">Suggestion</label><textarea id="customer-suggestion-message" rows="4" placeholder="Share an idea with us..."></textarea>
           <button class="button button-primary button-wide" id="customer-submit-suggestion" type="button" disabled>Submit Suggestion</button>
           <p id="customer-suggestion-status" class="customer-message" aria-live="polite"></p>

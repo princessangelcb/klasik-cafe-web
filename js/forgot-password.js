@@ -19,11 +19,11 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (error) {
-                alert("Error: " + error.message);
+                window.klasikNotify?.("Error: " + error.message, "error");
                 submitBtn.textContent = "Send Reset Instructions";
                 submitBtn.disabled = false;
             } else {
-                alert("Success! Check your email for the password reset link.");
+                window.klasikNotify?.("Password reset link sent. Please check your email.");
                 forgotForm.reset();
                 submitBtn.textContent = "Send Reset Instructions";
                 submitBtn.disabled = false;

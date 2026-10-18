@@ -12,14 +12,15 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/customer.css">
   <script src="js/script.js" defer></script>
-  <script src="js/customer.js" defer></script>
+  <script type="module" src="js/customer.js"></script>
 </head>
 <body>
   <header class="site-header">
     <div class="nav-wrap">
       <a class="brand" href="index.html" aria-label="KLASIK CAFE home">
-        <img class="brand-logo" src="klasik_cafe_logo_3_-removebg-preview.png" alt="KLASIK CAFE logo">
+        <img class="brand-logo" src="klasik_cafe_logovid_trans.gif" alt="KLASIK CAFE logo">
       </a>
+      <span id="nav-welcome-msg" class="nav-welcome-msg" hidden></span>
       <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="primary-nav">
         <span></span><span></span><span></span>
       </button>
@@ -29,7 +30,7 @@
         <a class="nav-link" href="index.html#story">About Us</a>
         <a class="nav-link" href="index.html#location">Location</a>
         <div class="nav-actions">
-          <a class="button button-outline button-small cart-trigger" href="orders.html" aria-label="Review your order">
+          <a class="button button-primary button-small cart-trigger is-current" href="orders.html" aria-label="Review your order" aria-current="page">
             <span aria-hidden="true">🛒</span>
             <span>Cart</span>
             <span class="cart-badge" id="cart-count-badge">0</span>
@@ -38,7 +39,6 @@
           <a id="nav-login-btn" class="button button-outline button-small" href="login.html">Login</a>
           <a id="nav-signup-btn" class="button button-primary button-small" href="signup.html">Sign Up</a>
           
-          <span id="nav-welcome-msg" style="display: none; align-self: center; margin-right: 15px; font-weight: 600; font-size: 0.9rem; color: #1e3382;"></span>
           <button id="nav-logout-btn" class="button button-outline button-small" style="display: none;">Logout</button>
         </div>
       </nav>
@@ -83,6 +83,6 @@
     <div class="page-width footer-bottom"><span>© 2026 KLASIK CAFE. All Rights Reserved.</span></div>
   </footer>
   <script type="module" src="js/auth-check.js"></script>
-  <script type="module" src="js/orders.js"></script>
+  <script type="module" src="js/order.js"></script>
 </body>
 </html>

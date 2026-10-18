@@ -5,23 +5,24 @@
 - **Type:** Small café website
 - **Brand:** KLASIK CAFE
 - **Primary color:** Logo blue (`#1E3382`); pale blue tints remain for backgrounds and borders
-- **Technology:** Plain HTML, CSS, and vanilla JavaScript; no framework or backend
+- **Technology:** Plain HTML, CSS, and vanilla JavaScript; the existing application also uses its Supabase client for backend-backed features
 
 ## Current Scope
-The static front end includes the café homepage, menu, demo login and sign-up pages, customer order review, placed orders, order history, customer feedback, and separate admin/barista panels.
+The site includes the café homepage, menu, Supabase-backed login and sign-up, customer order pages, customer feedback, and separate admin/barista panels.
 
-Authentication and all order, product-availability, review, and suggestion state are demonstration-only and stored in browser `localStorage`. There is no backend, database, API, payment processing, or real authentication. The shared order state is available only to pages using the same browser origin/profile; it is not a reliable shared source across devices, browsers, or staff/customer accounts.
+The existing Supabase integration is used by authentication, menu, cart/order, admin/barista, and storage flows. Customer reviews and suggestions, along with some favorites and homepage customer interactions, still use browser `localStorage` and are not a shared backend source. Preserve the configured Supabase project and its data/schema; do not replace or recreate it when making front-end changes.
 
 ## Structure
 - `klasik_cafe_logo_3_-removebg-preview.png`: shared brand logo used in the homepage header/footer and both account pages
 - `css/style.css`: shared responsive design and page styles
 - `js/script.js`: mobile navigation, image fallbacks, password toggles, demo links, and form validation
-- `images/`: local image paths are used when assets are added; remote café photography is the current fallback. If both sources fail, a styled placeholder is shown.
+- `images/`: local photos include `coffee.jpg` and `cafe.jpg` for the homepage experience/story sections; remote image fallbacks are retained where configured. If both sources fail, a styled placeholder is shown.
 
 ## Current Behavior and Decisions
 - Homepage navigation links scroll to sections; account links open the separate login and sign-up pages.
 - The existing homepage remains the customer homepage and links to the full menu, customer feedback, and order review while retaining its original café design.
-- The homepage menu area presents three featured products. The complete category-filtered menu is on `menu.html`, which loads the shared product catalog from `index.html` and retains drink customization and cart behavior.
+- The homepage sections follow the requested sequence: KLASIK Experience, More Than Coffee, Visit KLASIK CAFE, Guest Feedback, then the social footer band. The feedback button uses the existing `reviews.html` flow and the homepage review area shows the existing empty state when no reviews are stored.
+- The homepage contains no product catalog or product customizer; its menu teaser links to `menu.html`, which reads available products directly from the Supabase `menu_items` table. Admin menu changes therefore remain the menu source of truth. Available picks on Favorites now also read that same table.
 - Drink customization uses Medium as standard, Large adds ₱25, and the add-ons are Oreo ₱15, Biscoff ₱25, Cold Foam ₱15, Seasalt Cream ₱15, Extra Shot ₱25, Sauce/Syrup ₱15, and Oat Milk Substitute ₱25. Small, Soy Milk, and No Ice are removed.
 - `menu.html` provides live autocomplete for available catalog items, including closest-name suggestions for common misspellings. Selecting a suggestion reveals the matching product card.
 - The homepage opens with a white KLASIK logo above its blue tagline, centered in a stacked layout; the opening screen transitions automatically after 1.8 seconds plus its fade, with no continue button. The original homepage sections and styling remain intact, including the “A taste of Klasik in every cup.” hero headline.
@@ -31,15 +32,15 @@ Authentication and all order, product-availability, review, and suggestion state
 - Admin and barista sidebars remain sticky on desktop with Log Out at the bottom and return to normal document flow on smaller screens.
 - Product categories now support a nested structure so a main category such as Coffee can contain subcategories like Iced Coffee, Hot Coffee, and Espesyal for clearer organization in the admin panel and menu filtering.
 - `orders.html` handles the cart and themed pre-placement confirmation. Confirming creates a unique receipt/order code and moves the order into `placed-orders.html` with Awaiting Confirmation status.
-- Customer orders, admin orders, and the barista queue read and update the same `klasikCafeOrders` localStorage record. A bartender confirms an awaiting order into Confirmed before it moves into Order History; subsequent statuses are Preparing, Ready for Pickup, Completed, or Cancelled.
-- The admin menu is loaded from the actual homepage catalog and paginated. Admin and barista order status options use the same color-coded statuses: Awaiting Confirmation (yellow), Confirmed (blue), Preparing (orange), Ready for Pickup (green), Completed (gray), and Cancelled (red).
-- `reviews.html` is the customer feedback page. Review and suggestion submission requires a client-side demo login and non-empty required fields; the homepage only links to viewing/submitting feedback.
+- Customer order pages and the barista queue use `klasikCafeOrders` localStorage, while the Admin order panel reads Supabase `placed_orders`; these are separate and do not share order/status updates.
+- The admin menu reads and writes the Supabase `menu_items` table. The homepage and menu page no longer embed a duplicate product catalog.
+- `reviews.html` is the customer feedback page. Reviews and suggestions use the existing client-side feedback flow; the homepage uses the same review list and links to this page rather than adding a separate form.
 - The retired standalone customer dashboard has been replaced with links and order summaries using the current shared browser data instead of seeded sample profile/order details.
-- Menu product cards remove the old display-only “View menu” label and provide working availability-aware customization and favorite controls.
+- Menu product cards read current prices and availability from Supabase; `menu-page.js` displays them and opens the customization modal. Supabase cart insertion is in `cart.js`, but the cart/order review wiring still needs consolidation before production use.
 - Signup requires all fields, a valid email and phone number, a password of at least eight characters, matching confirmation, and accepted terms.
 - Login accepts a username or email, validates email formatting when the value contains `@`, and redirects the demo customer back to the homepage after successful login.
-- Demo forms and role links do not create or authenticate real accounts. A successful demo login sets a browser-local customer session solely to gate the feedback UI.
-- The café location is listed by Google Maps as beside Chapel, Matimbubong, San Ildefonso, Bulacan. The directions link and embedded map use the supplied Google Maps location. Opening hours, contact number, social accounts, and menu details are sample content and should be confirmed before real use.
+- Authentication is provided by the existing Supabase integration. Do not expose or replace its configuration, and do not put service-role credentials in frontend code.
+- The café location is listed by Google Maps as beside Chapel, Matimbubong, San Ildefonso, Bulacan. The directions link and embedded map use the supplied Google Maps location. Published phone and opening-hour strings elsewhere in older page footers are unverified sample content; do not treat them as confirmed business details. Social URLs are not configured.
 - Google Fonts, Unsplash image fallbacks, and the Google Maps embed require an internet connection; local images can replace the image fallbacks.
 
 ## Validation Performed
@@ -89,15 +90,24 @@ Authentication and all order, product-availability, review, and suggestion state
 - Added a Cart & Favorites shortcut from the menu and order-review pages, plus a Favorites jump link beside the order-page tabs. The Admin Best Seller map now takes precedence over any stale product-record flag, matching Admin's loading behavior; only Admin-marked items show the badge. `node --check js/customer.js` and targeted menu/order markup and state-precedence assertions passed.
 - HTTP smoke checks returned 200 for the homepage, menu, order review, placed orders, order history, feedback, customer, admin, and barista pages.
 - Integrated browser navigation returned `ERR_FAILED`; no interactive visual or responsive browser check was available in this session.
+- Current homepage restoration was verified in a local browser at desktop and mobile widths. The section order, unique IDs, local Experience/Story photos, responsive navigation, location map, feedback empty state, and existing menu/reviews routes all passed checks; no horizontal overflow was found.
+- `node --check` passed for the existing JavaScript files. No `package.json` or build script is present, and the existing Supabase integration/data were not changed.
+- The homepage Call the café control remains disabled until a real phone number is confirmed. Opening hours and social URLs remain unconfigured rather than using sample values.
+- A read-only browser check confirmed that `menu.html` loads the existing `menu_items` entry and Favorites fetches available picks from the same table. No database writes or schema changes were made for this update.
 
 ## Next Steps / Known Limitations
-- Add a real backend/database and authenticated customer/staff accounts before using ordering, status confirmation, reviews, suggestions, or availability settings in production. Browser storage is not a cross-device or secure shared data source.
-- Confirm the sample phone number, opening hours, social links, and placeholder menu details before real use.
-- Add actual photos under `images/` using the filenames referenced by the page markup.
-- The project remains a static front end with no automated test suite or backend services.
+- Reviews, suggestions, and some customer-only features remain browser-local and are not shared across devices; migrate only if explicitly requested and after agreeing on a schema.
+- Confirm the café phone number, opening hours, and official social URLs before enabling those homepage actions/links.
+- Supabase-backed and local-only flows are still split: the homepage/customer scripts keep separate localStorage cart/order/review/favorite state, while `menu.html` inserts into the Supabase cart. The order review page loads local state and references a missing `js/orders.js`; `js/order.js` exists but is not loaded there. The barista queue also reads localStorage instead of `placed_orders`.
+- Admin Reviews, Suggestions, Café Information, and Settings are not connected to database reads/writes; reviews/suggestions submitted by customers are localStorage-only. The customer reporting panel is a placeholder. The admin menu pagination controls currently have no handlers.
+- Signup creates a Supabase Auth user but does not create a `profiles` row; login uses a demo localStorage handler alongside Supabase Auth, and staff invitations write profile rows without sending Auth invitations. Review the role assignment and provisioning flow.
+- `auth-check.js` updates navigation/cart state but does not enforce page roles. Verify Supabase Row Level Security on `profiles`, `menu_items`, `cart`, `placed_orders`, and the `product-images` bucket; client-side role checks are not a security boundary.
+- The repository has no `package.json` or configured build/test script; use available syntax and browser checks for front-end validation.
 
 ## Session Maintenance
 When project files, behavior, scope, or decisions change, update these notes during that work session so the next chat starts with accurate context. Record meaningful decisions, current behavior, validation performed, and remaining work; remove details that are no longer true.
 - Latest customer-page update: Favorites is a standalone page reached from the order-page navigation; the Favorites content fills its own panel without an order list beside it. Order Review, Placed Orders, and Order History display only their own content. Cart labels remain Cart. The welcome overlay transitions after 1.8 seconds before its fade completes; the logo is enlarged, the tagline uses smaller single-line sizing, and the homepage phrase “in every cup.” uses the brand blue. Targeted markup/style checks and browser checks passed.
 - Favorites is linked as its own page (`favorites.html`) from the customer order navigation. Favorites functionality, guest login prompt, and real-catalog suggestions remain unchanged; browser inspection at mobile width showed three available menu picks, no order panel beside Favorites, and no horizontal overflow. Customer JavaScript syntax and page-link/unique-ID assertions passed.
 - Empty Favorites panels now show up to three available products parsed from the existing homepage catalog, each with a Save Favorite control for signed-in customers. Guest panels show the same real menu picks with login-to-save links. Browser testing confirmed three suggestions render, saving a suggestion moves it into the actual favorites list, and temporary QA session/favorite data was removed afterward. `node --check js/customer.js` and targeted HTML/CSS assertions passed.
+- Order Review checkout now snapshots item names, prices, customizations, and menu image URLs into each Supabase order; it expects the owner to apply the separate SQL migration for `placed_orders.order_code`, `placed_orders.customer_name`, and `placed_orders.items`. A new receipt page loads the inserted order by its ID and customer session. Admin and Barista queues use Supabase `placed_orders`, with order-code search, per-status pagination, item images, and Pending → Preparing → Ready for Pickup → Completed transitions. Signup adds customer name fields to Supabase Auth user metadata, and shared navigation uses that name before looking up `profiles.full_name`. Existing test suite passed; module syntax checks passed. No package manifest/build command exists. The complete Supabase checkout/receipt flow remains unverified until the SQL is applied and tested against the configured project.
+- Replaced all native JavaScript `alert()` and `confirm()` calls with the existing branded toast and confirmation dialog; homepage/menu customization now requires a signed-in Supabase user and uses the login/sign-up modal for guests. Admin and Barista order lists have two-column desktop cards, status colors, search icons, branded pagination buttons, and two orders per page in Admin's All filter. Admin product editing preserves the existing `image_url` in the form and displays it in the preview. Login now has one functional, styled Forgot password link. No database changes are needed for these UI/auth updates; JavaScript syntax checks passed and repository search found no remaining native alert/confirm calls.

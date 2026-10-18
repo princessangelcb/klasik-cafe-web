@@ -12,15 +12,16 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/customer.css">
   <script src="js/script.js" defer></script>
-  <script src="js/customer.js" defer></script>
+  <script type="module" src="js/customer.js"></script>
   <script type="module" src="js/menu-page.js"></script>
 </head>
 <body>
   <header class="site-header">
     <div class="nav-wrap">
       <a class="brand" href="index.html#home" aria-label="KLASIK CAFE home">
-        <img class="brand-logo" src="klasik_cafe_logo_3_-removebg-preview.png" alt="KLASIK CAFE logo">
+        <img class="brand-logo" src="klasik_cafe_logovid_trans.gif" alt="KLASIK CAFE logo">
       </a>
+      <span id="nav-welcome-msg" class="nav-welcome-msg" hidden></span>
       <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="primary-nav">
         <span></span><span></span><span></span>
       </button>
@@ -35,8 +36,9 @@
             <span>Cart</span>
             <span class="cart-badge" id="cart-count-badge">0</span>
           </a>
-          <a class="button button-outline button-small" href="login.html">Login</a>
-          <a class="button button-primary button-small" href="signup.html">Sign Up</a>
+          <a id="nav-login-btn" class="button button-outline button-small" href="login.html">Login</a>
+          <a id="nav-signup-btn" class="button button-primary button-small" href="signup.html">Sign Up</a>
+          <button id="nav-logout-btn" class="button button-outline button-small" style="display:none" type="button">Logout</button>
         </div>
       </nav>
     </div>
@@ -104,6 +106,7 @@
         </div>
       </div>
       <div class="customer-modal-total-row"><span>Total</span><strong id="customer-modal-total">₱0</strong></div>
+      <p id="customer-guest-action-note" class="customer-guest-action-note" hidden>Please log in to add this drink to your cart or favorites.</p>
       <button class="customer-modal-favorite" id="customer-modal-favorite" type="button">♡ Save to Favorites</button>
       <button class="button button-primary button-wide" id="customer-add-to-order" type="button">Add to Order</button>
     </div>

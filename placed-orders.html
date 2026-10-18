@@ -12,12 +12,13 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/customer.css">
   <script src="js/script.js" defer></script>
-  <script src="js/customer.js" defer></script>
+  <script type="module" src="js/customer.js"></script>
 </head>
 <body>
   <header class="site-header">
     <div class="nav-wrap">
-      <a class="brand" href="index.html" aria-label="KLASIK CAFE home"><img class="brand-logo" src="klasik_cafe_logo_3_-removebg-preview.png" alt="KLASIK CAFE logo"></a>
+      <a class="brand" href="index.html" aria-label="KLASIK CAFE home"><img class="brand-logo" src="klasik_cafe_logovid_trans.gif" alt="KLASIK CAFE logo"></a>
+      <span id="nav-welcome-msg" class="nav-welcome-msg" hidden></span>
       <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="primary-nav"><span></span><span></span><span></span></button>
       <nav id="primary-nav" class="primary-nav" aria-label="Main navigation">
         <a class="nav-link" href="index.html#home">Home</a><a class="nav-link" href="menu.html">Menu</a><a class="nav-link" href="index.html#story">About Us</a><a class="nav-link" href="index.html#location">Location</a>
@@ -31,7 +32,6 @@
           <a id="nav-login-btn" class="button button-outline button-small" href="login.html">Login</a>
           <a id="nav-signup-btn" class="button button-primary button-small" href="signup.html">Sign Up</a>
           
-          <span id="nav-welcome-msg" style="display: none; align-self: center; margin-right: 15px; font-weight: 600; font-size: 0.9rem; color: #1e3382;"></span>
           <button id="nav-logout-btn" class="button button-outline button-small" style="display: none;">Logout</button>
         </div>
       </nav>

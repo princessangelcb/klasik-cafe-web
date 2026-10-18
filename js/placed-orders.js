@@ -1,62 +1,59 @@
 import { supabase } from './supabase.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const placedOrdersContainer = document.getElementById('customer-placed-orders');
-
-    // 1. Get the logged-in user
-    const { data: { user } } = await supabase.auth.getUser();
-
+    const container = document.getElementById('customer-placed-orders');
+    if (!container) return;
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError) console.error('Could not verify customer session for placed orders.', authError);
     if (!user) {
-        placedOrdersContainer.innerHTML = '<p>Please log in to view your placed orders.</p>';
+        container.replaceChildren();
+        window.klasikShowAuthWarning?.('Please log in or sign up to view your placed orders.');
         return;
     }
 
-    // 2. Fetch the orders for this specific user, newest first
-    const { data: orders, error } = await supabase
-        .from('placed_orders')
-        .select('*')
-        .eq('user_email', user.email)
+    const { data: orders, error } = await supabase.from('placed_orders')
+        .select('id, order_code, created_at, status, order_details, total_price, special_request')
+        .eq('user_id', user.id)
+        .in('status', ['Pending', 'Preparing', 'Ready for Pickup'])
         .order('created_at', { ascending: false });
-
     if (error) {
-        placedOrdersContainer.innerHTML = '<p>Error loading orders. Please try again.</p>';
+        console.error('Could not load placed orders.', error);
+        container.innerHTML = '<p class="customer-empty-state">Placed orders could not be loaded. Please try again.</p>';
+        return;
+    }
+    if (!orders?.length) {
+        container.innerHTML = '<p class="customer-empty-state">You have no orders awaiting preparation. Completed orders appear in <a href="order-history.html">Order History</a>.</p>';
         return;
     }
 
-    // 3. Draw the orders on the screen
-    placedOrdersContainer.innerHTML = ''; 
-
-    if (orders.length === 0) {
-        placedOrdersContainer.innerHTML = '<p style="padding: 20px 0; color: #666;">You have no placed orders currently.</p>';
-        return;
-    }
-
-    orders.forEach(order => {
-        // Format the date nicely
-        const orderDate = new Date(order.created_at).toLocaleString();
-
-        // Create a visual card for each receipt
-        const orderCard = document.createElement('div');
-        orderCard.style.border = '1px solid #eee';
-        orderCard.style.borderRadius = '8px';
-        orderCard.style.padding = '20px';
-        orderCard.style.marginBottom = '15px';
-        orderCard.style.backgroundColor = '#fff';
-
-        orderCard.innerHTML = `
-            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px;">
-                <strong style="color: #1e3382;">Date: ${orderDate}</strong>
-                <span style="background-color: #ffe0b2; color: #e65100; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">${order.status}</span>
-            </div>
-            <div style="margin-bottom: 10px;">
-                <div style="font-weight: 600; margin-bottom: 5px;">Items:</div>
-                <div style="color: #555;">${order.order_details}</div>
-            </div>
-            ${order.special_request ? `<div style="margin-bottom: 10px; font-size: 0.9rem; color: #666;"><em>Note: ${order.special_request}</em></div>` : ''}
-            <div style="display: flex; justify-content: flex-end; font-size: 1.1rem;">
-                <strong>Total: ₱${order.total_price}</strong>
-            </div>
-        `;
-        placedOrdersContainer.appendChild(orderCard);
-    });
+    container.replaceChildren(...orders.map((order) => {
+        const card = document.createElement('article');
+        card.className = 'customer-order-history-card';
+        const header = document.createElement('div');
+        header.className = 'customer-order-history-head';
+        const date = document.createElement('strong');
+        date.textContent = order.order_code ? `Order #${order.order_code} · ${order.created_at ? new Date(order.created_at).toLocaleString() : ''}` : order.created_at ? new Date(order.created_at).toLocaleString() : 'Order date unavailable';
+        const status = document.createElement('span');
+        status.className = `customer-order-status status-${String(order.status || '').toLowerCase()}`;
+        status.textContent = order.status || 'Pending';
+        header.append(date, status);
+        const detailsLabel = document.createElement('span');
+        detailsLabel.className = 'customer-order-history-label';
+        detailsLabel.textContent = 'Items';
+        const details = document.createElement('p');
+        details.className = 'customer-order-history-details';
+        details.textContent = order.order_details || 'Order details unavailable';
+        card.append(header, detailsLabel, details);
+        if (order.special_request) {
+            const note = document.createElement('p');
+            note.className = 'customer-order-history-note';
+            note.textContent = `Special request: ${order.special_request}`;
+            card.append(note);
+        }
+        const total = document.createElement('strong');
+        total.className = 'customer-order-history-total';
+        total.textContent = `Total: \u20B1${Number(order.total_price || 0).toFixed(2)}`;
+        card.append(total);
+        return card;
+    }));
 });

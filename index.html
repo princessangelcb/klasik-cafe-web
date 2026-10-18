@@ -9,24 +9,26 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/customer.css">
   <script src="js/script.js" defer></script>
-  <script src="js/customer.js" defer></script>
+  <script type="module" src="js/customer.js"></script>
+  <script type="module" src="js/featured-menu.js"></script>
 </head>
 <body>
   <div id="welcome-screen" class="welcome-screen" aria-labelledby="welcome-tagline">
     <div class="welcome-lockup">
-      <img class="welcome-logo" src="klasik_cafe_logo_3_-removebg-preview.png" alt="KLASIK CAFE">
-      <h1 id="welcome-tagline" class="welcome-tagline" aria-label="A taste of Klasik in every cup.">A taste of Klasik in every cup.</h1>
+      <img class="welcome-logo" src="klasik_cafe_logovid_white.gif" alt="KLASIK CAFE">
+      <h1 id="welcome-tagline" class="welcome-tagline">A taste of Klasik in every cup.</h1>
     </div>
   </div>
-
   <header class="site-header">
     <div class="nav-wrap">
       <a class="brand" href="index.html" aria-label="KLASIK CAFE home">
-        <img class="brand-logo" src="klasik_cafe_logo_3_-removebg-preview.png" alt="KLASIK CAFE logo">
+        <img class="brand-logo" src="klasik_cafe_logovid_trans.gif" alt="">
       </a>
+      <span id="nav-welcome-msg" class="nav-welcome-msg" hidden></span>
       <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="primary-nav">
         <span></span><span></span><span></span>
       </button>
@@ -41,12 +43,9 @@
             <span>Cart</span>
             <span class="cart-badge" id="cart-count-badge">0</span>
           </a>
-          
           <a id="nav-login-btn" class="button button-outline button-small" href="login.html">Login</a>
           <a id="nav-signup-btn" class="button button-primary button-small" href="signup.html">Sign Up</a>
-          
-          <span id="nav-welcome-msg" style="display: none; align-self: center; margin-right: 15px; font-weight: 600; font-size: 0.9rem; color: #1e3382;"></span>
-          <button id="nav-logout-btn" class="button button-outline button-small" style="display: none;">Logout</button>
+          <button id="nav-logout-btn" class="button button-outline button-small" style="display:none" type="button">Logout</button>
         </div>
       </nav>
     </div>
@@ -54,11 +53,11 @@
 
   <main>
     <section class="hero" id="home" aria-labelledby="hero-title">
-      <img class="hero-photo" src="images/klasikcafe.jpg" data-fallback="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=2200&q=85" alt="A warmly lit neighborhood cafe ready to welcome guests">
+      <img class="hero-photo" src="images/klasikcafe.jpg" data-fallback="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=2200&q=85" alt="A warmly lit KLASIK CAFE storefront" fetchpriority="high" loading="eager" decoding="async">
       <div class="hero-shade"></div>
       <div class="hero-content page-width">
         <p class="eyebrow eyebrow-light"><span></span> YOUR LOCAL COFFEE SPOT</p>
-        <h1 id="hero-title">A taste of Klasik <em class="hero-tagline-blue">in every cup.</em></h1>
+        <h1 id="hero-title">A taste of Klasik<br><em>in every cup.</em></h1>
         <p class="hero-copy">A welcoming space for unhurried mornings, genuine connections, and the conversations in between.</p>
         <div class="hero-actions">
           <a class="button button-light" href="menu.html">View our menu <span aria-hidden="true">↗</span></a>
@@ -66,258 +65,156 @@
         </div>
         <div class="hero-note"><span class="hero-note-line"></span><span>KLASIK BREWS, GENUINE CONNECTIONS.</span></div>
       </div>
-      <a class="hero-scroll" href="#favorites" aria-label="Scroll to our featured items">SCROLL TO EXPLORE <span aria-hidden="true">↓</span></a>
+      <a class="hero-scroll" href="#menu" aria-label="Scroll to the current menu link">SCROLL TO EXPLORE <span aria-hidden="true">↓</span></a>
     </section>
 
-    <section class="favorites section-pad" id="favorites" aria-labelledby="favorites-title">
+    <section class="menu-teaser section-pad" id="menu" aria-labelledby="menu-teaser-title">
       <div class="page-width">
         <div class="section-heading heading-split">
           <div>
             <p class="eyebrow"><span></span> CRAFTED FOR COMFORT</p>
-            <h2 id="favorites-title">Featured <em>items</em></h2>
+            <h2 id="menu-teaser-title">Find your new <em>favorite</em></h2>
           </div>
-          <p class="section-intro">A few of our fresh, everyday favorites. Check out the full menu to find your perfect cup.</p>
+          <p class="section-intro">Browse the drinks and treats currently on our menu, maintained by the KLASIK CAFE team.</p>
         </div>
-        <div class="category-groups" aria-label="Menu categories">
-          <div class="category-group is-open">
-            <button class="main-category-button is-active" type="button" data-main-category="coffee">Coffee</button>
-            <div class="category-list is-open">
-              <span class="category-chip category-active" data-main-category="coffee" data-subcategory="iced-coffee" data-category="coffee">Iced Coffee</span>
-              <span class="category-chip" data-main-category="coffee" data-subcategory="hot-coffee" data-category="coffee">Hot Coffee</span>
-              <span class="category-chip" data-main-category="coffee" data-subcategory="espesyal" data-category="coffee">Espesyal</span>
-            </div>
-          </div>
+        <div id="featured-best-sellers" class="product-grid" aria-live="polite"></div>
+        <div class="featured-menu-action">
+          <a class="button button-primary" href="menu.html">Browse the menu <span aria-hidden="true">&#8599;</span></a>
+        </div>
+      </div>
+    </section>
 
-          <div class="category-group">
-            <button class="main-category-button" type="button" data-main-category="non-coffee">Non Coffee</button>
-            <div class="category-list">
-              <span class="category-chip" data-main-category="non-coffee" data-subcategory="non-coffee" data-category="non-coffee">Non Coffee</span>
-              <span class="category-chip" data-main-category="non-coffee" data-subcategory="espesyal2" data-category="non-coffee">Espesyal</span>
-            </div>
-          </div>
+    <section class="coffee-section section-pad" id="coffee" aria-labelledby="coffee-title">
+      <div class="page-width split-section">
+        <div class="split-image coffee-image image-frame">
+          <img src="images/coffee.jpg" data-fallback="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1200&q=85" alt="Three hands raising freshly prepared coffee cups together" loading="lazy">
+          <span class="media-placeholder" hidden>Photo coming soon</span>
+          <span class="image-caption">A GOOD CUP STARTS WITH GOOD BEANS.</span>
+        </div>
+        <div class="split-copy">
+          <p class="eyebrow"><span></span> THE KLASIK EXPERIENCE</p>
+          <h2 id="coffee-title">Your kind of coffee,<br><em>your kind of moment.</em></h2>
+          <p>At KLASIK CAFE, we believe that the little things make life special. Whether it's a comforting cup of coffee, a good conversation, or a quiet moment to yourself. From delicious coffee and refreshing drinks to treats worth coming back for, there's always something to enjoy. Whether you're catching up with friends, spending time with loved ones, or taking a break from a busy day, there's always a place for you here.</p>
+          <a class="button button-outline" href="menu.html">Find your favorite <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </section>
 
-          <div class="category-group">
-            <button class="main-category-button" type="button" data-main-category="matcha">Matcha Series</button>
-          </div>
+    <section class="story-section section-pad" id="story" aria-labelledby="story-title">
+      <div class="page-width split-section split-reverse">
+        <div class="split-copy story-copy">
+          <p class="eyebrow eyebrow-blue"><span></span> MORE THAN COFFEE</p>
+          <h2 id="story-title">The heart of <em>KLASIK</em></h2>
+          <p id="cafe-about-text">KLASIK CAFE is a cozy and welcoming space where good coffee, genuine connections, and meaningful moments come together. It's where conversations linger, laughter comes naturally, and even an ordinary day can become something memorable.</p>
+          <p>Whether you're reconnecting with friends, unwinding after a long day, or simply enjoying some time for yourself, we want you to feel at home.</p>
+          <a class="text-link" href="#location">Meet us in San Ildefonso <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="split-image story-image image-frame">
+          <img src="images/cafe.jpg" data-fallback="https://images.unsplash.com/photo-1445116572660-236099ec97a0?auto=format&fit=crop&w=1200&q=85" alt="A café table by a bright window with coffee and plants" loading="lazy">
+          <span class="media-placeholder" hidden>Photo coming soon</span>
+          <div class="story-stamp"><span>EST.</span><strong>KLASIK</strong><span>GOOD DAYS BEGIN HERE</span></div>
+        </div>
+      </div>
+    </section>
 
-          <div class="category-group">
-            <button class="main-category-button" type="button" data-main-category="pastries">Pastries</button>
-            <div class="category-list">
-              <span class="category-chip" data-main-category="pastries" data-subcategory="smores" data-category="pastries">Smores</span>
-              <span class="category-chip" data-main-category="pastries" data-subcategory="cookies" data-category="pastries">Cookies</span>
-              <span class="category-chip" data-main-category="pastries" data-subcategory="cheesecakes" data-category="pastries">Cheesecakes</span>
-            </div>
+    <section class="visit-section section-pad" id="location" aria-labelledby="visit-title">
+      <div class="page-width">
+        <div class="section-heading heading-split visit-heading">
+          <div><p class="eyebrow"><span></span> YOUR TABLE IS WAITING</p><h2 id="visit-title">Visit <em>KLASIK CAFE</em></h2></div>
+          <p class="section-intro">Find us in San Ildefonso. Drop by for your daily coffee or stay awhile.</p>
+        </div>
+        <div class="visit-layout">
+          <div class="visit-details">
+            <div class="visit-detail"><div><h3>Location</h3><p id="cafe-address">Beside Chapel, Matimbubong<br>San Ildefonso, Bulacan</p><a href="https://maps.app.goo.gl/Xdg2exSZq3SymPCn6" target="_blank" rel="noreferrer">Get directions <span aria-hidden="true">↗</span></a></div></div>
+            <div class="visit-detail"><div><h3>Opening hours</h3><p id="cafe-hours">Hours have not been confirmed yet. Please check back for updates.</p></div></div>
+            <div class="visit-detail"><div><h3>Say hello</h3><p id="cafe-phone">Phone number has not been confirmed yet.</p><p id="cafe-email"></p></div></div>
+            <button class="button button-primary" type="button" disabled title="Add the confirmed café phone number to enable calling">Call the café <span aria-hidden="true">↗</span></button>
           </div>
-
-          <div class="category-group">
-            <button class="main-category-button" type="button" data-main-category="snacks">Snacks</button>
-          </div>
-
-          <div class="category-group">
-            <button class="main-category-button" type="button" data-main-category="pasta">Pasta</button>
-          </div>
-
-          <div class="category-group">
-            <button class="main-category-button" type="button" data-main-category="add-ons">Add-ons</button>
-            <div class="category-list">
-              <span class="category-chip" data-main-category="add-ons" data-subcategory="add-ons" data-category="add-ons">Add-ons</span>
-            </div>
+          <div class="map-frame">
+            <iframe title="Map showing KLASIK CAFE in San Ildefonso, Bulacan" src="https://maps.google.com/maps?q=15.0664981%2C120.9448379&z=17&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <div class="map-label"><span class="map-pin" aria-hidden="true">●</span><span><strong>KLASIK CAFE</strong><small>SAN ILDEFONSO, BULACAN</small></span></div>
           </div>
         </div>
-        <div class="product-grid">
+      </div>
+    </section>
 
-          <!-- COFFEE ITEMS -->
-          <article class="product-card" data-main-category="coffee" data-subcategory="iced-coffee" data-category="coffee">
-            <div class="product-image image-frame">
-              <img src="images/products/coffee/amerikano.jpg" data-fallback="https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=800&q=80" alt="A freshly poured cup of black coffee" loading="lazy">  <span class="media-placeholder" hidden>Photo coming soon</span>
-              <span class="product-category">ICED COFFEE</span>
-            </div>
-            <div class="product-info"><div class="product-title"><h3>Amerikano</h3><span>₱120</span></div><p>Smooth espresso combined with steamed milk.</p><span class="product-link">View menu</span></div>
-          </article>
+    <section class="review-showcase section-pad" aria-labelledby="review-showcase-title">
+      <div class="page-width">
+        <div class="section-heading heading-split">
+          <div>
+            <p class="eyebrow eyebrow-blue"><span></span> GUEST FEEDBACK</p>
+            <h2 id="review-showcase-title">What guests <em>say</em></h2>
+          </div>
+          <p class="section-intro">Share your KLASIK CAFE experience with us. We welcome reviews and suggestions from every guest.</p>
+        </div>
+        <div id="customer-review-list" class="review-showcase-list customer-review-list" aria-live="polite"></div>
+        <p id="customer-review-realtime-status" class="customer-message" role="status" aria-live="polite"></p>
+        <div class="featured-menu-action">
+          <a class="button button-primary" href="reviews.html">Leave a review or suggestion <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </section>
 
-          <article class="product-card" data-main-category="coffee" data-subcategory="iced-coffee" data-category="coffee">
-            <div class="product-image image-frame">
-              <img src="images/products/coffee/tresletches.jpg" data-fallback="https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=800&q=80" alt="A freshly poured cup of black coffee" loading="lazy">  <span class="media-placeholder" hidden>Photo coming soon</span>
-              <span class="product-category">ICED COFFEE</span>
-            </div>
-            <div class="product-info"><div class="product-title"><h3>Cafe Latte</h3><span>₱120</span></div><p>Smooth espresso combined with steamed milk.</p><span class="product-link">View menu</span></div>
-          </article>
+    <section class="social-band" aria-labelledby="social-title">
+      <div class="page-width social-inner">
+        <div><p class="eyebrow eyebrow-light"><span></span> LET'S KEEP IN TOUCH</p><h2 id="social-title">A little more <em>KLASIK.</em></h2></div>
+        <div class="social-links">
+          <a href="https://www.facebook.com/profile.php?id=61553105262630" target="_blank" rel="noopener noreferrer" aria-label="Visit KLASIK CAFE on Facebook"><svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M13.4 21v-8h2.7l.4-3.1h-3.1v-2c0-.9.3-1.5 1.6-1.5h1.7V3.6c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.1H7.3V13H10v8h3.4Z"/></svg>Facebook <span aria-hidden="true">↗</span></a>
+          <a href="https://www.instagram.com/klasikcafe_/" target="_blank" rel="noopener noreferrer" aria-label="Visit KLASIK CAFE on Instagram"><svg class="social-icon social-icon-instagram" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.7" cy="6.6" r=".9" fill="currentColor" stroke="none"/></svg>Instagram <span aria-hidden="true">↗</span></a>
+          <a aria-disabled="true" tabindex="-1" title="Official TikTok URL not configured" aria-label="KLASIK CAFE on TikTok (link not configured)">TikTok <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
 
-          <article class="product-card" data-category="iced">
-            <div class="product-image image-frame">
-              <img src="images/products/coffee/caramelmacchiato.jpg" data-fallback="https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=800&q=80" alt="A freshly poured cup of black coffee" loading="lazy">  <span class="media-placeholder" hidden>Photo coming soon</span>
-              <span class="product-category">ICED COFFEE</span>
-            </div>
-            <div class="product-info"><div class="product-title"><h3>Caramel Latte</h3><span>₱120</span></div><p>Smooth espresso combined with steamed milk.</p><span class="product-link">View menu</span></div>
-          </article>
+  <div id="customer-customization-modal" class="customer-modal" hidden>
+    <div class="customer-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="customer-customize-title">
+      <button class="customer-modal-close" type="button" aria-label="Close customization">&times;</button>
+      <h3 id="customer-customize-title">Customize Item</h3>
+      <div class="customer-option-block"><h4>Size</h4><div class="customer-option-row"><label><input type="radio" name="custom-size" value="Medium" checked> Medium (Standard)</label><label><input type="radio" name="custom-size" value="Large"> Large +₱25</label></div></div>
+      <div class="customer-option-block"><h4>Milk</h4><div class="customer-option-row"><label><input type="radio" name="custom-milk" value="Regular" checked> Regular</label></div></div>
+      <div class="customer-option-block"><h4>Sweetness</h4><div class="customer-option-row"><label><input type="radio" name="custom-sweetness" value="0%" checked> 0%</label><label><input type="radio" name="custom-sweetness" value="25%"> 25%</label><label><input type="radio" name="custom-sweetness" value="50%"> 50%</label><label><input type="radio" name="custom-sweetness" value="75%"> 75%</label><label><input type="radio" name="custom-sweetness" value="100%"> 100%</label></div></div>
+      <div class="customer-option-block"><h4>Ice</h4><div class="customer-option-row"><label><input type="radio" name="custom-ice" value="Less Ice" checked> Less Ice</label><label><input type="radio" name="custom-ice" value="Regular Ice"> Regular Ice</label><label><input type="radio" name="custom-ice" value="Extra Ice"> Extra Ice</label></div></div>
+      <div class="customer-option-block"><h4>Add-ons</h4><div class="customer-option-row customer-option-stack"><label><input type="checkbox" name="custom-addon" data-price="15" value="Oreo"> Oreo +₱15</label><label><input type="checkbox" name="custom-addon" data-price="25" value="Biscoff"> Biscoff +₱25</label><label><input type="checkbox" name="custom-addon" data-price="15" value="Cold Foam"> Cold Foam +₱15</label><label><input type="checkbox" name="custom-addon" data-price="15" value="Seasalt Cream"> Seasalt Cream +₱15</label><label><input type="checkbox" name="custom-addon" data-price="25" value="Extra Shot"> Extra Shot +₱25</label><label><input type="checkbox" name="custom-addon" data-price="15" value="Sauce/Syrup"> Sauce/Syrup +₱15</label><label><input type="checkbox" name="custom-addon" data-price="25" value="Oat Milk Substitute"> Oat Milk Substitute +₱25</label></div></div>
+      <div class="customer-option-block customer-qty-row"><h4>Quantity</h4><div class="customer-qty-control"><button type="button" class="customer-qty-button" data-qty-action="decrease">−</button><span id="customer-modal-qty">1</span><button type="button" class="customer-qty-button" data-qty-action="increase">+</button></div></div>
+      <div class="customer-modal-total-row"><span>Total</span><strong id="customer-modal-total">₱0</strong></div>
+      <p id="customer-guest-action-note" class="customer-guest-action-note" hidden>Please log in to add this drink to your cart or favorites.</p>
+      <button class="customer-modal-favorite" id="customer-modal-favorite" type="button">♡ Save to Favorites</button>
+      <button class="button button-primary button-wide" id="customer-add-to-order" type="button">Add to Order</button>
+    </div>
+  </div>
 
-          <article class="product-card" data-category="iced">
-            <div class="product-image image-frame">
-              <img src="images/products/coffee/matcha something.jpg" data-fallback="https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=800&q=80" alt="A freshly poured cup of black coffee" loading="lazy">  <span class="media-placeholder" hidden>Photo coming soon</span>
-              <span class="product-category">ICED COFFEE</span>
-            </div>
-            <div class="product-info"><div class="product-title"><h3>Dirty Matcha</h3><span>₱120</span></div><p>Smooth espresso combined with steamed milk.</p><span class="product-link">View menu</span></div>
-          </article>
-
-          <article class="product-card" data-category="iced">
-            <div class="product-image image-frame">
-              <img src="images/products/coffee/strawbmatcha.jpg" data-fallback="https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=800&q=80" alt="A freshly poured cup of black coffee" loading="lazy">  <span class="media-placeholder" hidden>Photo coming soon</span>
-              <span class="product-category">ICED COFFEE</span>
-            </div>
-            <div class="product-info"><div class="product-title"><h3>Dirty Strawberry</h3><span>₱120</span></div><p>Smooth espresso combined with steamed milk.</p><span class="product-link">View menu</span></div>
-          </article>
-
-
-          <article class="product-card" data-category="iced">
-            <div class="product-image image-frame">
-              <img src="images/products/coffee/seasaltlatte.jpg" data-fallback="https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=800&q=80" alt="A freshly poured cup of black coffee" loading="lazy">  <span class="media-placeholder" hidden>Photo coming soon</span>
-              <span class="product-category">ICED COFFEE</span>
-            </div>
-            <div class="product-info"><div class="product-title"><h3>French Vanilla</h3><span>₱120</span></div><p>Smooth espresso combined with steamed milk.</p><span class="product-link">View menu</span></div>
-          </article>
-
-
-          <article class="product-card" data-category="iced">
-            <div class="product-image image-frame">
-              <img src="images/products/coffee/klasikpremium.jpg" data-fallback="https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=800&q=80" alt="A freshly poured cup of black coffee" loading="lazy">  <span class="media-placeholder" hidden>Photo coming soon</span>
-              <span class="product-category">ICED COFFEE</span>
-            </div>
-            <div class="product-info"><div class="product-title"><h3>Hazelnut Latte</h3><span>₱120</span></div><p>Smooth espresso combined with steamed milk.</p><span class="product-link">View menu</span></div>
-          </article>
-
-
-          <article class="product-card" data-category="iced">
-            <div class="product-image image-frame">
-              <img src="images/products/coffee/amerikano.jpg" data-fallback="https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=800&q=80" alt="A freshly poured cup of black coffee" loading="lazy">  <span class="media-placeholder" hidden>Photo coming soon</span>
-              <span class="product-category">ICED COFFEE</span>
-            </div>
-            <div class="product-info"><div class="product-title"><h3>Iced Mocha </h3><span>₱120</span></div><p>Smooth espresso combined with steamed milk.</p><span class="product-link">View menu</span></div>
-          </article>
-
-
-          <article class="product-card" data-category="iced">
-            <div class="product-image image-frame">
-              <img src="images/products/coffee/icedmocha.jpg" data-fallback="https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=800&q=80" alt="A freshly poured cup of black coffee" loading="lazy">  <span class="media-placeholder" hidden>Photo coming soon</span>
-              <span class="product-category">ICED COFFEE</span>
-            </div>
-            <div class="product-info"><div class="product-title"><h3>Oreo Latte </h3><span>₱120</span></div><p>Smooth espresso combined with steamed milk.</p><span class="product-link">View menu</span></div>
-          </article>
-
-
-          <article class="product-card" data-category="iced">
-            <div class="product-image image-frame">
-              <img src="images/products/coffee/caramelmacchiato.jpg" data-fallback="https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=800&q=80" alt="A freshly poured cup of black coffee" loading="lazy">  <span class="media-placeholder" hidden>Photo coming soon</span>
-              <span class="media-placeholder" hidden>Photo coming soon</span>
-              <span class="product-category">ICED COFFEE</span>
-            </div>
-            <div class="product-info"><div class="product-title"><h3>Spanish Latte </h3><span>₱120</span></div><p>Smooth espresso combined with steamed milk.</p><span class="product-link">View menu</span></div>
-          </article>
-
-
-          <article class="product-card" data-category="iced">
-            <div class="product-image image-frame">
-              <img src="images/products/coffee/tresletches.jpg" data-fallback="https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=800&q=80" alt="A freshly poured cup of black coffee" loading="lazy">  <span class="media-placeholder" hidden>Photo coming soon</span>
-              <span class="media-placeholder" hidden>Photo coming soon</span>
-              <span class="product-category">ICED COFFEE</span>
-            </div>
-            <div class="product-info"><div class="product-title"><h3>Tres Letches </h3><span>₱120</span></div><p>Smooth espresso combined with steamed milk.</p><span class="product-link">View menu</span></div>
-          </article>
-
-          <!-- NON-COFFEE ITEMS -->
-          <article class="product-card" data-main-category="coffee" data-subcategory="hot-coffee" data-category="coffee" hidden>
-            <div class="product-image image-frame">
-              <img src="images/products/coffee/latte.jpg" data-fallback="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80" alt="Freshly made latte with a delicate milk design" loading="lazy">
-              <span class="media-placeholder" hidden>Photo coming soon</span>
-              <span class="product-category">HOT COFFEE</span>
-            </div>
-            <div class="product-info"><div class="product-title"><h3>Spanish Latte</h3><span>₱120</span></div><p>Smooth espresso combined with steamed milk.</p><span class="product-link">View menu</span></div>
-          </article>
-
-          <article class="product-card" data-category="hot" hidden>
-            <div class="product-image image-frame">
-              <img src="images/products/coffee/caramelmacchiato.jpg" data-fallback="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80" alt="Freshly made latte with a delicate milk design" loading="lazy">
-              <span class="media-placeholder" hidden>Photo coming soon</span>
-              <span class="product-category">HOT COFFEE</span>
-            </div>
-            <div class="product-info"><div class="product-title"><h3>Hot Mocha</h3><span>₱120</span></div><p>Smooth espresso combined with steamed milk.</p><span class="product-link">View menu</span></div>
-          </article>
-
-          <article class="product-card" data-category="hot" hidden>
-            <div class="product-image image-frame">
-              <img src="images/products/coffee/tresletches.jpg" data-fallback="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80" alt="Freshly made latte with a delicate milk design" loading="lazy">
-              <span class="media-placeholder" hidden>Photo coming soon</span>
-              <span class="product-category">HOT COFFEE</span>
-            </div>
-            <div class="product-info"><div class="product-title"><h3>White Mocha</h3><span>₱120</span></div><p>Smooth espresso combined with steamed milk.</p><span class="product-link">View menu</span></div>
-          </article>
-
-          <article class="product-card" data-category="hot" hidden>
-            <div class="product-image image-frame">
-              <img src="images/products/coffee/minasalatte.jpg" data-fallback="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80" alt="Freshly made latte with a delicate milk design" loading="lazy">
-              <span class="media-placeholder" hidden>Photo coming soon</span>
-              <span class="product-category">HOT COFFEE</span>
-            </div>
-            <div class="product-info"><div class="product-title"><h3>Vanilla Latte</h3><span>₱120</span></div><p>Smooth espresso combined with steamed milk.</p><span class="product-link">View menu</span></div>
-          </article>
-
-          <article class="product-card" data-category="hot" hidden>
-            <div class="product-image image-frame">
-              <img src="images/products/coffee/manggoklasikmilk.jpg" data-fallback="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80" alt="Freshly made latte with a delicate milk design" loading="lazy">
-              <span class="media-placeholder" hidden>Photo coming soon</span>
-              <span class="product-category">HOT COFFEE</span>
-            </div>
-            <div class="product-info"><div class="product-title"><h3>Hot Matcha</h3><span>₱120</span></div><p>Smooth espresso combined with steamed milk.</p><span class="product-link">View menu</span></div>
-          </article>
-
-          <article class="product-card" data-category="hot" hidden>
-            <div class="product-image image-frame">
-              <img src="images/products/coffee/tresletches.jpg" data-fallback="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80" alt="Freshly made latte with a delicate milk design" loading="lazy">
-              <span class="media-placeholder" hidden>Photo coming soon</span>
-              <span class="product-category">HOT COFFEE</span>
-            </div>
-            <div class="product-info"><div class="product-title"><h3>Hot Choco</h3><span>₱120</span></div><p>Smooth espresso combined with steamed milk.</p><span class="product-link">View menu</span></div>
-          </article>
-          
-          <!-- ESPESYAL -->
-          <article class="product-card" data-category="espesyal" hidden>
-            <div class="product-image image-frame">
-              <img src="images/products/coffee/seasaltlatte.jpg" data-fallback="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=800&q=80" alt="Iced coffee with creamy milk" loading="lazy">
-              <span class="media-placeholder" hidden>Photo coming soon</span>
-              <span class="product-category">ESPESYAL</span>
-            </div>
-            <div class="product-info"><div class="product-title"><h3>Biscoff Latte</h3><span>₱130</span></div><p>Rich espresso combined with sweetened milk.</p><span class="product-link">View menu</span></div>
-          </article>
-
-          <article class="product-card" data-category="espesyal" hidden>
-            <div class="product-image image-frame">
-              <img src="images/products/coffee/amerikano.jpg" data-fallback="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=800&q=80" alt="Iced coffee with creamy milk" loading="lazy">
-              <span class="media-placeholder" hidden>Photo coming soon</span>
-              <span class="product-category">ESPESYAL</span>
-            </div>
-            <div class="product-info"><div class="product-title"><h3>Barista Drink</h3><span>₱130</span></div><p>Rich espresso combined with sweetened milk.</p><span class="product-link">View menu</span></div>
-          </article>
-
-          <article class="product-card" data-category="espesyal" hidden>
-            <div class="product-image image-frame">
-              <img src="images/products/coffee/minasalatte.jpg" data-fallback="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=800&q=80" alt="Iced coffee with creamy milk" loading="lazy">
-              <span class="media-placeholder" hidden>Photo coming soon</span>
-              <span class="product-category">ESPESYAL</span>
-            </div>
-            <div class="product-info"><div class="product-title"><h3>Caramel Macchiato</h3><span>₱130</span></div><p>Rich espresso combined with sweetened milk.</p><span class="product-link">View menu</span></div>
-          </article>
-
-          <article class="product-card" data-category="espesyal" hidden>
-            <div class="product-image image-frame">
-              <img src="images/products/coffee/manggoklasikmilk.jpg" data-fallback="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=800&q=80" alt="Iced coffee with creamy milk" loading="lazy">
-              <span class="media-placeholder" hidden>Photo coming soon</span>
-              <span class="product-category">ESPESYAL</span>
-            </div>
-            <div class="product-info"><div class="product-title"><h3>Hazelnut Mocha</h3><span>₱130</span></div><p>Rich espresso combined with sweetened milk.</p><span class="product-link">View menu</span></div>
-          </article>
-
-          <article class="product-card" data-category="espesyal" hidden>
-            <div class="product-image image-frame">
-              <img src="images/products/coffee/seasaltmatcha.jpg" data-fallback="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=800&q=80" alt="Iced coffee with creamy milk" loading="lazy">
-              <span class="media-placeholder" hidden>Photo coming soon</span>
-              <span class="product-category">ESPESYAL</span>
-            </div>
+  <footer class="site-footer">
+    <div class="page-width footer-main">
+      <div class="footer-brand-block">
+        <a class="brand brand-footer" href="#home">
+          <img class="brand-logo" src="klasik_cafe_logo_3_-removebg-preview.png" alt="KLASIK CAFE logo">
+        </a>
+        <p>Your classic coffee experience.<br>Made with care in San Ildefonso.</p>
+      </div>
+      <div class="footer-column">
+        <h2>Explore</h2>
+        <a href="menu.html">Our menu</a>
+        <a href="#coffee">Our coffee</a>
+        <a href="#story">Our story</a>
+        <a href="#location">Location</a>
+      </div>
+      <div class="footer-column">
+        <h2>Say hello</h2>
+        <p>Beside Chapel, Matimbubong<br>San Ildefonso, Bulacan</p>
+      </div>
+      <div class="footer-column">
+        <h2>Your account</h2>
+        <a href="login.html">Login</a>
+        <a href="signup.html">Create an account</a>
+        <a href="favorites.html">Favorites</a>
+        <a href="reviews.html">Reviews &amp; Suggestions</a>
+      </div>
+    </div>
+    <div class="page-width footer-bottom"><span>© 2026 KLASIK CAFE. All Rights Reserved.</span></div>
+  </footer>
+  <script type="module" src="js/cafe-info.js"></script>
+  <script type="module" src="js/cart.js"></script>
+  <script type="module" src="js/auth-check.js"></script>
+</body>
+</html>

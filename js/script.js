@@ -29,7 +29,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const productAvailability = document.getElementById("product-availability");
   productAvailability?.addEventListener("change", () => {
     const label = document.getElementById("product-availability-label");
-    if (label) label.textContent = productAvailability.checked ? "Available" : "Unavailable";
+    if (label) label.textContent = productAvailability.checked ? "Available" : "Not Available";
+  });
+  const productBestSeller = document.getElementById("product-best-seller");
+  productBestSeller?.addEventListener("change", () => {
+    const label = productBestSeller.closest(".availability-switch")?.querySelector(".availability-label");
+    if (label) label.textContent = productBestSeller.checked ? "Best Seller" : "Not Best Seller";
   });
 
   const menuToggle = document.querySelector(".menu-toggle");
@@ -179,6 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
       input.type = shouldShow ? "text" : "password";
       button.setAttribute("aria-pressed", String(shouldShow));
       button.setAttribute("aria-label", shouldShow ? "Hide password" : "Show password");
+      button.classList.toggle("is-visible", shouldShow);
     });
   });
 

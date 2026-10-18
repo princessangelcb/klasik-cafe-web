@@ -26,6 +26,8 @@
 .barista-sidebar {
   position: sticky;
   top: 0;
+  left: 0;
+  z-index: 20;
   display: flex;
   height: 100vh;
   flex-direction: column;
@@ -72,6 +74,24 @@
 
 .sidebar-logout:hover,
 .sidebar-logout:focus-visible { background: rgba(255, 255, 255, .12); color: #fff; }
+
+.barista-sidebar-menu-status { margin-top: 22px; padding: 15px 0 8px; border-top: 1px solid rgba(255,255,255,.24); }
+.sidebar-menu-heading { display: grid; gap: 6px; }
+.sidebar-menu-heading > span { color: rgba(255,255,255,.72); font-size: 9px; font-weight: 700; letter-spacing: .14em; }
+.sidebar-menu-heading > strong { color: #fff; font-family: "Playfair Display", serif; font-size: 18px; line-height: 1.2; }
+.barista-sidebar-menu-status .barista-menu-help { margin: 8px 0 10px; color: rgba(255,255,255,.72); font-size: 10px; line-height: 1.45; }
+.barista-sidebar-menu-status .barista-menu-table-wrap { max-height: 36vh; overflow: auto; }
+.barista-sidebar-menu-status .barista-menu-table { min-width: 370px; color: #fff; font-size: 10px; }
+.barista-sidebar-menu-status .barista-menu-table th,
+.barista-sidebar-menu-status .barista-menu-table td { padding: 9px 7px; border-color: rgba(255,255,255,.18); }
+.barista-sidebar-menu-status .barista-menu-table th { color: rgba(255,255,255,.72); font-size: 8px; }
+.barista-sidebar-menu-status .barista-menu-table td:first-child { min-width: 105px; }
+.barista-sidebar-menu-status .status-switch { gap: 5px; font-size: 9px; }
+.barista-sidebar-menu-status .availability-switch-track { width: 32px; height: 19px; }
+.barista-sidebar-menu-status .availability-switch-track::after { width: 13px; height: 13px; }
+.barista-sidebar-menu-status .status-switch input:checked + .availability-switch-track::after { transform: translateX(13px); }
+.barista-sidebar-menu-status .status-value { color: #fff; }
+.barista-sidebar-menu-status .status-value.is-off { color: #ffd2d2; }
 
 .barista-main {
   padding: 34px 26px 54px;
@@ -369,13 +389,17 @@
   }
 
   .barista-sidebar {
-    position: static;
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 20;
     height: auto;
     overflow: visible;
     padding-bottom: 12px;
   }
 
   .sidebar-logout { margin-top: 14px; }
+  .barista-sidebar-menu-status .barista-menu-table-wrap { max-height: 260px; }
 
   .sidebar-nav {
     display: grid;
@@ -404,3 +428,76 @@
     grid-template-columns: 1fr;
   }
 }
+.barista-menu-help { margin: -8px 0 18px; color: var(--admin-muted, #68716f); font-size: 13px; }
+.barista-menu-table-wrap { overflow-x: auto; }
+.barista-menu-table { width: 100%; border-collapse: collapse; }
+.barista-menu-table th, .barista-menu-table td { padding: 13px 12px; border-bottom: 1px solid #e8eaf0; text-align: left; }
+.barista-menu-table th { color: #1e3382; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
+.barista-menu-table td:first-child { min-width: 150px; font-weight: 600; }
+.status-switch { display: inline-flex; align-items: center; gap: 9px; white-space: nowrap; cursor: pointer; font-size: 12px; font-weight: 700; }
+.status-switch input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+.availability-switch-track { position: relative; display: inline-block; flex: 0 0 auto; width: 42px; height: 24px; border-radius: 999px; background: #9aa2b1; transition: background .2s ease; }
+.availability-switch-track::after { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: white; content: ""; transition: transform .2s ease; }
+.status-switch input:checked + .availability-switch-track { background: #258455; }
+.status-switch input:checked + .availability-switch-track::after { transform: translateX(18px); }
+.status-switch input:focus-visible + .availability-switch-track { outline: 3px solid rgba(30, 51, 130, .35); outline-offset: 2px; }
+.status-value.is-on { color: #1b5e20; }
+.status-value.is-off { color: #b71c1c; }
+.barista-queue-tools { display: grid; gap: 14px; margin: 0 0 20px; }
+.barista-queue-tools label, .admin-order-tools label { display: grid; gap: 6px; max-width: 320px; font-size: 12px; font-weight: 700; color: var(--barista-muted, #5f6f82); }
+.barista-queue-tools input, .admin-order-tools input { min-height: 42px; padding: 8px 12px; border: 1px solid #d9dfeb; border-radius: 4px; background: #fff; }
+.barista-order-filters, .admin-order-filters { display: flex; flex-wrap: wrap; gap: 8px; }
+.barista-order-filters button, .admin-order-filters button { min-height: 36px; padding: 6px 12px; border: 1px solid #d7deec; background: #fff; color: #263653; cursor: pointer; }
+.barista-order-filters button.active, .admin-order-filters button.active { border-color: #1e3382; background: #1e3382; color: #fff; }
+.barista-order-filters button[data-order-filter="Pending"] { color:#8a4e08; border-color:#d9ae7c; }
+.barista-order-filters button[data-order-filter="Preparing"] { color:#244b9b; border-color:#9eb9e7; }
+.barista-order-filters button[data-order-filter="Ready for Pickup"] { color:#17643c; border-color:#9fcbb1; }
+.barista-order-filters button[data-order-filter="Completed"] { color:#4b5563; border-color:#c7ccd4; }
+.barista-pagination, .admin-order-pagination { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 16px; color: #111; font-size: 13px; }
+.barista-pagination > span { margin-left: 12px; color: #111; }
+.barista-pagination div, .admin-order-pagination div { display: flex; gap: 8px; }
+.barista-pagination button, .admin-order-pagination button { padding: 8px 12px; border: 1px solid #1e3382; border-radius: 0; background: #1e3382; color: #fff; cursor: pointer; }
+.barista-pagination button:disabled, .admin-order-pagination button:disabled { opacity: .45; cursor: not-allowed; }
+.barista-order-card-head, .admin-order-summary > header, .barista-order-card-foot, .admin-order-summary > footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.barista-order-card-head { padding-bottom: 0; border-bottom: 0; }
+.barista-order-card-head > div { display: grid; }
+.barista-order-card-head small, .admin-order-summary > small { color: #6b7280; font-size: 12px; }
+.barista-customer-name { margin: 10px 0; }
+.barista-order-products, .admin-order-products { display: grid; gap: 9px; }
+.barista-order-product, .admin-order-product { display: flex; align-items: center; gap: 11px; min-width: 0; padding: 8px; background: #f7f8fb; }
+.barista-order-product img, .admin-order-product img, .barista-order-product-placeholder, .admin-order-product-placeholder { width: 52px; height: 52px; flex: 0 0 52px; object-fit: cover; background: #e9ecf5; }
+.barista-order-product-placeholder, .admin-order-product-placeholder { display: grid; place-items: center; font-size: 23px; }
+.barista-order-product div, .admin-order-product > span:last-child { display: grid; min-width: 0; }
+.barista-order-product small, .admin-order-product small { color: #6b7280; font-size: 12px; }
+.barista-order-note { color: #9d3b32; }
+.barista-order-card-foot, .admin-order-summary > footer { padding-top: 12px; margin-top: 12px; border-top: 1px solid #e7eaf1; }
+.admin-order-tools { display: grid; gap: 14px; margin: 12px 0 18px; }
+.admin-order-summary, .order-card { display:grid; grid-template-columns:auto auto; align-items:center; gap:6px 12px; padding:18px; margin:0; border:1px solid #e3e7ef; border-radius:8px; background:#fff; box-shadow:none; }
+.order-card > p { grid-column:1 / -1; margin:10px 0; color:var(--barista-muted); font-size:12px; }
+.order-card > small, .admin-order-summary > small { color:#6b7280; font-size:12px; }
+.admin-order-summary > p { margin: 10px 0; }
+.admin-order-products { margin-top: 12px; }
+.admin-order-empty, .barista-empty-queue { padding: 20px; color: #657083; background: #fff; border: 1px solid #e3e7ef; }
+@media (max-width: 700px) { .barista-pagination, .admin-order-pagination { align-items: flex-start; flex-direction: column; } }
+.barista-queue-tools label { position: relative; }
+.barista-queue-tools label::before { position: absolute; right: 15px; bottom: 13px; width: 10px; height: 10px; border: 2px solid #1e3382; border-radius: 50%; content: ""; pointer-events: none; }
+.barista-queue-tools label::after { position: absolute; right: 12px; bottom: 10px; width: 2px; height: 7px; background: #1e3382; content: ""; transform: rotate(-45deg); pointer-events: none; }
+.barista-layout { grid-template-columns: minmax(0, 1fr); }
+.barista-layout #barista-order-detail:empty { display: none; }
+.order-queue { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; gap: 14px; }
+.order-card.status-pending { border-left: 4px solid #d18428; background: #fffaf2; }
+.order-card.status-preparing { border-left: 4px solid #4778c7; background: #f5f8ff; }
+.order-card.status-ready-for-pickup { border-left: 4px solid #339268; background: #f3fbf6; }
+.order-card.status-completed { border-left: 4px solid #8992a3; background: #f7f8fa; }
+.order-card.status-pending .order-status-tag { color:#8a4e08; background:#f4d7ad; }
+.order-card.status-preparing .order-status-tag { color:#244b9b; background:#dce8fc; }
+.order-card.status-ready-for-pickup .order-status-tag { color:#17643c; background:#d8f0e2; }
+.order-card.status-completed .order-status-tag { color:#4b5563; background:#e5e7eb; }
+.barista-pagination button { border-color: #1e3382; background: #1e3382; color: #fff; }
+.barista-pagination button:disabled { opacity:.45; cursor:not-allowed; }
+.barista-order-filters button[data-order-filter="Pending"].active { background:#b86d17; border-color:#b86d17; }
+.barista-order-filters button[data-order-filter="Preparing"].active { background:#4778c7; border-color:#4778c7; }
+.barista-order-filters button[data-order-filter="Ready for Pickup"].active { background:#258455; border-color:#258455; }
+.barista-order-filters button[data-order-filter="Completed"].active { background:#737d8d; border-color:#737d8d; }
+.barista-order-filters button[data-order-filter].active { color:#fff; }
+@media (max-width: 700px) { .order-queue { grid-template-columns: 1fr; } }

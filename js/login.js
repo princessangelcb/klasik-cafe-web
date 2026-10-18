@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (error) {
-                alert("Login failed: " + error.message);
+                window.klasikNotify?.("Login failed: " + error.message, "error");
                 return;
             }
 
@@ -36,8 +36,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const role = profileData ? profileData.role.toLowerCase() : 'customer';
 
             // 3. Route to the right dashboard
-            if (role === 'admin' || role === 'barista') {
+            if (role === 'admin') {
                 window.location.href = 'admin.html';
+            } else if (role === 'barista') {
+                window.location.href = 'barista.html';
             } else {
                 window.location.href = 'index.html';
             }
