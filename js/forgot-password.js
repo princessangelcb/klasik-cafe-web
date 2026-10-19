@@ -2,32 +2,33 @@ import { supabase } from './supabase.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const forgotForm = document.getElementById('forgot-password-form');
+    const emailInput = document.getElementById('reset-email');
+    const message = document.getElementById('forgot-password-message');
+    const submitBtn = forgotForm?.querySelector('button[type="submit"]');
 
-    if (forgotForm) {
-        forgotForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const emailInput = document.getElementById('reset-email');
-            const email = emailInput.value.trim().toLowerCase();
+    if (!forgotForm || !emailInput || !message || !submitBtn) return;
 
-            const submitBtn = forgotForm.querySelector('button[type="submit"]');
-            submitBtn.textContent = "Sending Link...";
-            submitBtn.disabled = true;
+    forgotForm.addEventListener('submit', async event => {
+        event.preventDefault();
+        const email = emailInput.value.trim().toLowerCase();
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending Link...';
+        message.textContent = '';
 
-            // Trigger Supabase password recovery email
+        try {
             const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                redirectTo: window.location.origin + '/update-password.html',
+                redirectTo: new URL('/update-password.html', window.location.origin).toString()
             });
+            if (error) throw error;
 
-            if (error) {
-                window.klasikNotify?.("Error: " + error.message, "error");
-                submitBtn.textContent = "Send Reset Instructions";
-                submitBtn.disabled = false;
-            } else {
-                window.klasikNotify?.("Password reset link sent. Please check your email.");
-                forgotForm.reset();
-                submitBtn.textContent = "Send Reset Instructions";
-                submitBtn.disabled = false;
-            }
-        });
-    }
+            message.textContent = 'If an account exists for that email, a password reset link will be sent.';
+            forgotForm.reset();
+        } catch (error) {
+            console.error('Could not send password reset email.', error);
+            message.textContent = error.message || 'Could not send the reset email. Please try again.';
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Send Reset Link →';
+        }
+    });
 });

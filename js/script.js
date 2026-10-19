@@ -77,6 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
       cookies: "pastries",
       smores: "pastries",
       cheesecakes: "pastries",
+      pastry: "pastries",
       "add-ons": "add-ons"
     };
 

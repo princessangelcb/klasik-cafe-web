@@ -343,6 +343,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     productPriceInput?.addEventListener('keydown', event => {
         if (['e', 'E', '+', '-'].includes(event.key)) event.preventDefault();
     });
+    productPriceInput?.addEventListener('beforeinput', event => {
+        if (event.data && /[eE+-]/.test(event.data)) event.preventDefault();
+    });
     productPriceInput?.addEventListener('input', event => {
         const input = event.currentTarget;
         const numeric = input.value.replace(/[^0-9.]/g, '');
@@ -361,7 +364,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
     const normalizeProductCategory = value => {
         const normalized = String(value || '').trim().toLowerCase().replace(/[\s_]+/g, '-');
-        return ({ noncoffee: 'non-coffee', 'matcha-series': 'matcha', addons: 'add-ons' })[normalized] || normalized;
+        return ({ noncoffee: 'non-coffee', 'matcha-series': 'matcha', addons: 'add-ons', pastry: 'pastries' })[normalized] || normalized;
     };
     const populateSubcategories = (category, selected = '') => {
         if (!productSubcategory) return;
@@ -487,6 +490,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         productForm.addEventListener('submit', async (e) => {
             e.preventDefault(); 
             
+            if (!productForm.reportValidity()) return;
+            const price = Number(productPriceInput?.value);
+            if (!Number.isFinite(price) || price < 0) {
+                productPriceInput?.setCustomValidity('Enter a valid non-negative price.');
+                productPriceInput?.reportValidity();
+                productPriceInput?.setCustomValidity('');
+                return;
+            }
+
             const submitBtn = productForm.querySelector('button[type="submit"]');
             submitBtn.textContent = "Uploading & Saving...";
             submitBtn.disabled = true;
@@ -508,7 +520,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     category: document.getElementById('product-main-category').value,
                     subcategory: document.getElementById('product-subcategory').value || null,
                     description: document.getElementById('product-description').value.trim(),
-                    price: parseFloat(document.getElementById('product-price').value),
+                    price,
                     is_available: document.getElementById('product-availability').checked,
                     is_best_seller: document.getElementById('product-best-seller').checked,
                     image_url: imageUrl

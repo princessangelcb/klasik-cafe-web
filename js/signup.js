@@ -1,4 +1,5 @@
 import { supabase } from './supabase.js';
+import { isValidPassword } from './password-validation.mjs';
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Look for the newly named form
@@ -25,6 +26,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!lastName) {
                 window.klasikNotify?.('Please enter your last name.', 'error');
                 document.getElementById('last-name')?.focus();
+                return;
+            }
+            if (!isValidPassword(password)) {
+                window.klasikNotify?.('Use at least 8 characters with letters and numbers, no spaces, and no URLs.', 'error');
+                document.getElementById('signup-password')?.focus();
                 return;
             }
             if (!signupForm.checkValidity()) {

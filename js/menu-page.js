@@ -5,7 +5,7 @@ const MENU_CATEGORIES = [
   { id: 'coffee', label: 'Coffee', children: [['iced-coffee', 'Iced Coffee'], ['hot-coffee', 'Hot Coffee'], ['espesyal', 'Espesyal']] },
   { id: 'non-coffee', label: 'Non Coffee', children: [['non-coffee', 'Non Coffee'], ['espesyal', 'Espesyal']] },
   { id: 'matcha', label: 'Matcha Series' },
-  { id: 'pastries', label: 'Pastries', children: [['smores', 'Smores'], ['cookies', 'Cookies'], ['cheesecakes', 'Cheesecakes']] },
+  { id: 'pastries', label: 'Pastry', children: [['smores', 'Smores'], ['cookies', 'Cookies'], ['cheesecakes', 'Cheesecakes']] },
   { id: 'snacks', label: 'Snacks' },
   { id: 'pasta', label: 'Pasta' },
   { id: 'add-ons', label: 'Add-ons' }
@@ -14,7 +14,7 @@ const MENU_CATEGORIES = [
 const normalize = value => String(value ?? '').trim().toLowerCase().replace(/[_\s]+/g, '-');
 const normalizeMain = value => {
   const key = normalize(value);
-  return ({ noncoffee: 'non-coffee', 'matcha-series': 'matcha', addons: 'add-ons', iced: 'coffee', 'iced-coffee': 'coffee', hot: 'coffee', 'hot-coffee': 'coffee', especial: 'coffee', espesyal: 'coffee', especial2: 'non-coffee', espesyal2: 'non-coffee', 'espesyal-2': 'non-coffee', smores: 'pastries', cookies: 'pastries', cheesecakes: 'pastries' })[key] || key;
+  return ({ noncoffee: 'non-coffee', 'matcha-series': 'matcha', addons: 'add-ons', pastry: 'pastries', iced: 'coffee', 'iced-coffee': 'coffee', hot: 'coffee', 'hot-coffee': 'coffee', especial: 'coffee', espesyal: 'coffee', especial2: 'non-coffee', espesyal2: 'non-coffee', 'espesyal-2': 'non-coffee', smores: 'pastries', cookies: 'pastries', cheesecakes: 'pastries' })[key] || key;
 };
 const normalizeSub = value => {
   const key = normalize(value);
