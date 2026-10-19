@@ -288,9 +288,10 @@ a.product-link:hover { color: var(--blue); }
 .form-field input:focus { border-color: var(--blue); background: var(--white); outline: none; }
 .password-wrap { position: relative; }
 .password-wrap input { padding-right: 48px; }
-.password-toggle { position: absolute; top: 50%; right: 6px; width: 36px; height: 36px; display: grid; place-items: center; color: #67716e; background: transparent; border: 0; border-radius: 2px; cursor: pointer; transform: translateY(-50%); }
+.password-toggle { position: absolute; z-index: 2; top: 50%; right: 6px; width: 36px; height: 36px; display: grid; place-items: center; color: #43516f; background: transparent; border: 0; border-radius: 2px; cursor: pointer; transform: translateY(-50%); }
 .password-toggle:hover { color: var(--blue); background: var(--blue-pale); }
-.password-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.password-toggle:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.password-toggle svg { display: block; width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .password-toggle .eye-slash { opacity: 0; transition: opacity .15s ease; }
 .password-toggle.is-visible .eye-slash { opacity: 1; }
 .form-options { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: -2px; }

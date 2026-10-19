@@ -12,23 +12,25 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault();
         const email = emailInput.value.trim().toLowerCase();
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Sending Link...';
+        submitBtn.textContent = 'Sending link...';
         message.textContent = '';
+        message.classList.remove('is-success');
 
         try {
             const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                redirectTo: new URL('/update-password.html', window.location.origin).toString()
+                redirectTo: 'https://klasik-cafe-web.vercel.app/update-password.html'
             });
             if (error) throw error;
 
-            message.textContent = 'If an account exists for that email, a password reset link will be sent.';
+            message.textContent = 'If an account exists for that email, a reset link is on its way. Please check your email.';
+            message.classList.add('is-success');
             forgotForm.reset();
         } catch (error) {
             console.error('Could not send password reset email.', error);
             message.textContent = error.message || 'Could not send the reset email. Please try again.';
         } finally {
             submitBtn.disabled = false;
-            submitBtn.textContent = 'Send Reset Link →';
+            submitBtn.innerHTML = 'Send reset link <span aria-hidden="true">→</span>';
         }
     });
 });

@@ -16,11 +16,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!isValidPassword(newPassword)) {
             message.textContent = 'Use at least 8 characters with letters and numbers, no spaces, and no URLs.';
+            message.classList.remove('is-success');
             passwordInput.focus();
             return;
         }
         if (newPassword !== confirmInput.value) {
             message.textContent = 'Your passwords do not match.';
+            message.classList.remove('is-success');
             confirmInput.focus();
             return;
         }
@@ -29,12 +31,14 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.textContent = 'Updating...';
         submitBtn.disabled = true;
         message.textContent = '';
+        message.classList.remove('is-success');
 
         try {
             const { error } = await supabase.auth.updateUser({ password: newPassword });
             if (error) throw error;
 
             message.textContent = 'Password updated. Redirecting to login...';
+            message.classList.add('is-success');
             window.setTimeout(() => { window.location.href = 'login.html'; }, 1000);
         } catch (error) {
             console.error('Could not update password.', error);
