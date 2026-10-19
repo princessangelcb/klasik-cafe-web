@@ -29,7 +29,6 @@
           <p class="eyebrow eyebrow-blue"><span></span> ADMIN PANEL</p>
           <h1>Dashboard</h1>
         </div>
-        <button class="button button-primary" type="button" id="add-product-trigger">Add Product</button>
       </header>
 
       <section id="admin-dashboard" class="stats-grid">
@@ -57,11 +56,12 @@
 
       <div class="admin-operations-grid">
       <section id="menu-management" class="panel admin-panel">
-        <div class="section-header compact-header">
+        <div class="section-header compact-header menu-management-header">
           <div>
             <p class="eyebrow eyebrow-blue"><span></span> STOCK</p>
             <h2>Menu <em>Management</em></h2>
           </div>
+          <button class="button button-primary" type="button" id="add-product-trigger">Add Product</button>
         </div>
 
         <div class="table-wrap">
@@ -185,7 +185,7 @@
           <option value="">No subcategory</option>
         </select></label>
         <label>Description<textarea id="product-description" rows="4"></textarea></label>
-        <label>Price<input type="number" id="product-price" min="1" step="1"></label>
+        <label>Price<input type="text" id="product-price" inputmode="decimal" pattern="[0-9]+([.][0-9]*)?|[.][0-9]+" autocomplete="off"></label>
         <label class="image-upload-label" for="product-image-file">Product Image</label>
         <div id="product-image-dropzone" class="image-upload-dropzone" tabindex="0" aria-controls="product-image-file" aria-label="Choose or drop a product image">
           <input id="product-image-file" type="file" accept="image/png,image/jpeg,image/webp" hidden>

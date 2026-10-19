@@ -192,7 +192,9 @@
   <div id="customer-customization-modal" class="customer-modal" hidden>
     <div class="customer-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="customer-customize-title">
       <button class="customer-modal-close" type="button" aria-label="Close customization">&times;</button>
-      <h3 id="customer-customize-title">Customize Item</h3>
+      <img id="customer-modal-image" class="customer-modal-image" alt="" src="" hidden>
+      <div class="customer-modal-content">
+      <div class="customer-modal-product-heading"><h3 id="customer-customize-title">Customize Item</h3><strong id="customer-modal-base-price"></strong></div>
       <div class="customer-option-block"><h4>Size</h4><div class="customer-option-row"><label><input type="radio" name="custom-size" value="Medium" checked> Medium (Standard)</label><label><input type="radio" name="custom-size" value="Large"> Large +₱25</label></div></div>
       <div class="customer-option-block"><h4>Milk</h4><div class="customer-option-row"><label><input type="radio" name="custom-milk" value="Regular" checked> Regular</label></div></div>
       <div class="customer-option-block"><h4>Sweetness</h4><div class="customer-option-row"><label><input type="radio" name="custom-sweetness" value="0%" checked> 0%</label><label><input type="radio" name="custom-sweetness" value="25%"> 25%</label><label><input type="radio" name="custom-sweetness" value="50%"> 50%</label><label><input type="radio" name="custom-sweetness" value="75%"> 75%</label><label><input type="radio" name="custom-sweetness" value="100%"> 100%</label></div></div>
@@ -202,7 +204,8 @@
       <div class="customer-modal-total-row"><span>Total</span><strong id="customer-modal-total">₱0</strong></div>
       <p id="customer-guest-action-note" class="customer-guest-action-note" hidden>Please log in to add this drink to your cart or favorites.</p>
       <button class="customer-modal-favorite" id="customer-modal-favorite" type="button">♡ Save to Favorites</button>
-      <button class="button button-primary button-wide" id="customer-add-to-order" type="button">Add to Order</button>
+      <button class="button button-primary button-wide" id="customer-add-to-order" type="button">Add to Cart</button>
+      </div>
     </div>
   </div>
 

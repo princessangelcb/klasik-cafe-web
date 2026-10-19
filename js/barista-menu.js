@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const tbody = document.getElementById('barista-menu-status-list');
   if (!tbody) return;
   const { data: products, error } = await supabase.from('menu_items')
-    .select('id, item_name, is_available, is_best_seller').order('item_name');
+    .select('id, item_name, is_available, is_best_seller, sort_order').order('sort_order', { ascending: true, nullsFirst: false }).order('item_name');
   if (error) {
     tbody.innerHTML = '<tr><td colspan="3">Menu status could not be loaded.</td></tr>';
     console.error('Could not load menu status for barista panel.', error);
@@ -15,8 +15,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const render = () => {
     if (!menuItems.length) { tbody.innerHTML = '<tr><td colspan="3">No menu items found.</td></tr>'; return; }
     tbody.innerHTML = menuItems.map((product) => `
-      <tr>
-        <td>${escapeHtml(product.item_name)}</td>
+      <tr data-product-id="${escapeHtml(product.id)}">
+        <td><button type="button" class="menu-drag-handle" aria-label="Drag to reorder ${escapeHtml(product.item_name)}" title="Drag to reorder">&#8942;&#8942;</button>${escapeHtml(product.item_name)}</td>
         <td>${switchMarkup(product, 'is_available', 'toggle-availability', 'Available', 'Not Available')}</td>
         <td>${switchMarkup(product, 'is_best_seller', 'toggle-bestseller', 'Best Seller', 'Not Best Seller')}</td>
       </tr>`).join('');
@@ -33,6 +33,86 @@ document.addEventListener('DOMContentLoaded', async () => {
     return String(value ?? '').replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
   }
   render();
+  let draggedRow = null;
+  let pointerDidReorder = false;
+  tbody.addEventListener('dragstart', event => {
+    const handle = event.target.closest('.menu-drag-handle');
+    const row = event.target.closest('tr[data-product-id]');
+    if (!handle || !row) { event.preventDefault(); return; }
+    draggedRow = row;
+    pointerDidReorder = false;
+    row.classList.add('menu-dragging');
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', row.dataset.productId);
+  });
+  tbody.addEventListener('dragover', event => {
+    const target = event.target.closest('tr[data-product-id]');
+    if (!draggedRow || !target || target === draggedRow) return;
+    event.preventDefault();
+    tbody.querySelectorAll('.menu-drop-target').forEach(row => row.classList.remove('menu-drop-target'));
+    target.classList.add('menu-drop-target');
+    const box = target.getBoundingClientRect();
+    tbody.insertBefore(draggedRow, event.clientY < box.top + box.height / 2 ? target : target.nextSibling);
+  });
+  tbody.addEventListener('drop', async event => {
+    if (!draggedRow) return;
+    event.preventDefault();
+    const orderedIds = [...tbody.querySelectorAll('tr[data-product-id]')].map(row => row.dataset.productId);
+    const originalOrder = [...menuItems];
+    const byId = new Map(menuItems.map(product => [String(product.id), product]));
+    menuItems.splice(0, menuItems.length, ...orderedIds.map(id => byId.get(String(id))).filter(Boolean));
+    draggedRow.classList.remove('menu-dragging');
+    tbody.querySelectorAll('.menu-drop-target').forEach(row => row.classList.remove('menu-drop-target'));
+    draggedRow = null;
+    const results = await Promise.all(menuItems.map((product, index) => supabase.from('menu_items').update({ sort_order: index }).eq('id', product.id)));
+    const failed = results.find(result => result.error);
+    if (failed) {
+      menuItems.splice(0, menuItems.length, ...originalOrder);
+      console.error('Could not save barista menu order.', failed.error);
+      window.klasikNotify?.('Could not save the new product order. Please try again.', 'error');
+    } else {
+      menuItems.forEach((product, index) => { product.sort_order = index; });
+      window.klasikNotify?.('Product order saved.');
+    }
+    render();
+  });
+  tbody.addEventListener('dragend', () => {
+    draggedRow?.classList.remove('menu-dragging');
+    tbody.querySelectorAll('.menu-drop-target').forEach(row => row.classList.remove('menu-drop-target'));
+    draggedRow = null;
+  });
+  tbody.addEventListener('pointerdown', event => {
+    const handle = event.target.closest('.menu-drag-handle');
+    const row = handle?.closest('tr[data-product-id]');
+    if (!row) return;
+    event.preventDefault();
+    draggedRow = row;
+    pointerDidReorder = false;
+    row.classList.add('menu-dragging');
+    handle.setPointerCapture(event.pointerId);
+  });
+  tbody.addEventListener('pointermove', event => {
+    if (!draggedRow) return;
+    event.preventDefault();
+    const target = document.elementFromPoint(event.clientX, event.clientY)?.closest('tr[data-product-id]');
+    if (!target || target === draggedRow || !tbody.contains(target)) return;
+    pointerDidReorder = true;
+    tbody.querySelectorAll('.menu-drop-target').forEach(row => row.classList.remove('menu-drop-target'));
+    target.classList.add('menu-drop-target');
+    const box = target.getBoundingClientRect();
+    tbody.insertBefore(draggedRow, event.clientY < box.top + box.height / 2 ? target : target.nextSibling);
+  });
+  tbody.addEventListener('pointerup', event => {
+    if (!draggedRow) return;
+    if (pointerDidReorder) tbody.dispatchEvent(new Event('drop', { cancelable: true }));
+    else { draggedRow.classList.remove('menu-dragging'); draggedRow = null; }
+  });
+  tbody.addEventListener('pointercancel', () => {
+    draggedRow?.classList.remove('menu-dragging');
+    tbody.querySelectorAll('.menu-drop-target').forEach(row => row.classList.remove('menu-drop-target'));
+    draggedRow = null;
+    render();
+  });
   tbody.addEventListener('change', async (event) => {
     const input = event.target.closest('.toggle-availability, .toggle-bestseller');
     if (!input) return;

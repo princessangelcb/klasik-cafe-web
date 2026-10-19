@@ -440,6 +440,101 @@ a.product-link:hover { color: var(--blue); }
   .social-links { gap: 10px 17px; }
 }
 
+/* Authentication screens stay within the viewport and keep their forms compact. */
+.auth-page { height: 100vh; height: 100dvh; min-height: 0; overflow: hidden; }
+.auth-layout { height: 100vh; height: 100dvh; min-height: 0; overflow: hidden; }
+.auth-visual { position: relative; height: 100%; min-height: 0; }
+.auth-content { height: 100%; min-height: 0; overflow: hidden; padding: 24px 36px; }
+.auth-card { margin-block: 0; padding-block: 8px; }
+.auth-brand { margin-bottom: 14px; }
+.auth-brand .brand-logo { width: min(100%, 170px); max-height: 52px; }
+.auth-card .eyebrow { margin-bottom: 7px; }
+.auth-subtitle { margin: 7px 0 16px; }
+.auth-form { gap: 11px; }
+.auth-card .form-field input { height: 41px; }
+.auth-switch { margin-top: 13px; }
+.auth-home-link { margin-top: 13px; }
+.auth-content-signup { padding-block: 10px; }
+.auth-card-signup { padding-block: 0; }
+.auth-card-signup .auth-brand { margin-bottom: 8px; }
+.auth-card-signup .auth-subtitle { margin: 4px 0 10px; }
+.auth-card-signup .auth-form { gap: 8px; }
+.auth-card-signup .form-grid { gap: 6px 10px; }
+.auth-card-signup .form-field { gap: 3px; }
+.auth-card-signup .form-field label { font-size: 10px; }
+.auth-card-signup .form-field input { height: 36px; }
+.auth-card-signup .terms-label { margin-block: 0; }
+.brand-light { top: 35%; right: auto; left: 50%; width: 80%; max-width: 500px; transform: translate(-50%, -50%); }
+.brand-light .brand-logo { display: block; width: 100%; max-width: 500px; max-height: min(50vh, 360px); object-fit: contain; }
+
+@media (max-width: 700px) {
+  .auth-layout { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: 100px minmax(0, 1fr); }
+  .auth-visual { height: 100px; min-height: 0; }
+  .brand-light { top: 50%; right: auto; left: 50%; width: min(78%, 360px); transform: translate(-50%, -50%); }
+  .brand-light .brand-logo { max-height: 90px; }
+  .auth-visual-caption { display: none; }
+  .auth-back { top: 17px; left: 14px; color: #fff; font-size: 10px; }
+  .auth-content, .auth-content-signup { height: auto; min-height: 0; padding: 5px 16px; }
+  .auth-card { width: min(100%, 490px); padding: 0; }
+  .auth-card .auth-brand { display: none; }
+  .auth-card h1 { font-size: clamp(27px, 6vw, 36px); }
+  .auth-subtitle { margin: 4px 0 11px; }
+  .auth-form { gap: 8px; }
+  .auth-card .form-field input { height: 38px; }
+  .auth-footnote, .auth-home-link { display: none; }
+  .auth-card-signup .auth-subtitle { margin: 3px 0 8px; }
+  .auth-card-signup .auth-form { gap: 6px; }
+  .auth-card-signup .form-grid { gap: 4px 8px; }
+  .auth-card-signup .form-field input { height: 34px; }
+  .auth-card-signup .form-field label { font-size: 9px; }
+  .auth-card-signup .terms-label { font-size: 10px; }
+  .auth-card .button-wide { min-height: 38px; }
+  .auth-switch { margin-top: 8px; }
+}
+
+@media (max-width: 768px) {
+  .auth-page {
+    height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .auth-layout {
+    display: grid;
+    height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(260px, 38vh) auto;
+  }
+  .auth-visual {
+    position: relative;
+    height: auto;
+    min-height: 260px;
+  }
+  .auth-content,
+  .auth-content-signup {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+  .brand-light {
+    top: 50%;
+    right: auto;
+    left: 50%;
+    width: min(80%, 400px);
+    transform: translate(-50%, -50%);
+  }
+  .brand-light .brand-logo {
+    width: 100%;
+    max-height: min(38vh, 300px);
+    object-fit: contain;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .welcome-tagline .tagline-letter { animation-delay: 0ms !important; }

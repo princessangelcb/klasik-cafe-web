@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (orderEmails.length) {
             const { data: profiles, error: profileError } = await supabase.from('profiles').select('email, full_name').in('email', orderEmails);
             if (profileError) console.warn('Could not load customer names for older orders.', profileError);
-            orderCustomerNames = new Map((profiles || []).map(profile => [String(profile.email || '').toLowerCase(), profile.full_name || [profile.first_name, profile.last_name].filter(Boolean).join(' ') || profile.name]).filter(([, name]) => name));
+            orderCustomerNames = new Map((profiles || []).map(profile => [String(profile.email || '').toLowerCase(), profile.full_name]).filter(([, name]) => name));
         }
         const names = [...new Set(orders.flatMap(order => (Array.isArray(order.items) && order.items.length ? order.items : parseLegacyOrderItems(order.order_details)).map(item => item.item_name).filter(Boolean)))];
         if (names.length) {
@@ -63,7 +63,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const statusClass = `status-${String(order.status || 'Pending').toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
                 const customerName = order.customer_name || orderCustomerNames.get(String(order.user_email || '').toLowerCase()) || 'Customer';
                 const deleteButton = order.status === 'Completed' ? `<button type="button" class="button button-small delete-completed-order" data-id="${escapeOrderText(order.id)}">Delete</button>` : '';
-                return `<article class="admin-order-summary ${statusClass}"><header><strong>Order #${escapeOrderText(order.order_code || String(order.id).slice(0, 8))}</strong><span class="order-status-tag">${escapeOrderText(order.status || 'Pending')}</span></header><p><strong>Customer:</strong> ${escapeOrderText(customerName)}</p><small>Placed: ${order.created_at ? escapeOrderText(new Date(order.created_at).toLocaleString()) : 'Date unavailable'}</small><div class="admin-order-products">${productsHtml}</div>${order.special_request ? `<p><strong>Note:</strong> ${escapeOrderText(order.special_request)}</p>` : `<p></p>`}<footer><strong>Total: &#8369;${Number(order.total_price || 0).toFixed(2)}</strong>${next ? `<button type="button" class="button button-primary button-small admin-order-advance" data-id="${escapeOrderText(order.id)}" data-next="${escapeOrderText(next[0])}">${escapeOrderText(next[1])}</button>` : deleteButton || `<span></span>`}</footer></article>`;
+                const placedAt = order.created_at ? escapeOrderText(new Date(order.created_at).toLocaleString()) : 'Date unavailable';
+                return `<article class="admin-order-summary ${statusClass}"><header class="admin-order-card-head"><strong>Order #${escapeOrderText(order.order_code || String(order.id).slice(0, 8))}</strong><div class="order-card-header-meta"><span class="order-status-tag">${escapeOrderText(order.status || 'Pending')}</span><small>Placed: ${placedAt}</small></div></header><p><strong>Customer:</strong> ${escapeOrderText(customerName)}</p><div class="admin-order-products">${productsHtml}</div>${order.special_request ? `<p><strong>Note:</strong> ${escapeOrderText(order.special_request)}</p>` : `<p></p>`}<footer><strong>Total: &#8369;${Number(order.total_price || 0).toFixed(2)}</strong>${next ? `<button type="button" class="button button-primary button-small admin-order-advance" data-id="${escapeOrderText(order.id)}" data-next="${escapeOrderText(next[0])}">${escapeOrderText(next[1])}</button>` : deleteButton || `<span></span>`}</footer></article>`;
             }).join('') : '<p class="admin-order-empty">No orders match this status or order code.</p>';
             orderPagination.innerHTML = `<span>Page ${orderPage} of ${pageCount} &middot; ${filtered.length} orders</span><div><button type="button" data-admin-page="prev" ${orderPage <= 1 ? 'disabled' : ''}>Previous</button><button type="button" data-admin-page="next" ${orderPage >= pageCount ? 'disabled' : ''}>Next</button></div>`;
         };
@@ -105,6 +106,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const { data: menuItems, error: menuFetchError } = await supabase
         .from('menu_items')
         .select('*')
+        .order('sort_order', { ascending: true, nullsFirst: false })
         .order('created_at', { ascending: false });
 
     if (!menuFetchError && menuItems) {
@@ -115,13 +117,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             tableBody.innerHTML = '';
             menuItems.forEach(item => {
                 const row = document.createElement('tr');
+                row.dataset.productId = item.id;
                 row.style.borderBottom = '1px solid #eee';
                 row.innerHTML = `
-                    <td style="padding: 12px; display: flex; align-items: center; gap: 10px;">
-                        <img src="${item.image_url || 'images/products/coffee/amerikano.jpg'}" alt="" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
-                        <strong>${item.item_name}</strong>
+                    <td class="menu-product-cell">
+                        <div class="menu-product-content">
+                            <button type="button" class="menu-drag-handle" aria-label="Drag to reorder ${escapeOrderText(item.item_name)}" title="Drag to reorder">&#8942;&#8942;</button>
+                            <img src="${item.image_url || 'images/products/coffee/amerikano.jpg'}" alt="" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
+                            <strong class="menu-product-name">${item.item_name}</strong>
+                        </div>
                     </td>
-                    <td style="padding: 12px; text-transform: uppercase; font-size: 0.85rem; color: #666;">${item.category}</td>
+                    <td class="menu-category-cell" style="padding: 12px; text-transform: uppercase; font-size: 0.85rem; color: #666;">${item.category}</td>
                     <td style="padding: 12px; font-weight: bold; color: #1e3382;">₱${item.price}</td>
                     <td style="padding: 12px;">
                         <label style="cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
@@ -159,6 +165,102 @@ document.addEventListener('DOMContentLoaded', async () => {
                     label.insertBefore(track, value);
                 });
                 tableBody.appendChild(row);
+            });
+
+            const menuPageSize = 5;
+            let menuPage = 1;
+            const previousMenuPage = document.getElementById('admin-products-previous');
+            const nextMenuPage = document.getElementById('admin-products-next');
+            const menuPageLabel = document.getElementById('admin-products-page');
+            const renderMenuPage = () => {
+                const rows = [...tableBody.querySelectorAll('tr')];
+                const pageCount = Math.max(1, Math.ceil(rows.length / menuPageSize));
+                menuPage = Math.max(1, Math.min(menuPage, pageCount));
+                rows.forEach((row, index) => {
+                    row.hidden = index < (menuPage - 1) * menuPageSize || index >= menuPage * menuPageSize;
+                });
+                if (menuPageLabel) menuPageLabel.textContent = `Page ${menuPage} of ${pageCount} · ${rows.length} items`;
+                if (previousMenuPage) previousMenuPage.disabled = menuPage === 1;
+                if (nextMenuPage) nextMenuPage.disabled = menuPage === pageCount;
+            };
+            previousMenuPage?.addEventListener('click', () => { menuPage -= 1; renderMenuPage(); });
+            nextMenuPage?.addEventListener('click', () => { menuPage += 1; renderMenuPage(); });
+            renderMenuPage();
+
+            let pointerDrag = null;
+            const saveMenuOrder = async () => {
+                const orderedIds = [...tableBody.querySelectorAll('tr[data-product-id]')].map(row => row.dataset.productId);
+                if (orderedIds.every((id, index) => id === String(menuItems[index]?.id))) return;
+                const oldOrder = [...menuItems];
+                const byId = new Map(menuItems.map(product => [String(product.id), product]));
+                const reordered = orderedIds.map(id => byId.get(String(id))).filter(Boolean);
+                const visibleIdSet = new Set(orderedIds);
+                let visibleIndex = 0;
+                const nextOrder = oldOrder.map(product => visibleIdSet.has(String(product.id)) ? reordered[visibleIndex++] : product);
+                menuItems.splice(0, menuItems.length, ...nextOrder);
+                draggedProductRow.classList.remove('menu-dragging');
+                tableBody.querySelectorAll('.menu-drop-target').forEach(row => row.classList.remove('menu-drop-target'));
+                draggedProductRow = null;
+                const updates = menuItems.map((product, index) => supabase.from('menu_items').update({ sort_order: index }).eq('id', product.id));
+                const results = await Promise.all(updates);
+                const failed = results.find(result => result.error);
+                if (failed) {
+                    menuItems.splice(0, menuItems.length, ...oldOrder);
+                    console.error('Could not save menu order.', failed.error);
+                    window.klasikNotify?.('Could not save the new product order. Please try again.', 'error');
+                    window.location.reload();
+                    return;
+                }
+                menuItems.forEach((product, index) => { product.sort_order = index; });
+                renderMenuPage();
+                window.klasikNotify?.('Product order saved.');
+            };
+            tableBody.addEventListener('pointerdown', event => {
+                const handle = event.target.closest('.menu-drag-handle');
+                const row = handle?.closest('tr[data-product-id]');
+                if (pointerDrag || !row || (event.pointerType === 'mouse' && event.button !== 0)) return;
+                event.preventDefault();
+                pointerDrag = {
+                    row,
+                    handle,
+                    pointerId: event.pointerId,
+                    startX: event.clientX,
+                    startY: event.clientY,
+                    moved: false
+                };
+                handle.setPointerCapture(event.pointerId);
+            });
+            tableBody.addEventListener('pointermove', event => {
+                if (!pointerDrag || event.pointerId !== pointerDrag.pointerId) return;
+                if (!pointerDrag.moved && Math.hypot(event.clientX - pointerDrag.startX, event.clientY - pointerDrag.startY) < 4) return;
+                pointerDrag.moved = true;
+                pointerDrag.row.classList.add('menu-dragging');
+                event.preventDefault();
+                const target = document.elementFromPoint(event.clientX, event.clientY)?.closest('tr[data-product-id]');
+                if (!target || target === pointerDrag.row || !tableBody.contains(target)) return;
+                tableBody.querySelectorAll('.menu-drop-target').forEach(row => row.classList.remove('menu-drop-target'));
+                target.classList.add('menu-drop-target');
+                const box = target.getBoundingClientRect();
+                tableBody.insertBefore(pointerDrag.row, event.clientY < box.top + box.height / 2 ? target : target.nextSibling);
+            });
+            tableBody.addEventListener('pointerup', event => {
+                if (!pointerDrag || event.pointerId !== pointerDrag.pointerId) return;
+                const didMove = pointerDrag.moved;
+                pointerDrag.row.classList.remove('menu-dragging');
+                tableBody.querySelectorAll('.menu-drop-target').forEach(row => row.classList.remove('menu-drop-target'));
+                pointerDrag = null;
+                if (didMove) saveMenuOrder();
+            });
+            tableBody.addEventListener('pointercancel', event => {
+                if (!pointerDrag || event.pointerId !== pointerDrag.pointerId) return;
+                pointerDrag.row.classList.remove('menu-dragging');
+                tableBody.querySelectorAll('.menu-drop-target').forEach(row => row.classList.remove('menu-drop-target'));
+                pointerDrag = null;
+                [...menuItems].forEach(product => {
+                    const row = [...tableBody.querySelectorAll('tr[data-product-id]')].find(candidate => candidate.dataset.productId === String(product.id));
+                    if (row) tableBody.appendChild(row);
+                });
+                renderMenuPage();
             });
 
             // Toggle Availability Switch Listener
@@ -237,6 +339,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     const closeBtn = document.querySelector('.modal-close');
     const cancelBtn = document.getElementById('cancel-product-modal');
     const productForm = document.getElementById('product-form');
+    const productPriceInput = document.getElementById('product-price');
+    productPriceInput?.addEventListener('keydown', event => {
+        if (['e', 'E', '+', '-'].includes(event.key)) event.preventDefault();
+    });
+    productPriceInput?.addEventListener('input', event => {
+        const input = event.currentTarget;
+        const numeric = input.value.replace(/[^0-9.]/g, '');
+        const decimalAt = numeric.indexOf('.');
+        input.value = decimalAt < 0 ? numeric : `${numeric.slice(0, decimalAt + 1)}${numeric.slice(decimalAt + 1).replace(/\./g, '')}`;
+    });
     const productIdInput = document.getElementById('product-id');
     const productMainCategory = document.getElementById('product-main-category');
     const productSubcategory = document.getElementById('product-subcategory');
@@ -401,6 +513,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                     is_best_seller: document.getElementById('product-best-seller').checked,
                     image_url: imageUrl
                 };
+                if (!productId) {
+                    const { data: lastPosition, error: orderError } = await supabase.from('menu_items').select('sort_order').order('sort_order', { ascending: false, nullsFirst: false }).limit(1).maybeSingle();
+                    if (orderError) throw orderError;
+                    productData.sort_order = Number(lastPosition?.sort_order ?? -1) + 1;
+                }
                 const result = productId
                     ? await supabase.from('menu_items').update(productData).eq('id', productId)
                     : await supabase.from('menu_items').insert([productData]);
@@ -606,10 +723,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             let rows = data || [];
             const userIds = [...new Set(rows.map(row => row.user_id).filter(Boolean))];
             if (userIds.length) {
-                const { data: profiles, error: profileError } = await supabase.from('profiles').select('id, full_name, first_name, last_name').in('id', userIds);
+                const { data: profiles, error: profileError } = await supabase.from('profiles').select('id, full_name').in('id', userIds);
                 if (profileError) console.warn('Could not resolve full names for older reviews; showing their saved customer names.', profileError);
                 else {
-                    const fullNames = new Map((profiles || []).map(profile => [String(profile.id), [profile.first_name, profile.last_name].filter(Boolean).join(' ') || profile.full_name ]).filter(([, name]) => name));
+                    const fullNames = new Map((profiles || []).map(profile => [String(profile.id), profile.full_name]).filter(([, name]) => name));
                     rows = rows.map(row => ({ ...row, customer_name: fullNames.get(String(row.user_id)) || row.customer_name || 'Customer' }));
                 }
             }
@@ -623,10 +740,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             let rows = data || [];
             const userIds = [...new Set(rows.map(row => row.user_id).filter(Boolean))];
             if (userIds.length) {
-                const { data: profiles, error: profileError } = await supabase.from('profiles').select('id, full_name, first_name, last_name').in('id', userIds);
+                const { data: profiles, error: profileError } = await supabase.from('profiles').select('id, full_name').in('id', userIds);
                 if (profileError) console.warn('Could not resolve full names for older suggestions; showing their saved customer names.', profileError);
                 else {
-                    const fullNames = new Map((profiles || []).map(profile => [String(profile.id), [profile.first_name, profile.last_name].filter(Boolean).join(' ') || profile.full_name ]).filter(([, name]) => name));
+                    const fullNames = new Map((profiles || []).map(profile => [String(profile.id), profile.full_name]).filter(([, name]) => name));
                     rows = rows.map(row => ({ ...row, customer_name: fullNames.get(String(row.user_id)) || row.customer_name || 'Customer' }));
                 }
             }

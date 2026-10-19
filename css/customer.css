@@ -1720,6 +1720,6 @@
 }
 
 /* Periwinkle Polaroid panels without visible card or image borders. */
-#featured-best-sellers .product-card { background-color: #8da2db; border: none; }
+#featured-best-sellers .product-card { background-color: #fff; border: none; }
 #featured-best-sellers .product-image { border: none; }
 #featured-best-sellers .product-info { background: transparent; color: #202633; }
