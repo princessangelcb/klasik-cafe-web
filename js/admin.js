@@ -62,7 +62,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const next = { Pending: ['Preparing', 'Start Preparing'], Preparing: ['Ready for Pickup', 'Ready for Pickup'], 'Ready for Pickup': ['Completed', 'Complete Order'] }[order.status];
                 const statusClass = `status-${String(order.status || 'Pending').toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
                 const customerName = order.customer_name || orderCustomerNames.get(String(order.user_email || '').toLowerCase()) || 'Customer';
-                return `<article class="admin-order-summary ${statusClass}"><header><strong>Order #${escapeOrderText(order.order_code || String(order.id).slice(0, 8))}</strong><span class="order-status-tag">${escapeOrderText(order.status || 'Pending')}</span></header><p><strong>Customer:</strong> ${escapeOrderText(customerName)}</p><small>Placed: ${order.created_at ? escapeOrderText(new Date(order.created_at).toLocaleString()) : 'Date unavailable'}</small><div class="admin-order-products">${productsHtml}</div>${order.special_request ? `<p><strong>Note:</strong> ${escapeOrderText(order.special_request)}</p>` : `<p></p>`}<footer><strong>Total: &#8369;${Number(order.total_price || 0).toFixed(2)}</strong>${next ? `<button type="button" class="button button-primary button-small admin-order-advance" data-id="${escapeOrderText(order.id)}" data-next="${escapeOrderText(next[0])}">${escapeOrderText(next[1])}</button>` : `<span></span>`}</footer></article>`;
+                const deleteButton = order.status === 'Completed' ? `<button type="button" class="button button-small delete-completed-order" data-id="${escapeOrderText(order.id)}">Delete</button>` : '';
+                return `<article class="admin-order-summary ${statusClass}"><header><strong>Order #${escapeOrderText(order.order_code || String(order.id).slice(0, 8))}</strong><span class="order-status-tag">${escapeOrderText(order.status || 'Pending')}</span></header><p><strong>Customer:</strong> ${escapeOrderText(customerName)}</p><small>Placed: ${order.created_at ? escapeOrderText(new Date(order.created_at).toLocaleString()) : 'Date unavailable'}</small><div class="admin-order-products">${productsHtml}</div>${order.special_request ? `<p><strong>Note:</strong> ${escapeOrderText(order.special_request)}</p>` : `<p></p>`}<footer><strong>Total: &#8369;${Number(order.total_price || 0).toFixed(2)}</strong>${next ? `<button type="button" class="button button-primary button-small admin-order-advance" data-id="${escapeOrderText(order.id)}" data-next="${escapeOrderText(next[0])}">${escapeOrderText(next[1])}</button>` : deleteButton || `<span></span>`}</footer></article>`;
             }).join('') : '<p class="admin-order-empty">No orders match this status or order code.</p>';
             orderPagination.innerHTML = `<span>Page ${orderPage} of ${pageCount} &middot; ${filtered.length} orders</span><div><button type="button" data-admin-page="prev" ${orderPage <= 1 ? 'disabled' : ''}>Previous</button><button type="button" data-admin-page="next" ${orderPage >= pageCount ? 'disabled' : ''}>Next</button></div>`;
         };
@@ -74,6 +75,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         orderTools.querySelector('input').addEventListener('input', event => { orderSearch = event.target.value.trim().toUpperCase(); orderPage = 1; renderAdminOrders(); });
         orderPagination.addEventListener('click', event => { if (!event.target.dataset.adminPage) return; orderPage += event.target.dataset.adminPage === 'next' ? 1 : -1; renderAdminOrders(); });
         ordersList?.addEventListener('click', async event => {
+            const deleteButton = event.target.closest('.delete-completed-order');
+            if (deleteButton) {
+                const order = orders.find(item => String(item.id) === deleteButton.dataset.id);
+                if (!order || order.status !== 'Completed' || !window.confirm(`Permanently delete completed order #${order.order_code || order.id}?`)) return;
+                deleteButton.disabled = true;
+                const { data: deleted, error } = await supabase.from('placed_orders').delete().eq('id', order.id).eq('status', 'Completed').select('id').maybeSingle();
+                if (error || !deleted) {
+                    console.error('Could not delete completed order.', error);
+                    window.klasikNotify?.(error ? `Could not delete order: ${error.message}` : 'Order was not deleted. Refresh and try again.', 'error');
+                    deleteButton.disabled = false;
+                    return;
+                }
+                orders = orders.filter(item => String(item.id) !== String(order.id));
+                if (orderCountBadge) orderCountBadge.textContent = orders.length;
+                renderAdminOrders();
+                return;
+            }
             const button = event.target.closest('.admin-order-advance'); if (!button) return;
             button.disabled = true;
             const { error } = await supabase.from('placed_orders').update({ status: button.dataset.next }).eq('id', button.dataset.id);
@@ -666,7 +684,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // ADMIN SECURE LOGOUT
-    const adminSidebar = document.querySelector('.admin-sidebar .sidebar-nav');
+    const adminSidebar = document.querySelector('.dashboard-primary-nav');
     if (adminSidebar && 'IntersectionObserver' in window) {
         const adminTargets = [...adminSidebar.querySelectorAll('a[href^="#"]')]
             .map(link => document.getElementById(decodeURIComponent(link.hash.slice(1))))
@@ -686,7 +704,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         updateAdminScrollSpy();
     }
 
-    const adminLogoutBtn = document.querySelector('.sidebar-logout');
+    const adminLogoutBtn = document.querySelector('.dashboard-logout') || document.querySelector('.sidebar-logout');
     if (adminLogoutBtn) {
         adminLogoutBtn.addEventListener('click', async (e) => {
             e.preventDefault(); 

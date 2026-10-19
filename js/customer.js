@@ -17,6 +17,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   
   const modal = document.getElementById("customer-customization-modal");
   const modalTitle = document.getElementById("customer-customize-title");
+  const modalImage = document.getElementById("customer-modal-image");
+  const modalBasePrice = document.getElementById("customer-modal-base-price");
   const modalClose = document.querySelector(".customer-modal-close");
   const modalAddButton = document.getElementById("customer-add-to-order");
   const modalFavoriteButton = document.getElementById("customer-modal-favorite");
@@ -133,7 +135,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         info.append(customizeButton);
       }
       customizeButton.classList.add("customer-product-button");
-      customizeButton.textContent = available ? "Customize" : "Unavailable";
+      customizeButton.textContent = available ? "Add to Cart" : "Unavailable";
       customizeButton.disabled = !available;
 
       let availabilityMessage = info.querySelector(".product-availability");
@@ -217,6 +219,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const saved = favoriteNames.has(modalFavoriteKey());
     modalFavoriteButton.textContent = saved ? "♥ Remove customized drink from Favorites" : "♡ Save customized drink to Favorites";
     modalFavoriteButton.setAttribute("aria-pressed", String(saved));
+    modalFavoriteButton.setAttribute("aria-label", saved ? "Remove customized drink from Favorites" : "Save customized drink to Favorites");
   }
 
   async function loadFavorites() {
@@ -309,6 +312,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!modal) return;
     activeProduct = { name: productName, price: Number(productPrice), image: productImage };
     if (modalTitle) modalTitle.textContent = productName;
+    if (modalBasePrice) modalBasePrice.textContent = money(Number(productPrice));
+    if (modalImage) {
+      modalImage.hidden = !productImage;
+      modalImage.alt = productName ? `${productName} drink` : "Selected menu item";
+      if (productImage) modalImage.src = productImage;
+    }
     activeQuantity = 1;
     document.querySelectorAll("input[name='custom-addon']").forEach((input) => { input.checked = false; });
     const medium = document.querySelector("input[name='custom-size'][value='Medium']");

@@ -674,6 +674,41 @@
 .admin-order-summary.status-preparing .order-status-tag { color:#244b9b; background:#dce8fc; }
 .admin-order-summary.status-ready-for-pickup .order-status-tag { color:#17643c; background:#d8f0e2; }
 .admin-order-summary.status-completed .order-status-tag { color:#4b5563; background:#e5e7eb; }
+
+/* Shared homepage-style top navigation replaces the dashboard sidebar. */
+.admin-sidebar { display: none; }
+.admin-shell { display: block; min-height: calc(100vh - 84px); }
+.admin-main { width: min(100%, 1600px); margin: 0 auto; padding: 34px clamp(16px, 3vw, 42px) 54px; }
+.dashboard-site-header { position: sticky; top: 0; z-index: 100; }
+.dashboard-site-header .primary-nav { gap: clamp(10px, 1.4vw, 22px); }
+.dashboard-primary-nav .nav-link { white-space: nowrap; }
+.dashboard-primary-nav .dashboard-logout { color: var(--blue-deep); font-weight: 700; }
+.admin-operations-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(340px, 1fr); align-items: start; gap: 22px; }
+.admin-operations-grid > .admin-panel { min-width: 0; margin-bottom: 26px; }
+.admin-order-summary .delete-completed-order { min-height: 36px; padding: 0 12px; border: 1px solid #b42318; background: #fff; color: #b42318; cursor: pointer; }
+.admin-order-summary .delete-completed-order:hover { background: #fff0f0; }
+
+@media (max-width: 960px) {
+  .dashboard-site-header .menu-toggle { width: 42px; height: 42px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; padding: 0; border: 1px solid var(--line); border-radius: 2px; background: transparent; cursor: pointer; }
+  .dashboard-site-header .menu-toggle span { width: 17px; height: 1.5px; background: var(--blue-deep); transition: transform .2s ease, opacity .2s ease; }
+  .dashboard-site-header .menu-toggle[aria-expanded="true"] span:first-child { transform: translateY(6.5px) rotate(45deg); }
+  .dashboard-site-header .menu-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+  .dashboard-site-header .menu-toggle[aria-expanded="true"] span:last-child { transform: translateY(-6.5px) rotate(-45deg); }
+  .dashboard-site-header .primary-nav { position: absolute; top: 100%; right: 0; left: 0; display: none; align-items: stretch; gap: 0; padding: 8px 24px 18px; border-bottom: 1px solid var(--line); background: var(--paper); box-shadow: 0 12px 20px rgba(34, 43, 42, .08); }
+  .dashboard-site-header .primary-nav.is-open { display: flex; flex-direction: column; }
+  .dashboard-primary-nav .nav-link { padding: 11px 4px; }
+  .admin-operations-grid { grid-template-columns: minmax(0, 1fr); }
+  .admin-operations-grid > #admin-orders { order: 1; }
+  .admin-operations-grid > #menu-management { order: 2; }
+}
+@media (max-width: 620px) {
+  .admin-main { padding: 22px 14px 40px; }
+}
+.admin-body .admin-sidebar { display: none; }
+.admin-operations-grid #admin-order-list { grid-template-columns: minmax(0, 1fr); }
+.admin-order-product > span:last-child { flex: 1 1 0; min-width: 0; }
+.admin-order-product strong { overflow-wrap: anywhere; line-height: 1.4; }
+.admin-order-product small { display: block; white-space: normal; overflow-wrap: anywhere; line-height: 1.5; }
 .admin-order-pagination button { border-color: #1e3382; background: #1e3382; color: #fff; }
 .admin-order-pagination button:disabled, .admin-feedback-pagination button:disabled { opacity: .45; cursor: not-allowed; }
 .admin-order-filters button[data-admin-order-filter="Pending"].active { background:#b86d17; border-color:#b86d17; }

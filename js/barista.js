@@ -78,7 +78,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             const next = { 'Pending': ['Preparing', 'Start Preparing'], 'Preparing': ['Ready for Pickup', 'Ready for Pickup'], 'Ready for Pickup': ['Completed', 'Complete Order'] }[order.status];
             const statusClass = `status-${String(order.status || 'Pending').toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
             const customerName = order.customer_name || customerNameByEmail.get(String(order.user_email || '').toLowerCase()) || 'Customer';
-            return `<article class="order-card ${statusClass}"><header class="barista-order-card-head"><strong>Order #${esc(order.order_code || String(order.id).slice(0, 8))}</strong><span class="order-status-tag">${esc(order.status || 'Pending')}</span></header><p class="barista-customer-name"><strong>Customer:</strong> ${esc(customerName)}</p><small>Placed: ${order.created_at ? esc(new Date(order.created_at).toLocaleString()) : 'Date unavailable'}</small><div class="barista-order-products">${itemsHtml}</div>${order.special_request ? `<p class="barista-order-note"><strong>Note:</strong> ${esc(order.special_request)}</p>` : `<p></p>`}<footer class="barista-order-card-foot"><strong>${money(order.total_price)}</strong>${next ? `<button type="button" class="button button-primary button-small action-status-btn" data-id="${esc(order.id)}" data-next="${esc(next[0])}">${esc(next[1])}</button>` : `<span></span>`}</footer></article>`;
+            const deleteButton = order.status === 'Completed' ? `<button type="button" class="button button-small delete-completed-order" data-id="${esc(order.id)}">Delete</button>` : '';
+            return `<article class="order-card ${statusClass}"><header class="barista-order-card-head"><strong>Order #${esc(order.order_code || String(order.id).slice(0, 8))}</strong><span class="order-status-tag">${esc(order.status || 'Pending')}</span></header><p class="barista-customer-name"><strong>Customer:</strong> ${esc(customerName)}</p><small>Placed: ${order.created_at ? esc(new Date(order.created_at).toLocaleString()) : 'Date unavailable'}</small><div class="barista-order-products">${itemsHtml}</div>${order.special_request ? `<p class="barista-order-note"><strong>Note:</strong> ${esc(order.special_request)}</p>` : `<p></p>`}<footer class="barista-order-card-foot"><strong>${money(order.total_price)}</strong>${next ? `<button type="button" class="button button-primary button-small action-status-btn" data-id="${esc(order.id)}" data-next="${esc(next[0])}">${esc(next[1])}</button>` : deleteButton || `<span></span>`}</footer></article>`;
         }).join('');
         pagination.innerHTML = `<span>Page ${currentPage} of ${pages} &middot; ${filtered.length} orders</span><div><button type="button" data-page="prev" ${currentPage <= 1 ? 'disabled' : ''}>Previous</button><button type="button" data-page="next" ${currentPage >= pages ? 'disabled' : ''}>Next</button></div>`;
     }
@@ -89,9 +90,41 @@ document.addEventListener('DOMContentLoaded', async () => {
         tools.querySelectorAll('[data-order-filter]').forEach(b => { b.classList.toggle('active', b === button); b.setAttribute('aria-selected', String(b === button)); }); render();
         document.querySelectorAll('.sidebar-nav a').forEach(link => link.classList.toggle('active', link.textContent.trim() === currentFilter));
     });
+    document.querySelector('.dashboard-primary-nav')?.addEventListener('click', event => {
+        const link = event.target.closest('[data-order-filter]');
+        if (!link) return;
+        event.preventDefault();
+        currentFilter = link.dataset.orderFilter;
+        currentPage = 1;
+        tools.querySelectorAll('[data-order-filter]').forEach(button => {
+            const active = button.dataset.orderFilter === currentFilter;
+            button.classList.toggle('active', active);
+            button.setAttribute('aria-selected', String(active));
+        });
+        document.querySelectorAll('.dashboard-primary-nav [data-order-filter]').forEach(item => item.classList.toggle('active', item === link));
+        render();
+        document.getElementById('barista-orders')?.scrollIntoView({ behavior: 'smooth' });
+    });
     tools.querySelector('#barista-order-search').addEventListener('input', e => { searchCode = e.target.value.trim().toUpperCase(); currentPage = 1; render(); });
     pagination.addEventListener('click', e => { const direction = e.target.dataset.page; if (!direction) return; currentPage += direction === 'next' ? 1 : -1; render(); });
     queue?.addEventListener('click', async e => {
+        const deleteButton = e.target.closest('.delete-completed-order');
+        if (deleteButton) {
+            const order = allOrders.find(item => String(item.id) === deleteButton.dataset.id);
+            if (!order || order.status !== 'Completed' || !window.confirm(`Permanently delete completed order #${order.order_code || order.id}?`)) return;
+            deleteButton.disabled = true;
+            const { data: deleted, error } = await supabase.from('placed_orders').delete().eq('id', order.id).eq('status', 'Completed').select('id').maybeSingle();
+            if (error || !deleted) {
+                console.error('Could not delete completed order.', error);
+                window.klasikNotify?.(error ? `Could not delete order: ${error.message}` : 'Order was not deleted. Refresh and try again.', 'error');
+                deleteButton.disabled = false;
+                return;
+            }
+            allOrders = allOrders.filter(item => String(item.id) !== String(order.id));
+            updateStats();
+            render();
+            return;
+        }
         const button = e.target.closest('.action-status-btn'); if (!button) return;
         button.disabled = true; button.textContent = 'Updating…';
         const { error } = await supabase.from('placed_orders').update({ status: button.dataset.next }).eq('id', button.dataset.id);
@@ -104,7 +137,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!status) return;
         link.addEventListener('click', e => { e.preventDefault(); currentFilter = status; currentPage = 1; document.querySelectorAll('.sidebar-nav a').forEach(item => item.classList.toggle('active', item === link)); tools.querySelectorAll('[data-order-filter]').forEach(b => { b.classList.toggle('active', b.dataset.orderFilter === status); b.setAttribute('aria-selected', String(b.dataset.orderFilter === status)); }); render(); document.getElementById('barista-orders')?.scrollIntoView({ behavior: 'smooth' }); });
     });
-    const baristaSidebar = document.querySelector('.barista-sidebar .sidebar-nav');
+    const baristaSidebar = document.querySelector('.dashboard-primary-nav');
     if (baristaSidebar && 'IntersectionObserver' in window) {
         const baristaTargets = [...baristaSidebar.querySelectorAll('a[href^="#"]')]
             .map(link => document.getElementById(decodeURIComponent(link.hash.slice(1))))
@@ -128,7 +161,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         updateBaristaScrollSpy();
     }
 
-    const logout = document.querySelector('.sidebar-logout') || document.getElementById('barista-logout');
+    const logout = document.querySelector('.dashboard-logout') || document.querySelector('.sidebar-logout') || document.getElementById('barista-logout');
     logout?.addEventListener('click', async e => { e.preventDefault(); await supabase.auth.signOut(); window.location.href = 'login.html'; });
     await loadOrders();
 });

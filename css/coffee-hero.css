@@ -10,25 +10,18 @@ body { transition: background-color .6s ease; }
 .coffee-hero-wave {
   position: absolute; z-index: 5; right: 0; bottom: -22px; left: 0; width: 100%; height: clamp(190px, 25vh, 250px);
   overflow: visible; fill: #1e2a4f; pointer-events: none; transform-origin: center top;
-  animation: coffee-wave-flow 5s ease-in-out infinite;
 }
-.coffee-hero-wave path { transform-box: fill-box; transform-origin: center top; animation: coffee-wave-undulate 3.8s ease-in-out infinite alternate; }
-.coffee-hero-wave.is-moving { animation: coffee-wave-swell .9s cubic-bezier(.25,.65,.3,1); }
 .coffee-hero-inner {
   position: relative; z-index: auto; width: min(1220px, calc(100% - 56px)); min-height: clamp(400px, 64svh, 620px); margin-inline: auto;
   display: grid; grid-template-columns: minmax(250px, .72fr) minmax(0, 1.28fr); align-items: center; gap: clamp(16px, 3vw, 46px);
 }
 .coffee-active-name { position: absolute; z-index: 8; top: 8px; right: 0; max-width: 34%; min-height: 1.5em; margin: 0; color: #1e2a4f; font: 700 clamp(13px, 1.4vw, 18px)/1.3 var(--sans, "DM Sans", sans-serif); letter-spacing: .14em; text-align: right; text-transform: uppercase; }
-.coffee-hero-menu-link { position: absolute; z-index: 8; right: 0; bottom: -70px; }
 .coffee-hero-copy { position: relative; z-index: 6; }
 .coffee-hero-eyebrow { display: flex; align-items: center; gap: 11px; margin: 0 0 22px; color: #315f94; font: 700 10px/1.3 var(--sans, "DM Sans", sans-serif); letter-spacing: .2em; }
 .coffee-hero-eyebrow::before { width: 30px; height: 1px; background: currentColor; content: ""; }
 .coffee-hero-copy h2 { margin: 0; color: #172b50; font-family: var(--serif, "Playfair Display", Georgia, serif); font-size: clamp(56px, 7vw, 100px); font-weight: 500; letter-spacing: -.065em; line-height: .93; animation: coffee-title-arrive .9s .12s both cubic-bezier(.2,.7,.2,1); }
 .coffee-hero-copy h2 em { color: #8da2db; font-style: normal; }
 .coffee-hero-description { max-width: 330px; margin: 25px 0 26px; color: #46566f; font: 400 14px/1.8 var(--sans, "DM Sans", sans-serif); }
-.coffee-hero-menu-link { display: flex; min-height: 52px; align-items: center; justify-content: center; gap: 8px; padding: 0 21px; background: #8da2db; color: #172b50; font: 700 12px/1 var(--sans, "DM Sans", sans-serif); text-decoration: none; transition: background .2s ease, transform .2s ease; }
-.coffee-hero-menu-link:hover { transform: translateY(-2px); background: #a5b5e4; }
-.coffee-hero-menu-link span { font-size: 17px; }
 .coffee-stage { position: relative; z-index: auto; min-width: 0; perspective: 1200px; }
 .coffee-carousel { position: relative; width: 100%; height: clamp(350px, 43vw, 500px); transform-style: preserve-3d; touch-action: pan-y; user-select: none; cursor: grab; transition: transform .25s ease-out; transform: translateX(var(--drag-offset, 0px)); }
 .coffee-carousel.is-dragging { cursor: grabbing; transition: none; }
@@ -44,16 +37,7 @@ body { transition: background-color .6s ease; }
 .coffee-slide.is-leaving-prev { animation: coffee-back-out .72s cubic-bezier(.4,0,.7,.35) both; }
 .coffee-slide.is-entering-next { z-index: 5; animation: coffee-forward-in .72s cubic-bezier(.2,.75,.25,1) both; }
 .coffee-slide.is-entering-prev { z-index: 5; animation: coffee-rise-in .72s cubic-bezier(.2,.75,.25,1) both; }
-.coffee-carousel { margin-bottom: 36px; }
-.coffee-direction-controls { position: relative; z-index: 7; display: flex; align-items: center; justify-content: center; gap: clamp(18px, 4vw, 42px); }
-.coffee-direction { display: grid; width: 84px; min-height: 36px; place-items: center; padding: 8px; border: 0; background: transparent; cursor: pointer; }
-.coffee-direction::before { display: block; width: 100%; height: 6px; border-radius: 99px; background: #b9cbe0; content: ""; transition: background-color .25s ease, transform .25s ease; }
-.coffee-direction.is-selected::before, .coffee-direction:hover::before { background: #1e4b82; transform: scaleY(1.2); }
-.coffee-direction:focus-visible { outline: 1px solid #1e3382; outline-offset: 3px; }
 @keyframes coffee-title-arrive { from { opacity: 0; translate: 0 22px; } to { opacity: 1; translate: 0 0; } }
-@keyframes coffee-wave-flow { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
-@keyframes coffee-wave-undulate { from { transform: translateY(0) scaleY(1); } to { transform: translateY(-12px) scaleY(1.1); } }
-@keyframes coffee-wave-swell { 0%,100% { transform: translateY(0) scaleY(1); } 48% { transform: translateY(-18px) scaleY(1.14); } }
 @keyframes coffee-drop-out { from { transform: translate3d(0,0,0) rotate(0) scale(1); opacity: 1; filter: blur(0); } to { transform: translate3d(-50px,100px,80px) rotate(-15deg) scale(.7); opacity: .18; filter: blur(4px); } }
 @keyframes coffee-back-out { from { transform: translate3d(0,0,0) scale(1); opacity: 1; filter: blur(0); } to { transform: translate3d(13%,-1%,-55px) rotate(12deg) scale(.78); opacity: .72; filter: blur(4px); } }
 @keyframes coffee-forward-in { from { transform: translate3d(24%,-10%,-125px) rotate(18deg) scale(.48); opacity: .3; filter: blur(9px); } to { transform: translate3d(0,0,0) rotate(0) scale(1); opacity: 1; filter: blur(0); } }
@@ -64,20 +48,105 @@ body { transition: background-color .6s ease; }
   .coffee-hero-inner { width: min(100% - 32px, 560px); min-height: 0; grid-template-columns: 1fr; grid-template-rows: auto 1fr; gap: 2px; }
   .coffee-hero-copy { text-align: center; }
   .coffee-active-name { top: 2px; right: 0; max-width: 48%; font-size: 11px; }
-  .coffee-hero-menu-link { right: 0; bottom: -66px; min-height: 46px; }
   .coffee-hero-eyebrow { justify-content: center; margin-bottom: 12px; font-size: 9px; }
   .coffee-hero-copy h2 { font-size: clamp(45px, 10vw, 68px); }
   .coffee-hero-description { margin: 13px auto 15px; }
-  .coffee-hero-menu-link { min-height: 46px; }
   .coffee-stage { width: 100%; }
   .coffee-carousel { height: clamp(285px, 39svh, 370px); }
   .coffee-slide img { width: min(82%, 380px); }
   .coffee-slide.is-second { transform: translate3d(11%,-1%,-50px) scale(.72); }
   .coffee-slide.is-third { transform: translate3d(19%,-2%,-88px) scale(.52); }
   .coffee-stage { --coffee-back-x: 11%; --coffee-back-z: -50px; --coffee-back-scale: .72; --coffee-back-opacity: .78; --coffee-back-blur: 4px; }
-  .coffee-direction { width: 74px; min-height: 42px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .coffee-hero-copy h2, .coffee-hero-wave, .coffee-hero-wave path { animation: none !important; }
   .coffee-slide { transition-duration: .01ms; }
+}
+
+@media (max-width: 760px) {
+  .coffee-hero-inner { grid-template-rows: auto auto auto; }
+  .coffee-active-name { position: relative; top: auto; right: auto; grid-column: 1; grid-row: 2; justify-self: center; max-width: 100%; min-height: 0; margin: 0 0 5px; color: #1e3382; font-size: 11px; text-align: center; }
+  .coffee-stage { grid-column: 1; grid-row: 3; }
+}
+
+/* Two fixed, single-line hero headline rows with room for the longest line. */
+.coffee-hero-inner { grid-template-columns: minmax(390px, .9fr) minmax(0, 1.1fr); }
+.coffee-hero-copy { width: 100%; max-width: 500px; }
+.coffee-hero-copy h2 { font-size: clamp(32px, 4.2vw, 54px); letter-spacing: -.05em; line-height: 1.04; }
+.coffee-hero-title-line { display: block; white-space: nowrap; }
+.coffee-hero-title-line-accent { color: #8da2db; }
+.coffee-hero-description { max-width: 390px; font-size: 16px; }
+@media (max-width: 760px) {
+  .coffee-hero-inner { grid-template-columns: minmax(0, 1fr); }
+  .coffee-hero-copy { max-width: 100%; }
+  .coffee-hero-copy h2 { font-size: clamp(30px, 8vw, 45px); }
+  .coffee-hero-description { max-width: 420px; font-size: 16px; }
+}
+
+/* Lower, livelier multi-crest wave with a stronger continuous drift. */
+.coffee-hero-wave { height: clamp(145px, 20vh, 205px); }
+@media (max-width: 760px) {
+  .coffee-hero-wave { height: 132px; bottom: -14px; }
+}
+
+/* Increase hero typography while keeping each headline line unbroken. */
+.coffee-hero-eyebrow { gap: 14px; margin-bottom: 26px; font-size: 14px; letter-spacing: .18em; }
+.coffee-hero-eyebrow::before { width: 42px; height: 3px; }
+.coffee-hero-copy h2 { font-size: clamp(42px, 5.1vw, 66px); line-height: 1.02; letter-spacing: -.055em; }
+.coffee-hero-title-line { white-space: nowrap; }
+.coffee-hero-description { max-width: 440px; margin: 26px 0 22px; font-size: 19px; font-weight: 500; line-height: 1.65; }
+.coffee-active-name { max-width: 35%; }
+@media (max-width: 760px) {
+  .coffee-hero-eyebrow { justify-content: center; gap: 10px; margin-bottom: 18px; font-size: 12px; }
+  .coffee-hero-eyebrow::before { width: 32px; height: 2px; }
+  .coffee-hero-copy h2 { font-size: clamp(35px, 9.5vw, 52px); line-height: 1.04; }
+  .coffee-hero-description { max-width: 460px; margin: 20px auto 18px; font-size: 17px; line-height: 1.6; }
+  .coffee-active-name { margin-bottom: 10px; }
+}
+
+/* Pin the wave to viewport edges and reserve more room for the larger copy. */
+.coffee-hero-wave { left: 50%; right: auto; width: 100vw; margin-left: -50vw; }
+.coffee-hero-inner { grid-template-columns: minmax(480px, .92fr) minmax(0, 1.08fr); }
+.coffee-hero-copy { max-width: 560px; }
+.coffee-active-name { max-width: 27%; }
+.coffee-hero-eyebrow { margin-bottom: 30px; font-size: 16px; font-weight: 800; line-height: 1.4; }
+.coffee-hero-eyebrow::before { width: 48px; height: 3px; flex: 0 0 48px; }
+.coffee-hero-copy h2 { font-size: clamp(48px, 6vw, 76px); font-weight: 600; line-height: 1.02; letter-spacing: -.06em; }
+.coffee-hero-description { max-width: 500px; margin: 30px 0 24px; font-size: 20px; font-weight: 600; line-height: 1.6; }
+@media (max-width: 760px) {
+  .coffee-hero-inner { grid-template-columns: minmax(0, 1fr); }
+  .coffee-hero-copy { max-width: 100%; }
+  .coffee-hero-eyebrow { margin-bottom: 20px; font-size: 13px; }
+  .coffee-hero-eyebrow::before { width: 34px; flex-basis: 34px; }
+  .coffee-hero-copy h2 { font-size: clamp(34px, 10vw, 56px); }
+  .coffee-hero-description { max-width: 460px; margin: 22px auto 18px; font-size: 17px; line-height: 1.55; }
+}
+@media (max-width: 360px) {
+  .coffee-hero-copy h2 { font-size: 32px; }
+}
+
+/* A subtle vertical resting ripple, with a stronger in-place carousel response. */
+.coffee-hero-wave { left: 50%; right: auto; width: 100vw; margin-left: -50vw; animation: coffee-wave-rest 3.8s ease-in-out infinite alternate; transform-origin: center top; }
+.coffee-hero-wave path { animation: coffee-wave-path-rest 3.2s ease-in-out infinite alternate; transform-origin: center top; }
+.coffee-hero-wave.wave-active { animation: coffee-wave-active .55s ease-in-out infinite alternate; }
+.coffee-hero-wave.wave-active path { animation: coffee-wave-path-active .62s ease-in-out infinite alternate; }
+@keyframes coffee-wave-rest {
+  from { transform: translateY(0) scaleY(1); }
+  to { transform: translateY(-8px) scaleY(1.04); }
+}
+@keyframes coffee-wave-path-rest {
+  from { transform: translateY(0) scaleY(1); }
+  to { transform: translateY(-10px) scaleY(1.08); }
+}
+@keyframes coffee-wave-active {
+  from { transform: translateY(0) scaleY(1); }
+  to { transform: translateY(-25px) scaleY(1.2); }
+}
+@keyframes coffee-wave-path-active {
+  from { transform: translateY(0) scaleY(1); }
+  to { transform: translateY(-30px) scaleY(1.28); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .coffee-hero-wave, .coffee-hero-wave path,
+  .coffee-hero-wave.wave-active, .coffee-hero-wave.wave-active path { animation: none !important; }
 }

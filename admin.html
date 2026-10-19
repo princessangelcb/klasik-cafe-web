@@ -15,25 +15,15 @@
   <script src="js/dashboard-menu.js" defer></script>
 </head>
 <body class="admin-body">
+  <header class="site-header dashboard-site-header">
+    <div class="nav-wrap">
+      <a class="brand" href="index.html#home" aria-label="KLASIK CAFE home"><img class="brand-logo" src="klasik_cafe_logo_3_-removebg-preview.png" alt="KLASIK CAFE logo"></a>
+      <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="admin-primary-nav"><span></span><span></span><span></span></button>
+      <nav id="admin-primary-nav" class="primary-nav dashboard-primary-nav" aria-label="Admin navigation"><a class="nav-link" href="#admin-dashboard">Dashboard</a><a class="nav-link" href="#menu-management">Menu</a><a class="nav-link" href="#admin-orders">Orders</a><a class="nav-link" href="#admin-reviews">Reviews</a><a class="nav-link" href="#admin-suggestions">Suggestions</a><a class="nav-link" href="#admin-staff">Staff</a><a class="nav-link" href="#admin-cafe-info">Cafe Info</a><a class="nav-link dashboard-logout" href="login.html">Log Out</a></nav>
+    </div>
+  </header>
   <div class="admin-shell">
-    <aside class="admin-sidebar">
-      <div class="sidebar-brand">
-        <img class="brand-logo" src="klasik_cafe_logo_3_-removebg-preview.png" alt="KLASIK CAFE logo">
-        <button class="dashboard-menu-toggle" type="button" aria-expanded="false" aria-controls="admin-sidebar-navigation">Menu <span aria-hidden="true">☰</span></button>
-      </div>
-      <nav class="sidebar-nav" id="admin-sidebar-navigation" aria-label="Admin navigation">
-        <a href="#admin-dashboard" class="active">Dashboard</a>
-        <a href="#menu-management">Menu Management</a>
-        <a href="#admin-orders">Orders</a>
-        <a href="#admin-reviews">Reviews</a>
-        <a href="#admin-suggestions">Suggestions</a>
-        <a href="#admin-staff">Invite staff</a>
-        <a href="#admin-cafe-info">Café Information</a>
-      </nav>
-      <a class="sidebar-logout" href="login.html">Log Out</a>
-    </aside>
-
-    <main class="admin-main">
+<main class="admin-main">
       <header class="admin-topbar">
         <div>
           <p class="eyebrow eyebrow-blue"><span></span> ADMIN PANEL</p>
@@ -65,6 +55,7 @@
         </article>
       </section>
 
+      <div class="admin-operations-grid">
       <section id="menu-management" class="panel admin-panel">
         <div class="section-header compact-header">
           <div>
@@ -104,6 +95,7 @@
         </div>
         <div id="admin-order-list" class="admin-order-list"></div>
       </section>
+      </div>
 
       <section id="admin-reviews" class="panel admin-panel">
         <div class="section-header compact-header">

@@ -15,28 +15,15 @@
   <script src="js/dashboard-menu.js" defer></script>
 </head>
 <body class="barista-body">
+  <header class="site-header dashboard-site-header">
+    <div class="nav-wrap">
+      <a class="brand" href="index.html#home" aria-label="KLASIK CAFE home"><img class="brand-logo" src="klasik_cafe_logo_3_-removebg-preview.png" alt="KLASIK CAFE logo"></a>
+      <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="barista-primary-nav"><span></span><span></span><span></span></button>
+      <nav id="barista-primary-nav" class="primary-nav dashboard-primary-nav" aria-label="Barista navigation"><a class="nav-link" href="#barista-dashboard">Dashboard</a><a class="nav-link" href="#barista-orders" data-order-filter="Pending">Pending</a><a class="nav-link" href="#barista-orders" data-order-filter="Preparing">Preparing</a><a class="nav-link" href="#barista-orders" data-order-filter="Ready for Pickup">Ready for Pickup</a><a class="nav-link" href="#barista-orders" data-order-filter="Completed">Completed</a><a class="nav-link dashboard-logout" href="login.html">Log Out</a></nav>
+    </div>
+  </header>
   <div class="barista-shell">
-    <aside class="barista-sidebar">
-      <div class="sidebar-brand">
-        <img class="brand-logo" src="klasik_cafe_logo_3_-removebg-preview.png" alt="KLASIK CAFE logo">
-        <button class="dashboard-menu-toggle" type="button" aria-expanded="false" aria-controls="barista-sidebar-navigation">Menu <span aria-hidden="true">☰</span></button>
-      </div>
-      <nav class="sidebar-nav" id="barista-sidebar-navigation" aria-label="Barista navigation">
-        <a href="#barista-dashboard" class="active">Dashboard</a>
-        <a href="#barista-orders" data-order-filter="Pending">Pending</a>
-        <a href="#barista-orders" data-order-filter="Preparing">Preparing</a>
-        <a href="#barista-orders" data-order-filter="Ready for Pickup">Ready for Pickup</a>
-        <a href="#barista-orders" data-order-filter="Completed">Completed</a>
-      </nav>
-      <section id="barista-menu-status" class="barista-sidebar-menu-status" aria-labelledby="barista-menu-status-title">
-        <div class="sidebar-menu-heading"><span>MENU STATUS</span><strong id="barista-menu-status-title">Product Availability</strong></div>
-        <p class="barista-menu-help">Changes sync with the live menu.</p>
-        <div class="barista-menu-table-wrap"><table class="barista-menu-table"><thead><tr><th>Product</th><th>Availability</th><th>Best Seller</th></tr></thead><tbody id="barista-menu-status-list"><tr><td colspan="3">Loading menu items...</td></tr></tbody></table></div>
-      </section>
-      <a class="sidebar-logout" href="login.html">Log Out</a>
-    </aside>
-
-    <main class="barista-main">
+<main class="barista-main">
       <header class="barista-topbar">
         <div>
           <p class="eyebrow eyebrow-blue"><span></span> BARISTA PANEL</p>
@@ -63,6 +50,7 @@
         </article>
       </section>
 
+      <div class="barista-workspace-grid">
       <section id="barista-orders" class="panel barista-panel">
         <div class="section-header compact-header">
           <div>
@@ -76,6 +64,18 @@
           <aside id="barista-order-detail" class="detail-panel"></aside>
         </div>
       </section>
+
+      <section id="barista-menu-status" class="panel barista-panel barista-menu-status-panel" aria-labelledby="barista-menu-status-title">
+        <div class="section-header compact-header">
+          <div>
+            <p class="eyebrow eyebrow-blue"><span></span> MENU STATUS</p>
+            <h2 id="barista-menu-status-title">Product <em>Availability</em></h2>
+          </div>
+        </div>
+        <p class="barista-menu-help">Changes sync with the live menu.</p>
+        <div class="barista-menu-table-wrap"><table class="barista-menu-table"><thead><tr><th>Product</th><th>Availability</th><th>Best Seller</th></tr></thead><tbody id="barista-menu-status-list"><tr><td colspan="3">Loading menu items...</td></tr></tbody></table></div>
+      </section>
+      </div>
 
     </main>
   </div>

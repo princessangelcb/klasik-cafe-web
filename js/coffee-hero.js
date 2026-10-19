@@ -23,9 +23,7 @@ const initCoffeeHero = () => {
   const track = section?.querySelector('[data-coffee-carousel]');
   const wave = section?.querySelector('[data-coffee-wave]');
   const nameLabel = section?.querySelector('[data-coffee-name]');
-  const previousButton = section?.querySelector('[data-coffee-prev]');
-  const nextButton = section?.querySelector('[data-coffee-next]');
-  if (!section || !track || !wave || !nameLabel || !previousButton || !nextButton) return;
+  if (!section || !track || !wave || !nameLabel) return;
 
   const slides = COFFEE_PRODUCTS.map((product, index) => {
     const slide = document.createElement('article');
@@ -57,6 +55,25 @@ const initCoffeeHero = () => {
   let pointerId = null;
   let dragMoved = false;
   let suppressClick = false;
+  let autoplayTimer = null;
+  let waveSettleTimer = null;
+
+  const pulseWave = () => {
+    window.clearTimeout(waveSettleTimer);
+    wave.classList.add('wave-active');
+    void wave.getBoundingClientRect();
+    waveSettleTimer = window.setTimeout(() => {
+      wave.classList.remove('wave-active');
+    }, 820);
+  };
+
+  const scheduleAutoplay = () => {
+    window.clearTimeout(autoplayTimer);
+    autoplayTimer = window.setTimeout(() => {
+      goTo(1);
+      scheduleAutoplay();
+    }, 3500);
+  };
 
   const setPositions = () => {
     slides.forEach((slide, index) => {
@@ -76,6 +93,7 @@ const initCoffeeHero = () => {
   };
 
   const goTo = direction => {
+    pulseWave();
     if (isAnimating) return;
     isAnimating = true;
     const outgoing = slides[activeIndex];
@@ -86,9 +104,6 @@ const initCoffeeHero = () => {
 
     outgoing.classList.add(direction > 0 ? 'is-leaving-next' : 'is-leaving-prev');
     incoming.classList.add(direction > 0 ? 'is-entering-next' : 'is-entering-prev');
-    previousButton.classList.toggle('is-selected', direction < 0);
-    nextButton.classList.toggle('is-selected', direction > 0);
-
     window.setTimeout(() => {
       outgoing.classList.remove('is-leaving-next', 'is-leaving-prev');
       incoming.classList.remove('is-entering-next', 'is-entering-prev');
@@ -96,15 +111,14 @@ const initCoffeeHero = () => {
     }, 760);
   };
 
-  previousButton.addEventListener('click', () => goTo(-1));
-  nextButton.addEventListener('click', () => goTo(1));
   section.addEventListener('keydown', event => {
-    if (event.key === 'ArrowRight') { event.preventDefault(); goTo(1); }
-    if (event.key === 'ArrowLeft') { event.preventDefault(); goTo(-1); }
+    if (event.key === 'ArrowRight') { event.preventDefault(); goTo(1); scheduleAutoplay(); }
+    if (event.key === 'ArrowLeft') { event.preventDefault(); goTo(-1); scheduleAutoplay(); }
   });
 
   track.addEventListener('pointerdown', event => {
     if (event.pointerType === 'mouse' && event.button !== 0) return;
+    scheduleAutoplay();
     pointerStartX = event.clientX;
     pointerId = event.pointerId;
     dragMoved = false;
@@ -117,6 +131,8 @@ const initCoffeeHero = () => {
     if (Math.abs(delta) > 15) {
       dragMoved = true;
       suppressClick = true;
+      window.clearTimeout(waveSettleTimer);
+      wave.classList.add('wave-active');
       if (event.cancelable) event.preventDefault();
     }
     if (dragMoved) track.style.setProperty('--drag-offset', `${delta * .38}px`);
@@ -129,21 +145,34 @@ const initCoffeeHero = () => {
     if (Math.abs(delta) > 15) {
       suppressClick = true;
       goTo(delta < 0 ? 1 : -1);
+      scheduleAutoplay();
       window.setTimeout(() => { suppressClick = false; }, 400);
+    } else {
+      window.clearTimeout(waveSettleTimer);
+      wave.classList.remove('wave-active');
     }
     pointerId = null;
   };
   window.addEventListener('pointerup', finishPointer);
   window.addEventListener('pointercancel', finishPointer);
   track.addEventListener('click', event => {
-    if (!suppressClick) return;
+    if (suppressClick) {
+      event.preventDefault();
+      event.stopPropagation();
+      suppressClick = false;
+      return;
+    }
+    const clickedSlide = event.target.closest('.coffee-slide');
+    if (!clickedSlide || clickedSlide.classList.contains('is-active')) return;
     event.preventDefault();
-    event.stopPropagation();
-    suppressClick = false;
+    const offset = (Number(clickedSlide.dataset.index) - activeIndex + slides.length) % slides.length;
+    const direction = offset > slides.length / 2 ? offset - slides.length : offset;
+    if (direction) goTo(direction);
+    scheduleAutoplay();
   }, true);
 
   setPositions();
-  nextButton.classList.add('is-selected');
+  scheduleAutoplay();
 };
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initCoffeeHero, { once: true });

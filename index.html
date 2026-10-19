@@ -71,22 +71,17 @@
     </section>
 
     <section class="coffee-hero" id="home" aria-labelledby="coffee-hero-title">
-      <svg class="coffee-hero-wave" data-coffee-wave viewBox="0 0 1440 220" preserveAspectRatio="none" aria-hidden="true"><path d="M0 57C170 25 290 78 450 75c179-4 268-61 440-48 171 13 269 79 430 52 48-8 85-20 120-32v173H0Z"/></svg>
+      <svg class="coffee-hero-wave" data-coffee-wave width="100%" viewBox="0 0 1440 220" preserveAspectRatio="none" aria-hidden="true"><path d="M0 72C80 32 160 112 240 72S400 32 480 72 640 112 720 72 880 32 960 72 1120 112 1200 72 1360 32 1440 72V220H0Z"/></svg>
       <div class="coffee-hero-inner">
         <div class="coffee-hero-copy">
           <p class="coffee-hero-eyebrow">YOUR LOCAL COFFEE SPOT</p>
-          <h2 id="coffee-hero-title">Awaken<br><em>Your Senses</em></h2>
+          <h2 id="coffee-hero-title"><span class="coffee-hero-title-line">A taste of Klasik</span><span class="coffee-hero-title-line coffee-hero-title-line-accent">in every cup.</span></h2>
           <p class="coffee-hero-description">Meet the cups that make an ordinary day feel a little more special.</p>
         </div>
         <div class="coffee-stage" data-coffee-stage aria-label="Featured coffee carousel">
           <div class="coffee-carousel" data-coffee-carousel></div>
-          <div class="coffee-direction-controls" role="group" aria-label="Change featured coffee">
-            <button class="coffee-direction coffee-previous" data-coffee-prev type="button" aria-label="Previous coffee"></button>
-            <button class="coffee-direction coffee-next" data-coffee-next type="button" aria-label="Next coffee"></button>
-          </div>
         </div>
         <p class="coffee-active-name" data-coffee-name aria-live="polite">Amerikano</p>
-        <a class="coffee-hero-menu-link" href="menu.html">View our menu <span aria-hidden="true">&#8599;</span></a>
       </div>
     </section>
 
@@ -100,6 +95,11 @@
           <p class="section-intro">Browse the drinks and treats currently on our menu, maintained by the KLASIK CAFE team.</p>
         </div>
         <div id="featured-best-sellers" class="product-grid" aria-live="polite"></div>
+        <nav id="featured-best-sellers-pagination" class="featured-pagination" aria-label="Best seller pages" hidden>
+          <button class="featured-pagination-button" type="button" data-featured-page="previous" aria-label="Previous best sellers">&larr; <span>Previous</span></button>
+          <span class="featured-pagination-status" aria-live="polite"></span>
+          <button class="featured-pagination-button" type="button" data-featured-page="next" aria-label="Next best sellers"><span>Next</span> &rarr;</button>
+        </nav>
         <div class="featured-menu-action">
           <a class="button button-primary" href="menu.html">Browse the menu <span aria-hidden="true">&#8599;</span></a>
         </div>

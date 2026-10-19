@@ -7,6 +7,10 @@ const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (ch) => ({
 document.addEventListener('DOMContentLoaded', async () => {
   const container = document.getElementById('featured-best-sellers');
   if (!container) return;
+  const pagination = document.getElementById('featured-best-sellers-pagination');
+  const pageStatus = pagination?.querySelector('.featured-pagination-status');
+  let currentPage = 0;
+  const pageSize = 3;
   const { data, error } = await supabase
     .from('menu_items')
     .select('*')
@@ -22,9 +26,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   const featured = products.filter(item => item.is_best_seller === true);
   if (!featured.length) {
     container.innerHTML = '<p class="customer-empty-state">No featured favorites right now. Browse the full menu to find yours.</p>';
+    if (pagination) pagination.hidden = true;
     return;
   }
-  container.innerHTML = featured.map((item) => {
+  const pageCount = Math.ceil(featured.length / pageSize);
+  currentPage = Math.min(currentPage, pageCount - 1);
+  const pageItems = featured.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+  container.innerHTML = pageItems.map((item) => {
     const available = item.is_available !== false;
     const name = escapeHtml(item.item_name);
     const price = escapeHtml(item.price);
@@ -38,12 +46,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         <div class="product-title"><h3>${name}</h3><span>₱${price}</span></div>
         <p>${escapeHtml(item.description || '')}</p>
         ${available ? '' : '<p class="product-availability unavailable">Not Available</p>'}
-        <button class="button button-primary button-wide customer-product-button" type="button" data-name="${name}" data-price="${price}" data-available="${available}" ${available ? '' : 'disabled aria-disabled="true"'}>${available ? 'Customize' : 'Unavailable'}</button>
+        <button class="button button-primary button-wide customer-product-button" type="button" data-name="${name}" data-price="${price}" data-available="${available}" ${available ? '' : 'disabled aria-disabled="true"'}>${available ? 'Add to Cart' : 'Unavailable'}</button>
       </div>
     </article>`;
   }).join('');
+  if (pagination) {
+    pagination.hidden = pageCount <= 1;
+    pagination.querySelector('[data-featured-page="previous"]').disabled = currentPage === 0;
+    pagination.querySelector('[data-featured-page="next"]').disabled = currentPage >= pageCount - 1;
+    if (pageStatus) pageStatus.textContent = `Page ${currentPage + 1} of ${pageCount}`;
+  }
   window.dispatchEvent(new Event('klasik-menu-ready'));
   };
+  pagination?.addEventListener('click', event => {
+    const button = event.target.closest('[data-featured-page]');
+    if (!button || button.disabled) return;
+    const featured = products.filter(item => item.is_best_seller === true);
+    const pageCount = Math.ceil(featured.length / pageSize);
+    currentPage += button.dataset.featuredPage === 'next' ? 1 : -1;
+    currentPage = Math.max(0, Math.min(currentPage, pageCount - 1));
+    render();
+  });
   render();
   if (supabase.channel) {
     supabase.channel('homepage-menu-availability')
