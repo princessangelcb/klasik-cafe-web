@@ -19,6 +19,11 @@
 }  
   
 * { box-sizing: border-box; }  
+html[data-theme="dark"] { color-scheme: dark; --ink:#f1eee8; --muted:#b9b7b1; --paper:#171916; --white:#20231f; --line:#3a3d37; --blue-pale:#252b3c; }
+html[data-theme="dark"] body { background:#171916; color:#f1eee8; }
+html[data-theme="dark"] .site-header, html[data-theme="dark"] .customer-panel, html[data-theme="dark"] .panel, html[data-theme="dark"] .product-card, html[data-theme="dark"] .customer-order-item, html[data-theme="dark"] .customer-favorite-item, html[data-theme="dark"] .admin-modal { background:#20231f; color:#f1eee8; border-color:#3a3d37; }
+html[data-theme="dark"] input, html[data-theme="dark"] textarea, html[data-theme="dark"] select { color:#f1eee8; background:#292c27; border-color:#55594f; }
+.theme-toggle { border:1px solid currentColor; border-radius:999px; padding:6px 10px; color:inherit; background:transparent; font-size:12px; cursor:pointer; }
 html { scroll-behavior: smooth; scroll-padding-top: 88px; }  
 body { margin: 0; min-width: 320px; font-family: var(--sans); font-size: 16px; line-height: 1.65; }  
 img { display: block; max-width: 100%; }  

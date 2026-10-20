@@ -1723,3 +1723,6 @@
 #featured-best-sellers .product-card { background-color: #fff; border: none; }
 #featured-best-sellers .product-image { border: none; }
 #featured-best-sellers .product-info { background: transparent; color: #202633; }
+.customer-cart-item { position: relative; transition: transform .18s ease; touch-action: pan-y; }
+.customer-cart-delete { position:absolute; z-index:2; top:12px; right:12px; display:grid; place-items:center; width:36px; height:36px; border:0; border-radius:50%; color:#fff; background:#b3261e; cursor:pointer; }
+.customer-cart-item.is-swipe-revealed { transform:translateX(-44px); }

@@ -138,6 +138,12 @@
           </div>
           <button type="submit" class="button button-primary">Send Invitation</button>
         </form>
+        <h3>Current staff</h3><div id="admin-staff-list" class="admin-staff-list" aria-live="polite"></div>
+      </section>
+
+      <section id="admin-receipt-settings" class="panel admin-panel">
+        <div class="section-header compact-header"><div><p class="eyebrow eyebrow-blue"><span></span> RECEIPTS</p><h2>Receipt <em>Details</em></h2></div></div>
+        <form id="receipt-settings-form" class="admin-form"><label>Store header<input id="receipt-header" maxlength="120"></label><label>Contact details<input id="receipt-contact" maxlength="180"></label><label>Footer text<textarea id="receipt-footer" rows="3" maxlength="500"></textarea></label><button class="button button-primary" type="submit">Save receipt details</button><p id="receipt-settings-message" role="status"></p></form>
       </section>
 
       <!-- UPDATED CAFE INFO SECTION -->

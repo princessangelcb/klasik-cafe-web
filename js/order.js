@@ -70,6 +70,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 ? `<p class="customer-cart-customizations">${escapeHtml(item.customizations)}</p>`
                 : '<p class="customer-cart-customizations">Standard recipe</p>';
             return `<article class="customer-order-item customer-cart-item">
+                <button type="button" class="customer-cart-delete" data-cart-delete="${index}" aria-label="Remove ${escapeHtml(item.item_name)} from cart" title="Remove item">&#128465;</button>
                 <label class="customer-cart-select"><input type="checkbox" data-cart-select="${index}" ${selectedKeys.has(key) ? 'checked' : ''}><span>Include</span></label>
                 ${image}
                 <div class="customer-cart-info">
@@ -102,6 +103,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     itemsContainer.addEventListener('click', async (event) => {
+        const deleteButton = event.target.closest('[data-cart-delete]');
+        if (deleteButton) {
+            const index = Number(deleteButton.dataset.cartDelete);
+            const item = items[index];
+            if (!item?.id) { window.klasikNotify?.('This cart row cannot be removed because it has no ID.', 'error'); return; }
+            deleteButton.disabled = true;
+            const { error: deleteError } = await supabase.from('cart').delete().eq('id', item.id).eq('user_id', user.id);
+            if (deleteError) { deleteButton.disabled = false; window.klasikNotify?.('Could not remove this item.', 'error'); return; }
+            selectedKeys.delete(itemKey(item, index));
+            items.splice(index, 1);
+            if (!items.length) { itemsContainer.innerHTML = '<p class="customer-empty-state">Your cart is currently empty. Browse the <a href="menu.html">menu</a> to add an item.</p>'; refreshTotal(); }
+            else renderItems();
+            return;
+        }
         const button = event.target.closest('[data-cart-qty]');
         if (!button) return;
         const index = Number(button.dataset.cartIndex);
@@ -125,6 +140,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         item.quantity = nextQuantity;
         renderItems();
     });
+
+    let swipeStart = null;
+    itemsContainer.addEventListener('touchstart', event => {
+        const row = event.target.closest('.customer-cart-item');
+        if (row && event.touches.length === 1) swipeStart = { row, x: event.touches[0].clientX, y: event.touches[0].clientY };
+    }, { passive: true });
+    itemsContainer.addEventListener('touchend', event => {
+        if (!swipeStart || !event.changedTouches.length) return;
+        const dx = event.changedTouches[0].clientX - swipeStart.x;
+        const dy = event.changedTouches[0].clientY - swipeStart.y;
+        if (dx < -55 && Math.abs(dx) > Math.abs(dy) * 1.3) swipeStart.row.classList.add('is-swipe-revealed');
+        else if (dx > 30) swipeStart.row.classList.remove('is-swipe-revealed');
+        swipeStart = null;
+    }, { passive: true });
 
     placeOrderButton?.addEventListener('click', async () => {
         const selectedItems = items.filter((item, index) => selectedKeys.has(itemKey(item, index)));

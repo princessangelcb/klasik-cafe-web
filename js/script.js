@@ -1,6 +1,26 @@
 "use strict";
 
 document.addEventListener("DOMContentLoaded", () => {
+  const themeKey = "klasikCafeTheme";
+  const applyTheme = (theme) => { document.documentElement.dataset.theme = theme; };
+  applyTheme(localStorage.getItem(themeKey) === "dark" ? "dark" : "light");
+  const themeToggle = document.createElement("button");
+  themeToggle.type = "button";
+  themeToggle.className = "theme-toggle";
+  themeToggle.textContent = document.documentElement.dataset.theme === "dark" ? "Light mode" : "Dark mode";
+  themeToggle.setAttribute("aria-label", "Toggle dark mode");
+  themeToggle.addEventListener("click", () => {
+    const theme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    localStorage.setItem(themeKey, theme);
+    applyTheme(theme);
+    themeToggle.textContent = theme === "dark" ? "Light mode" : "Dark mode";
+  });
+  document.querySelector(".nav-actions")?.append(themeToggle);
+  const profileLink = document.createElement("a");
+  profileLink.className = "button button-outline button-small";
+  profileLink.href = "account-settings.html";
+  profileLink.textContent = "Profile";
+  document.querySelector(".nav-actions")?.append(profileLink);
   const welcomeScreen = document.getElementById("welcome-screen");
   const tagline = document.getElementById("welcome-tagline");
   if (welcomeScreen && tagline) {

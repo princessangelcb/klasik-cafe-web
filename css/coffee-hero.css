@@ -150,3 +150,7 @@ body { transition: background-color .6s ease; }
   .coffee-hero-wave, .coffee-hero-wave path,
   .coffee-hero-wave.wave-active, .coffee-hero-wave.wave-active path { animation: none !important; }
 }
+.coffee-carousel-arrow { position:absolute; z-index:8; top:50%; display:grid; place-items:center; width:44px; height:44px; border:1px solid rgba(255,255,255,.8); border-radius:50%; color:#fff; background:rgba(30,51,130,.75); cursor:pointer; transform:translateY(-50%); }
+.coffee-carousel-prev { left:0; }
+.coffee-carousel-next { right:0; }
+.coffee-carousel-arrow:hover { background:#1e3382; }

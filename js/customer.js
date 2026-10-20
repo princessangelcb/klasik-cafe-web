@@ -401,6 +401,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     return true;
   }
 
+  async function addPastryDirectly(product, button) {
+    const user = await window.klasikGetCurrentUser();
+    currentUser = user;
+    if (!user) { window.klasikShowAuthWarning("Please log in or sign up to add items to your cart."); return; }
+    button.disabled = true;
+    const { error } = await supabase.from("cart").insert([{ item_name: product.name, price: product.price, quantity: 1, customizations: "", user_id: user.id, user_email: user.email }]);
+    button.disabled = false;
+    if (error) { window.klasikNotify?.(`Could not add item: ${error.message}`, "error"); return; }
+    window.klasikNotify?.(`${product.name} added to your cart.`);
+    if (cartBadge) cartBadge.textContent = String((Number(cartBadge.textContent) || 0) + 1);
+  }
+
   function closeCustomization() {
     if (modal) modal.hidden = true;
     activeProduct = null;
@@ -533,6 +545,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       const price = Number(String(priceText || "").replace(/[^\d.]/g, ""));
       if (name && await checkProductAvailability(name)) {
         activeProduct = { name, price, image: card?.querySelector(".product-image img")?.src || "" };
+        const category = `${card?.dataset.category || ""} ${card?.dataset.subcategory || ""}`.toLowerCase();
+        if (/pastr|cookie|cheesecake|smores|s'mores/.test(category)) {
+          await addPastryDirectly(activeProduct, productButton);
+          activeProduct = null;
+          return;
+        }
         openCustomization(name, price, activeProduct.image);
         updateModalFavoriteButton();
       }

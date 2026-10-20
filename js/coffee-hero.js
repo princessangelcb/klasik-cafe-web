@@ -111,6 +111,11 @@ const initCoffeeHero = () => {
     }, 760);
   };
 
+  section.querySelectorAll('[data-coffee-direction]').forEach(button => button.addEventListener('click', () => {
+    goTo(Number(button.dataset.coffeeDirection));
+    scheduleAutoplay();
+  }));
+
   section.addEventListener('keydown', event => {
     if (event.key === 'ArrowRight') { event.preventDefault(); goTo(1); scheduleAutoplay(); }
     if (event.key === 'ArrowLeft') { event.preventDefault(); goTo(-1); scheduleAutoplay(); }

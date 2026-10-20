@@ -552,6 +552,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 4. Staff Invitation Logic
     const inviteForm = document.getElementById('invite-staff-form');
 
+    const staffList = document.getElementById('admin-staff-list');
+    const loadStaff = async () => {
+        if (!staffList) return;
+        const { data: staff, error } = await supabase.from('profiles').select('id,email,full_name,role').in('role', ['admin','barista']).order('email');
+        if (error) { staffList.textContent = `Staff list unavailable: ${error.message}`; return; }
+        staffList.innerHTML = (staff || []).length ? staff.map(member => `<div class="admin-staff-row"><span><strong>${escapeOrderText(member.full_name || member.email || 'Staff')}</strong><small>${escapeOrderText(member.email || '')}</small></span><select data-staff-role="${escapeOrderText(member.id)}" aria-label="Role for ${escapeOrderText(member.email || 'staff')}"><option value="barista" ${member.role === 'barista' ? 'selected' : ''}>Barista</option><option value="admin" ${member.role === 'admin' ? 'selected' : ''}>Admin</option><option value="customer">Remove staff access</option></select></div>`).join('') : '<p>No staff profiles found.</p>';
+    };
+    staffList?.addEventListener('change', async event => {
+        const select = event.target.closest('[data-staff-role]');
+        if (!select) return;
+        const role = select.value;
+        select.disabled = true;
+        const { error } = await supabase.from('profiles').update({ role }).eq('id', select.dataset.staffRole);
+        if (error) { window.klasikNotify?.(`Could not update staff role: ${error.message}`, 'error'); }
+        else window.klasikNotify?.(role === 'customer' ? 'Staff access removed.' : 'Staff role updated.');
+        await loadStaff();
+    });
+    await loadStaff();
+
     if (inviteForm) {
         inviteForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -594,9 +613,24 @@ document.addEventListener('DOMContentLoaded', async () => {
             } else {
                 window.klasikNotify?.(`${name} (${email}) has been pre-approved as a ${role}.`);
                 inviteForm.reset();
+                await loadStaff();
                 submitBtn.textContent = "Send Invitation";
                 submitBtn.disabled = false;
             }
+        });
+    }
+
+    const receiptForm = document.getElementById('receipt-settings-form');
+    if (receiptForm) {
+        const { data: settings } = await supabase.from('receipt_settings').select('*').eq('id', 1).maybeSingle();
+        document.getElementById('receipt-header').value = settings?.store_header || 'KLASIK CAFE';
+        document.getElementById('receipt-contact').value = settings?.contact_details || '';
+        document.getElementById('receipt-footer').value = settings?.footer_text || '';
+        receiptForm.addEventListener('submit', async event => {
+            event.preventDefault();
+            const update = { id: 1, store_header: document.getElementById('receipt-header').value.trim(), contact_details: document.getElementById('receipt-contact').value.trim(), footer_text: document.getElementById('receipt-footer').value.trim(), updated_at: new Date().toISOString() };
+            const { error } = await supabase.from('receipt_settings').upsert(update, { onConflict: 'id' });
+            document.getElementById('receipt-settings-message').textContent = error ? `Could not save: ${error.message}` : 'Receipt details saved.';
         });
     }
 

@@ -820,3 +820,6 @@ html { max-width: 100vw; overflow-x: hidden; }
   .menu-management-header { align-items: flex-start; flex-wrap: wrap; }
   .menu-management-header > .button { margin-left: auto; }
 }
+.admin-staff-list { display:grid; gap:10px; margin-top:14px; }
+.admin-staff-row { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:12px; border:1px solid var(--line); border-radius:10px; }
+.admin-staff-row small { display:block; color:var(--muted); }

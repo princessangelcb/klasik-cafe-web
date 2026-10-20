@@ -19,18 +19,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
     const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+    const { data: receiptSettings } = await supabase.from('receipt_settings').select('store_header,contact_details,footer_text').eq('id', 1).maybeSingle();
+    const storeHeader = receiptSettings?.store_header || 'KLASIK CAFE';
+    const contactDetails = receiptSettings?.contact_details || '';
+    const footerText = receiptSettings?.footer_text || 'This receipt needs to be presented first to the store to order and to pay before preparation will begin.';
     const items = Array.isArray(order.items) ? order.items : [];
     const content = items.length
         ? items.map((item) => `<li><span>${esc(item.quantity)} × ${esc(item.item_name)}${item.customizations ? `<small>${esc(item.customizations)}</small>` : ''}</span><strong>₱${(Number(item.unit_price || 0) * Number(item.quantity || 1)).toFixed(2)}</strong></li>`).join('')
         : `<li><span>${esc(order.order_details || 'Order items')}</span></li>`;
-    receipt.innerHTML = `<div class="receipt-brand"><img class="receipt-logo" src="klasik_cafe_logovid_trans.gif" alt="KLASIK CAFE"></div>
+    receipt.innerHTML = `<div class="receipt-brand"><img class="receipt-logo" src="klasik_cafe_logovid_trans.gif" alt="${esc(storeHeader)}"></div><h2 class="receipt-store-header">${esc(storeHeader)}</h2>
       <p class="receipt-instruction"><strong>Please take a screenshot of this receipt and present it to the store.</strong></p>
       <p class="receipt-kicker">DIGITAL ORDER RECEIPT</p>
       <div class="receipt-code-label">ORDER CODE</div><div class="receipt-code">${esc(order.order_code || 'PENDING')}</div>
       <div class="receipt-meta"><span>${esc(order.customer_name || 'Customer')}</span><span>${order.created_at ? esc(new Date(order.created_at).toLocaleString()) : ''}</span></div>
       <ul class="receipt-items">${content}</ul>${order.special_request ? `<p class="receipt-note"><strong>Note:</strong> ${esc(order.special_request)}</p>` : ''}
       <div class="receipt-total"><span>TOTAL</span><strong>₱${Number(order.total_price || 0).toFixed(2)}</strong></div>
-      <p class="receipt-disclaimer">This receipt needs to be presented first to the store to order and to pay before preparation will begin.</p>
+      ${contactDetails ? `<p class="receipt-contact">${esc(contactDetails)}</p>` : ''}<p class="receipt-disclaimer">${esc(footerText)}</p>
       <a class="button button-primary button-wide" href="placed-orders.html">View my orders</a>`;
     status.hidden = true;
     receipt.hidden = false;
