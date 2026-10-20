@@ -2,6 +2,7 @@
 import { supabase } from './supabase.js';
 import { buildCustomizedFavoriteKey, parseFavoriteKey } from './favorite-identity.mjs';
 import { getFavoritePricing } from './favorite-pricing.mjs';
+import { parseCustomizationData } from './customization-data.mjs';
 
 document.addEventListener("DOMContentLoaded", async () => {
   const keys = {
@@ -79,16 +80,19 @@ document.addEventListener("DOMContentLoaded", async () => {
   const selectedAddons = () => Array.from(document.querySelectorAll("input[name='custom-addon']:checked"));
   const selectedSize = () => document.querySelector("input[name='custom-size']:checked")?.value || "Medium";
   const addonCost = () => selectedAddons().reduce((sum, input) => sum + Number(input.dataset.price || 0), 0);
+  const supportsDrinkCustomizations = (category = "") => /coffee|espesyal|matcha/i.test(String(category));
   const selectedCustomizations = () => ({
-    size: selectedSize(),
-    milk: document.querySelector("input[name='custom-milk']:checked")?.value || "Regular",
-    sweetness: document.querySelector("input[name='custom-sweetness']:checked")?.value || "0%",
-    ice: document.querySelector("input[name='custom-ice']:checked")?.value || "Less Ice",
-    addons: selectedAddons().map((input) => ({ name: input.value, price: Number(input.dataset.price || 0) })).sort((a, b) => a.name.localeCompare(b.name)),
+    ...(activeProduct?.customizable ? {
+      size: selectedSize(),
+      milk: document.querySelector("input[name='custom-milk']:checked")?.value || "Regular",
+      sweetness: document.querySelector("input[name='custom-sweetness']:checked")?.value || "0%",
+      ice: document.querySelector("input[name='custom-ice']:checked")?.value || "Less Ice",
+      addons: selectedAddons().map((input) => ({ name: input.value, price: Number(input.dataset.price || 0) })).sort((a, b) => a.name.localeCompare(b.name))
+    } : {}),
     quantity: activeQuantity
   });
   const modalFavoriteKey = () => activeProduct
-    ? buildCustomizedFavoriteKey(activeProduct.name, selectedCustomizations())
+    ? (activeProduct.customizable ? buildCustomizedFavoriteKey(activeProduct.name, selectedCustomizations()) : activeProduct.name)
     : "";
 
   function applyProductCards() {
@@ -218,7 +222,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!modalFavoriteButton || !activeProduct) return;
     const saved = favoriteNames.has(modalFavoriteKey());
     modalFavoriteButton.textContent = saved ? "♥ Remove customized drink from Favorites" : "♡ Save customized drink to Favorites";
+    const itemLabel = activeProduct.customizable ? "customized drink" : "item";
+    modalFavoriteButton.textContent = saved ? `Remove ${itemLabel} from Favorites` : `Save ${itemLabel} to Favorites`;
     modalFavoriteButton.setAttribute("aria-pressed", String(saved));
+    modalFavoriteButton.setAttribute("aria-label", saved ? `Remove ${itemLabel} from Favorites` : `Save ${itemLabel} to Favorites`);
     modalFavoriteButton.setAttribute("aria-label", saved ? "Remove customized drink from Favorites" : "Save customized drink to Favorites");
   }
 
@@ -258,7 +265,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
     const productsNames = [...new Set(favoriteKeys.map((key) => parseFavoriteKey(key).baseName))];
-    const { data: products, error } = await supabase.from("menu_items").select("item_name, price, image_url, is_available").in("item_name", productsNames);
+    const { data: products, error } = await supabase.from("menu_items").select("item_name, price, image_url, is_available, category, subcategory").in("item_name", productsNames);
     if (error) console.error("Could not load favorite product details.", error);
     const productByName = new Map((products || []).map((product) => [product.item_name, product]));
     const favoriteRows = favoriteKeys.map((favoriteKey) => {
@@ -275,13 +282,15 @@ document.addEventListener("DOMContentLoaded", async () => {
       const customizationDetails = favorite.isCustomized
         ? `<span class="customer-favorite-type">Customized Drink</span><small class="customer-favorite-customizations">${escapeHtml(formatCustomizations(favorite.customizations))}</small>`
         : `<span class="customer-favorite-type customer-favorite-type-regular">Regular drink</span>`;
+      const canCustomize = true;
+      const hasDrinkOptions = supportsDrinkCustomizations(`${product?.category || ''} ${product?.subcategory || ''}`);
       return `<article class="customer-favorite-item${favorite.isCustomized ? ' is-customized-favorite' : ''}">${image}<div class="customer-favorite-info"><strong>${escapeHtml(name)}</strong>${customizationDetails}${price}
         <div class="customer-inline-qty" aria-label="Change favorite quantity for ${escapeHtml(name)}">
-          <button type="button" data-favorite-quantity="decrease" data-favorite-key="${escapeHtml(favoriteKey)}" aria-label="Decrease quantity">-</button>
+          <button type="button" data-favorite-quantity="decrease" data-favorite-key="${escapeHtml(favoriteKey)}" aria-label="Decrease quantity">&#8722;</button>
           <span>${quantity}</span>
           <button type="button" data-favorite-quantity="increase" data-favorite-key="${escapeHtml(favoriteKey)}" aria-label="Increase quantity">+</button>
         </div></div>
-        <div class="customer-favorite-actions"><a class="button button-outline button-small" href="menu.html">View menu</a><button class="customer-favorite-remove" type="button" data-favorite-remove="${escapeHtml(favoriteKey)}">Remove</button></div>
+        <div class="customer-favorite-actions">${canCustomize ? `<button class="button button-outline button-small" type="button" data-favorite-edit="${escapeHtml(favoriteKey)}" data-favorite-customizable="${hasDrinkOptions}" data-favorite-name="${escapeHtml(name)}" data-favorite-price="${Number(product?.price || 0)}" data-favorite-image="${escapeHtml(product?.image_url || '')}">Edit</button>` : ''}<a class="button button-outline button-small" href="menu.html">View menu</a><button class="customer-favorite-remove" type="button" data-favorite-remove="${escapeHtml(favoriteKey)}">Remove</button></div>
       </article>`;
     }).join("");
     favoritesList.innerHTML = favoriteRows;
@@ -301,16 +310,21 @@ document.addEventListener("DOMContentLoaded", async () => {
   const formatFavoriteMoney = (amount) => `\u20B1${Number(amount || 0).toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
   function selectedBasePrice() {
-    return Number(activeProduct?.price || 0) + (selectedSize() === "Large" ? 25 : 0) + addonCost();
+    return Number(activeProduct?.price || 0) + (activeProduct?.customizable && selectedSize() === "Large" ? 25 : 0) + (activeProduct?.customizable ? addonCost() : 0);
   }
 
   function updateModalTotal() {
     if (activeProduct && modalTotal) modalTotal.textContent = money(selectedBasePrice() * activeQuantity);
   }
 
-  function openCustomization(productName, productPrice, productImage = "") {
-    if (!modal) return;
-    activeProduct = { name: productName, price: Number(productPrice), image: productImage };
+  function openCustomization(productName, productPrice, productImage = "", customizable = true) {
+    if (!modal) return false;
+    activeProduct = { name: productName, price: Number(productPrice), image: productImage, customizable };
+    modal.dataset.customizable = String(customizable);
+    modal.querySelectorAll(".customer-modal-content > .customer-option-block:not(.customer-qty-row)").forEach((block) => {
+      block.hidden = !customizable;
+      block.style.display = customizable ? "" : "none";
+    });
     if (modalTitle) modalTitle.textContent = productName;
     if (modalBasePrice) modalBasePrice.textContent = money(Number(productPrice));
     if (modalImage) {
@@ -331,8 +345,33 @@ document.addEventListener("DOMContentLoaded", async () => {
     const guestNote = document.getElementById('customer-guest-action-note');
     if (guestNote) guestNote.hidden = Boolean(currentUser);
     if (modalAddButton) modalAddButton.disabled = false;
+    if (modalAddButton) { modalAddButton.hidden = false; modalAddButton.textContent = 'Add to Cart'; }
     updateModalTotal();
+    return true;
   }
+
+  window.klasikOpenCartCustomization = (name, price, image, details, id, quantity = 1, customizableOverride) => {
+    window.klasikEditingFavoriteKey = null;
+    const customizationState = parseCustomizationData(details);
+    const customizable = typeof customizableOverride === 'boolean'
+      ? customizableOverride
+      : Boolean(customizationState);
+    if (!openCustomization(name, price, image, customizable)) return false;
+    const pick = (group, value) => { const input = [...document.querySelectorAll(`input[name='custom-${group}']`)].find(item => item.value === value); if (input) input.checked = true; };
+    for (const key of ['size', 'milk', 'sweetness', 'ice']) {
+      const value = customizationState?.[key];
+      if (value) pick(key, value);
+    }
+    const addons = (customizationState?.addons || []).map(addon => addon.name);
+    document.querySelectorAll("input[name='custom-addon']").forEach(input => { input.checked = addons.includes(input.value); });
+    window.klasikEditingCartId = id;
+    activeQuantity = Math.max(1, Number.parseInt(quantity, 10) || 1);
+    if (modalQty) modalQty.textContent = String(activeQuantity);
+    if (modalAddButton) { modalAddButton.hidden = false; modalAddButton.textContent = 'Save Changes'; }
+    updateModalTotal();
+    return true;
+  };
+  window.klasikEditingFavoriteKey = null;
 
   async function checkProductAvailability(productName) {
     console.log("Checking availability for:", productName);
@@ -340,7 +379,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!normalizedName) {
       console.error("Availability check received an empty product name.");
       window.klasikNotify?.("Availability could not be confirmed. Please try again.", "error");
-      return false;
+      return null;
     }
 
     let data;
@@ -354,23 +393,23 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch (queryError) {
       console.error("Availability query threw a network or client error:", queryError);
       window.klasikNotify?.("Availability could not be confirmed. Please try again.", "error");
-      return false;
+      return null;
     }
 
     if (error) {
       console.error("Supabase availability query failed (check network, table access, and RLS):", error);
       window.klasikNotify?.("Availability could not be confirmed. Please try again.", "error");
-      return false;
+      return null;
     }
     if (!Array.isArray(data) || data.length === 0) {
       console.warn("No menu item matched this product name:", normalizedName);
       window.klasikNotify?.("Availability could not be confirmed. Please try again.", "error");
-      return false;
+      return null;
     }
     if (data.length > 1) {
       console.error("Availability lookup matched multiple menu items; item_name should be unique ignoring case:", data);
       window.klasikNotify?.("Availability could not be confirmed. Please contact the café.", "error");
-      return false;
+      return null;
     }
 
     const item = data[0];
@@ -396,27 +435,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       });
       window.klasikNotify?.("This product is not available right now.", "error");
-      return false;
+      return null;
     }
-    return true;
-  }
-
-  async function addPastryDirectly(product, button) {
-    const user = await window.klasikGetCurrentUser();
-    currentUser = user;
-    if (!user) { window.klasikShowAuthWarning("Please log in or sign up to add items to your cart."); return; }
-    button.disabled = true;
-    const { error } = await supabase.from("cart").insert([{ item_name: product.name, price: product.price, quantity: 1, customizations: "", user_id: user.id, user_email: user.email }]);
-    button.disabled = false;
-    if (error) { window.klasikNotify?.(`Could not add item: ${error.message}`, "error"); return; }
-    window.klasikNotify?.(`${product.name} added to your cart.`);
-    if (cartBadge) cartBadge.textContent = String((Number(cartBadge.textContent) || 0) + 1);
+    return item;
   }
 
   function closeCustomization() {
     if (modal) modal.hidden = true;
     activeProduct = null;
     activeQuantity = 1;
+    window.klasikEditingCartId = null;
+    window.klasikEditingFavoriteKey = null;
     if (modalQty) modalQty.textContent = "1";
   }
 
@@ -523,6 +552,27 @@ document.addEventListener("DOMContentLoaded", async () => {
       await toggleFavorite({ name: favorite.baseName, favoriteKey });
       return;
     }
+    const editFavorite = event.target.closest('[data-favorite-edit]');
+    if (editFavorite) {
+      const favoriteKey = editFavorite.dataset.favoriteEdit;
+      const favorite = parseFavoriteKey(favoriteKey);
+      window.klasikEditingCartId = null;
+      window.klasikEditingFavoriteKey = favoriteKey;
+      openCustomization(editFavorite.dataset.favoriteName, editFavorite.dataset.favoritePrice, editFavorite.dataset.favoriteImage, editFavorite.dataset.favoriteCustomizable === 'true');
+      if (modalAddButton) modalAddButton.hidden = true;
+      if (modalFavoriteButton) modalFavoriteButton.textContent = 'Save Changes to Favorites';
+      const values = favorite.customizations || {};
+      for (const key of ['size', 'milk', 'sweetness', 'ice']) {
+        const input = document.querySelector(`input[name='custom-${key}'][value="${CSS.escape(values[key] || '')}"]`);
+        if (input) input.checked = true;
+      }
+      document.querySelectorAll("input[name='custom-addon']").forEach(input => { input.checked = (values.addons || []).some(addon => (typeof addon === 'string' ? addon : addon.name) === input.value); });
+      activeQuantity = Math.max(1, Number.parseInt(values.quantity, 10) || 1);
+      if (modalQty) modalQty.textContent = String(activeQuantity);
+      if (modalAddButton) modalAddButton.textContent = 'Save Changes';
+      updateModalTotal();
+      return;
+    }
     const favoriteQuantityButton = event.target.closest("[data-favorite-quantity]");
     if (favoriteQuantityButton) {
       const favoriteKey = favoriteQuantityButton.dataset.favoriteKey;
@@ -542,16 +592,15 @@ document.addEventListener("DOMContentLoaded", async () => {
       const card = productButton.closest(".product-card");
       const name = card?.querySelector(".product-title h3")?.textContent.trim() || productButton.dataset.name;
       const priceText = card?.querySelector(".product-title > span")?.textContent || productButton.dataset.price;
-      const price = Number(String(priceText || "").replace(/[^\d.]/g, ""));
-      if (name && await checkProductAvailability(name)) {
-        activeProduct = { name, price, image: card?.querySelector(".product-image img")?.src || "" };
-        const category = `${card?.dataset.category || ""} ${card?.dataset.subcategory || ""}`.toLowerCase();
-        if (/pastr|cookie|cheesecake|smores|s'mores/.test(category)) {
-          await addPastryDirectly(activeProduct, productButton);
-          activeProduct = null;
-          return;
-        }
-        openCustomization(name, price, activeProduct.image);
+      const price = Number(String(priceText || "").replace(/[^0-9.]/g, ""));
+      window.klasikEditingCartId = null;
+      window.klasikEditingFavoriteKey = null;
+      const menuProduct = name ? await checkProductAvailability(name) : null;
+      if (menuProduct) {
+        const actualPrice = Number(menuProduct.price ?? price);
+        activeProduct = { name, price: Number.isFinite(actualPrice) ? actualPrice : price, image: card?.querySelector(".product-image img")?.src || menuProduct.image_url || "" };
+        const category = `${menuProduct.category || ""} ${menuProduct.subcategory || ""} ${card?.dataset.category || ""} ${card?.dataset.subcategory || ""}`.toLowerCase();
+        openCustomization(name, activeProduct.price, activeProduct.image, supportsDrinkCustomizations(category));
         updateModalFavoriteButton();
       }
       return;
@@ -565,7 +614,47 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
     if (event.target.closest("#customer-modal-favorite") && activeProduct) {
-      await toggleFavorite({ ...activeProduct, customizations: selectedCustomizations() });
+      if (window.klasikEditingFavoriteKey) {
+        const oldKey = window.klasikEditingFavoriteKey;
+        const options = selectedCustomizations();
+        const nextKey = activeProduct.customizable ? buildCustomizedFavoriteKey(activeProduct.name, options) : activeProduct.name;
+        let insertedNew = false;
+        if (nextKey !== oldKey && !favoriteNames.has(nextKey)) {
+          const { error } = await supabase.from('favorites').insert([{ user_id: currentUser.id, item_name: nextKey }]);
+          if (error) { window.klasikNotify?.('Could not save your favorite changes. Please try again.', 'error'); return; }
+          favoriteNames.add(nextKey);
+          insertedNew = true;
+        }
+        if (nextKey !== oldKey) {
+          const { error } = await supabase.from('favorites').delete().eq('user_id', currentUser.id).eq('item_name', oldKey);
+          if (error) {
+            if (insertedNew) await supabase.from('favorites').delete().eq('user_id', currentUser.id).eq('item_name', nextKey);
+            if (insertedNew) favoriteNames.delete(nextKey);
+            window.klasikNotify?.('Could not replace the saved favorite. Please try again.', 'error');
+            return;
+          }
+          favoriteNames.delete(oldKey);
+          favoriteNames.add(nextKey);
+        }
+        const quantity = Math.max(1, Number.parseInt(options.quantity, 10) || 1);
+        if (nextKey !== oldKey) delete favoriteQuantities[oldKey];
+        favoriteQuantities[nextKey] = quantity;
+        try { localStorage.setItem(`klasikCafeFavoriteQuantities:${currentUser.id}`, JSON.stringify(favoriteQuantities)); } catch (error) { console.warn('Could not update the saved favorite quantity.', error); }
+        favoritesLoaded = true;
+        syncFavoriteButtons();
+        renderFavorites();
+        window.klasikNotify?.(`${activeProduct.name} favorite updated.`);
+        window.klasikEditingFavoriteKey = null;
+        if (modal) modal.hidden = true;
+        if (modalAddButton) modalAddButton.hidden = false;
+        if (modalFavoriteButton) modalFavoriteButton.textContent = '♡ Save to Favorites';
+        return;
+      }
+      await toggleFavorite({ ...activeProduct, customizations: activeProduct.customizable ? selectedCustomizations() : null });
+      if (modalAddButton) modalAddButton.hidden = false;
+      if (modalAddButton) modalAddButton.textContent = 'Add to Cart';
+      if (modalFavoriteButton) modalFavoriteButton.textContent = '♡ Save to Favorites';
+      if (modal) modal.hidden = true;
     }
   });
 

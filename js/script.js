@@ -7,20 +7,65 @@ document.addEventListener("DOMContentLoaded", () => {
   const themeToggle = document.createElement("button");
   themeToggle.type = "button";
   themeToggle.className = "theme-toggle";
-  themeToggle.textContent = document.documentElement.dataset.theme === "dark" ? "Light mode" : "Dark mode";
+  const paintThemeIcon = () => {
+    const dark = document.documentElement.dataset.theme === "dark";
+    themeToggle.innerHTML = dark ? '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>' : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15.5A8.5 8.5 0 0 1 8.5 3.5 8.5 8.5 0 1 0 20.5 15.5Z"/></svg>';
+    themeToggle.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+  };
+  paintThemeIcon();
   themeToggle.setAttribute("aria-label", "Toggle dark mode");
   themeToggle.addEventListener("click", () => {
     const theme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
     localStorage.setItem(themeKey, theme);
     applyTheme(theme);
-    themeToggle.textContent = theme === "dark" ? "Light mode" : "Dark mode";
+    paintThemeIcon();
   });
-  document.querySelector(".nav-actions")?.append(themeToggle);
-  const profileLink = document.createElement("a");
-  profileLink.className = "button button-outline button-small";
-  profileLink.href = "account-settings.html";
-  profileLink.textContent = "Profile";
-  document.querySelector(".nav-actions")?.append(profileLink);
+  let locationLink = [...document.querySelectorAll(".primary-nav .nav-link")].find(link => /location/i.test(link.textContent));
+  if (!locationLink) {
+    locationLink = document.createElement("a");
+    locationLink.className = "nav-link";
+    locationLink.href = "index.html#location";
+    locationLink.textContent = "Location";
+    const nav = document.querySelector(".primary-nav");
+    nav?.insertBefore(locationLink, nav.querySelector(".nav-actions, .dashboard-logout") || null);
+  }
+  if (locationLink) locationLink.after(themeToggle);
+  else document.querySelector(".nav-actions, .primary-nav")?.append(themeToggle);
+  const actions = document.querySelector(".nav-actions");
+  document.getElementById("nav-logout-btn")?.remove();
+  document.querySelector(".dashboard-logout")?.remove();
+  const profileDropdown = document.createElement("div");
+  profileDropdown.className = "profile-dropdown";
+  profileDropdown.innerHTML = '<button id="nav-profile-btn" class="button button-outline button-small profile-dropdown-toggle" type="button" aria-haspopup="true" aria-expanded="false" hidden>Profile <span aria-hidden="true">&#9662;</span></button><div class="profile-dropdown-menu" id="profile-dropdown-menu" hidden><section class="profile-dropdown-details" aria-label="Account profile"><h2>My Profile</h2><dl><div><dt>Name</dt><dd id="nav-profile-name">Loading</dd></div><div><dt>Username</dt><dd id="nav-profile-username">Loading</dd></div><div><dt>Email</dt><dd id="nav-profile-email">Loading</dd></div><div><dt>Role</dt><dd id="nav-profile-role">Loading</dd></div></dl></section><button id="nav-change-password" type="button">Change Password</button><button id="nav-logout-btn" type="button">Logout</button></div><div class="profile-password-modal" id="profile-password-modal" hidden><section class="profile-password-dialog auth-card" role="dialog" aria-modal="true" aria-labelledby="profile-password-title"><button class="profile-password-close" id="profile-password-close" type="button" aria-label="Close">&times;</button><p class="eyebrow eyebrow-blue"><span></span> ACCOUNT SECURITY</p><h1 id="profile-password-title">Change your <em>password</em></h1><p class="auth-subtitle">Choose a new password for your KLASIK CAFE account.</p><form id="profile-password-form" class="auth-form" novalidate><div class="form-field"><label for="profile-new-password">New password</label><div class="password-wrap"><input id="profile-new-password" type="password" autocomplete="new-password" placeholder="At least 8 characters, with letters and numbers" required><button class="password-toggle" type="button" data-password-toggle="profile-new-password" aria-label="Show password" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="eye-outline" d="M2.5 12s3.3-6 9.5-6 9.5 6 9.5 6-3.3 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.7"/><path class="eye-slash" d="M4 4 20 20"/></svg></button></div></div><div class="form-field"><label for="profile-confirm-password">Confirm new password</label><div class="password-wrap"><input id="profile-confirm-password" type="password" autocomplete="new-password" placeholder="Enter your new password again" required><button class="password-toggle" type="button" data-password-toggle="profile-confirm-password" aria-label="Show password" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="eye-outline" d="M2.5 12s3.3-6 9.5-6 9.5 6 9.5 6-3.3 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.7"/><path class="eye-slash" d="M4 4 20 20"/></svg></button></div></div><p class="form-message" id="profile-password-message" role="status" aria-live="polite"></p><button class="button button-primary button-wide" type="submit">Update password <span aria-hidden="true">&#8594;</span></button></form></section></div>';
+  if (actions) actions.append(profileDropdown);
+  else document.querySelector(".dashboard-primary-nav")?.append(profileDropdown);
+  const profileToggle = profileDropdown.querySelector(".profile-dropdown-toggle");
+  const profileMenu = profileDropdown.querySelector(".profile-dropdown-menu");
+  profileToggle.addEventListener("click", () => {
+    const open = profileToggle.getAttribute("aria-expanded") !== "true";
+    profileToggle.setAttribute("aria-expanded", String(open));
+    profileMenu.hidden = !open;
+  });
+  profileDropdown.querySelector("#nav-change-password").addEventListener("click", () => {
+    profileMenu.hidden = true;
+    profileToggle.setAttribute("aria-expanded", "false");
+    profileDropdown.querySelector("#profile-password-modal").hidden = false;
+    profileDropdown.querySelector("#profile-new-password").focus();
+  });
+  profileDropdown.querySelector("#profile-password-close").addEventListener("click", () => { profileDropdown.querySelector("#profile-password-modal").hidden = true; });
+  profileDropdown.querySelector("#profile-password-modal").addEventListener("click", event => {
+    if (event.target.id === "profile-password-modal") event.currentTarget.hidden = true;
+  });
+  document.addEventListener("click", event => {
+    if (profileDropdown.contains(event.target)) return;
+    profileToggle.setAttribute("aria-expanded", "false");
+    profileMenu.hidden = true;
+  });
+  document.addEventListener("keydown", event => {
+    if (event.key !== "Escape") return;
+    profileToggle.setAttribute("aria-expanded", "false");
+    profileMenu.hidden = true;
+  });
   const welcomeScreen = document.getElementById("welcome-screen");
   const tagline = document.getElementById("welcome-tagline");
   if (welcomeScreen && tagline) {
@@ -282,26 +327,6 @@ document.addEventListener("DOMContentLoaded", () => {
       signupForm.querySelector("button[type='submit']").hidden = true;
     });
   }
-
-  const signedInSession = (() => {
-    try {
-      return JSON.parse(localStorage.getItem("klasikCafeCustomerSession") || "null");
-    } catch (error) {
-      console.error("Could not read the customer session from browser storage.", error);
-      return null;
-    }
-  })();
-
-  document.querySelectorAll(".primary-nav .nav-actions a[href='login.html']").forEach((link) => {
-    if (!signedInSession) return;
-    link.href = "login.html#logout";
-    link.textContent = "Log out";
-    link.addEventListener("click", (event) => {
-      event.preventDefault();
-      localStorage.removeItem("klasikCafeCustomerSession");
-      window.location.reload();
-    });
-  });
 
   window.klasikConfirm = (message, title = "Please Confirm") => new Promise((resolve) => {
     const backdrop = document.createElement("div");

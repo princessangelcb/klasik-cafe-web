@@ -1,21 +1,21 @@
-// All image paths are local to imagess/. Keep this list in sync with those files.
+// Carousel images live in imagess/products/coffee/.
 const COFFEE_PRODUCTS = [
-  { src: 'imagess/amerikano.png', name: 'Amerikano', href: 'menu.html#amerikano', color: '#e3eaf2', wave: '#527eae' },
-  { src: 'imagess/biscoffmatcha.png', name: 'Biscoff Matcha', href: 'menu.html#biscoff-matcha', color: '#e4ebdf', wave: '#6387a9' },
-  { src: 'imagess/biscoffmilk.png', name: 'Biscoff Milk', href: 'menu.html#biscoff-milk', color: '#eee5dc', wave: '#4779aa' },
-  { src: 'imagess/caramelmacchiato.png', name: 'Caramel Macchiato', href: 'menu.html#caramel-macchiato', color: '#eee2d6', wave: '#4674a4' },
-  { src: 'imagess/icecappucino.png', name: 'Iced Cappuccino', href: 'menu.html#iced-cappuccino', color: '#e0e9ed', wave: '#4b84a8' },
-  { src: 'imagess/klasikpremium.png', name: 'Klasik Premium', href: 'menu.html#klasik-premium', color: '#e9e5dc', wave: '#446e9c' },
-  { src: 'imagess/latte.png', name: 'Latte', href: 'menu.html#latte', color: '#eae5dc', wave: '#567da4' },
-  { src: 'imagess/manggoklasikmilk.png', name: 'Manggo Klasik Milk', href: 'menu.html#manggo-klasik-milk', color: '#f0e8d8', wave: '#5981a8' },
-  { src: 'imagess/matchalatte.png', name: 'Matcha Latte', href: 'menu.html#matcha-latte', color: '#e2e9de', wave: '#4d7c9f' },
-  { src: 'imagess/matchasomething.png', name: 'Matcha Something', href: 'menu.html#matcha-something', color: '#e4ebdd', wave: '#5c86a4' },
-  { src: 'imagess/minasalatte.png', name: 'Minasa Latte', href: 'menu.html#minasa-latte', color: '#eee5dc', wave: '#5075a1' },
-  { src: 'imagess/seasaltlatte.png', name: 'Seasalt Latte', href: 'menu.html#seasalt-latte', color: '#e0e9ec', wave: '#4c85a8' },
-  { src: 'imagess/strawbmatcha.png', name: 'Strawberry Matcha', href: 'menu.html#strawberry-matcha', color: '#efe2e3', wave: '#587dac' },
-  { src: 'imagess/tresletches.png', name: 'Tres Leches', href: 'menu.html#tres-leches', color: '#eee5dc', wave: '#5279a6' },
-  { src: 'imagess/ubecloudlatte.png', name: 'Ube Cloud Latte', href: 'menu.html#ube-cloud-latte', color: '#e9e4ef', wave: '#647ba7' },
-  { src: 'imagess/ubematcha.png', name: 'Ube Matcha', href: 'menu.html#ube-matcha', color: '#e7e2ed', wave: '#5678a5' }
+  { src: 'imagess/products/coffee/amerikano.png', name: 'Amerikano', href: 'menu.html#amerikano', color: '#e3eaf2', wave: '#527eae' },
+  { src: 'imagess/products/coffee/biscoffmatcha.png', name: 'Biscoff Matcha', href: 'menu.html#biscoff-matcha', color: '#e4ebdf', wave: '#6387a9' },
+  { src: 'imagess/products/coffee/biscoffmilk.png', name: 'Biscoff Milk', href: 'menu.html#biscoff-milk', color: '#eee5dc', wave: '#4779aa' },
+  { src: 'imagess/products/coffee/caramelmacchiato.png', name: 'Caramel Macchiato', href: 'menu.html#caramel-macchiato', color: '#eee2d6', wave: '#4674a4' },
+  { src: 'imagess/products/coffee/icecappucino.png', name: 'Iced Cappuccino', href: 'menu.html#iced-cappuccino', color: '#e0e9ed', wave: '#4b84a8' },
+  { src: 'imagess/products/coffee/klasikpremium.png', name: 'Klasik Premium', href: 'menu.html#klasik-premium', color: '#e9e5dc', wave: '#446e9c' },
+  { src: 'imagess/products/coffee/latte.png', name: 'Latte', href: 'menu.html#latte', color: '#eae5dc', wave: '#567da4' },
+  { src: 'imagess/products/coffee/manggoklasikmilk.png', name: 'Manggo Klasik Milk', href: 'menu.html#manggo-klasik-milk', color: '#f0e8d8', wave: '#5981a8' },
+  { src: 'imagess/products/coffee/matchalatte.png', name: 'Matcha Latte', href: 'menu.html#matcha-latte', color: '#e2e9de', wave: '#4d7c9f' },
+  { src: 'imagess/products/coffee/matchasomething.png', name: 'Matcha Something', href: 'menu.html#matcha-something', color: '#e4ebdd', wave: '#5c86a4' },
+  { src: 'imagess/products/coffee/minasalatte.png', name: 'Minasa Latte', href: 'menu.html#minasa-latte', color: '#eee5dc', wave: '#5075a1' },
+  { src: 'imagess/products/coffee/seasaltlatte.png', name: 'Seasalt Latte', href: 'menu.html#seasalt-latte', color: '#e0e9ec', wave: '#4c85a8' },
+  { src: 'imagess/products/coffee/strawbmatcha.png', name: 'Strawberry Matcha', href: 'menu.html#strawberry-matcha', color: '#efe2e3', wave: '#587dac' },
+  { src: 'imagess/products/coffee/tresletches.png', name: 'Tres Leches', href: 'menu.html#tres-leches', color: '#eee5dc', wave: '#5279a6' },
+  { src: 'imagess/products/coffee/ubecloudlatte.png', name: 'Ube Cloud Latte', href: 'menu.html#ube-cloud-latte', color: '#e9e4ef', wave: '#647ba7' },
+  { src: 'imagess/products/coffee/ubematcha.png', name: 'Ube Matcha', href: 'menu.html#ube-matcha', color: '#e7e2ed', wave: '#5678a5' }
 ];
 
 const initCoffeeHero = () => {
@@ -75,6 +75,12 @@ const initCoffeeHero = () => {
     }, 3500);
   };
 
+  const updatePageBackground = () => {
+    document.body.style.backgroundColor = document.documentElement.dataset.theme === 'dark'
+      ? '#171916'
+      : slides[activeIndex].dataset.color;
+  };
+
   const setPositions = () => {
     slides.forEach((slide, index) => {
       const offset = (index - activeIndex + slides.length) % slides.length;
@@ -88,9 +94,14 @@ const initCoffeeHero = () => {
     });
 
     const active = slides[activeIndex];
-    document.body.style.backgroundColor = active.dataset.color;
+    updatePageBackground();
     nameLabel.textContent = COFFEE_PRODUCTS[activeIndex].name;
   };
+
+  new MutationObserver(updatePageBackground).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme']
+  });
 
   const goTo = direction => {
     pulseWave();

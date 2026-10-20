@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const firstName = document.getElementById('first-name')?.value.trim() || '';
             const lastName = document.getElementById('last-name')?.value.trim() || '';
             const username = document.getElementById('signup-username')?.value.trim() || '';
-            const phone = document.getElementById('phone')?.value.trim() || '';
             const confirmPassword = document.getElementById('confirm-password')?.value || '';
 
             if (!firstName) {
@@ -46,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const { data, error } = await supabase.auth.signUp({
                 email: email,
                 password: password,
-                options: { data: { first_name: firstName, last_name: lastName, full_name: `${firstName} ${lastName}`.trim(), username, phone } }
+                options: { data: { first_name: firstName, last_name: lastName, full_name: `${firstName} ${lastName}`.trim(), username } }
             });
 
             if (error) {

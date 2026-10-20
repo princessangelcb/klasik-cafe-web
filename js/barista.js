@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         updateBaristaScrollSpy();
     }
 
-    const logout = document.querySelector('.dashboard-logout') || document.querySelector('.sidebar-logout') || document.getElementById('barista-logout');
+    const logout = document.querySelector('.dashboard-logout') || document.querySelector('.sidebar-logout');
     logout?.addEventListener('click', async e => { e.preventDefault(); await supabase.auth.signOut(); window.location.href = 'login.html'; });
     await loadOrders();
 });

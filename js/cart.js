@@ -1,4 +1,5 @@
 import { supabase } from './supabase.js';
+import { parseCustomizationData } from './customization-data.mjs';
 
 document.addEventListener('DOMContentLoaded', () => {
     const addToOrderBtn = document.getElementById('customer-add-to-order');
@@ -55,34 +56,49 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.klasikNotify?.('The item total could not be calculated. Please try again.', 'error');
                 return;
             }
-            const addonNames = Array.from(document.querySelectorAll("input[name='custom-addon']:checked"), (input) => input.value);
-            const customizationDetails = [
-                `Size: ${document.querySelector("input[name='custom-size']:checked")?.value || 'Medium'}`,
-                `Milk: ${document.querySelector("input[name='custom-milk']:checked")?.value || 'Regular'}`,
-                `Sweetness: ${document.querySelector("input[name='custom-sweetness']:checked")?.value || '0%'}`,
-                `Ice: ${document.querySelector("input[name='custom-ice']:checked")?.value || 'Less Ice'}`,
-                addonNames.length ? `Add-ons: ${addonNames.join(', ')}` : ''
-            ].filter(Boolean).join(' · ');
-
+            const canCustomize = document.getElementById('customer-customization-modal')?.dataset.customizable !== 'false';
+            const customizationState = canCustomize ? {
+                version: 1,
+                size: document.querySelector("input[name='custom-size']:checked")?.value || 'Medium',
+                milk: document.querySelector("input[name='custom-milk']:checked")?.value || 'Regular',
+                sweetness: document.querySelector("input[name='custom-sweetness']:checked")?.value || '0%',
+                ice: document.querySelector("input[name='custom-ice']:checked")?.value || 'Less Ice',
+                addons: Array.from(document.querySelectorAll("input[name='custom-addon']:checked"), input => ({
+                    name: input.value,
+                    price: Number(input.dataset.price || 0)
+                })).sort((left, right) => left.name.localeCompare(right.name))
+            } : null;
+            // Keep JSON serialized in the existing text-compatible column so legacy rows remain readable.
+            const customizationDetails = customizationState ? JSON.stringify(customizationState) : '';
+            if (customizationState && !parseCustomizationData(customizationDetails)) {
+                window.klasikNotify?.('The selected options could not be saved. Please try again.', 'error');
+                return;
+            }
             // 3. Save it to your new Supabase cart table
-            const { data, error } = await supabase.from('cart').insert([
-                {
+            const row = {
                     item_name: itemName,
                     price: price,
                     quantity: quantity,
                     customizations: customizationDetails,
                     user_id: user.id,
                     user_email: user.email
-                }
-            ]);
+                };
+            const editingId = window.klasikEditingCartId;
+            const result = editingId
+                ? await supabase.from('cart').update({ price, quantity, customizations: customizationDetails }).eq('id', editingId).eq('user_id', user.id)
+                : await supabase.from('cart').insert([row]);
+            const { error } = result;
 
             if (error) {
                 window.klasikNotify?.("Error adding to cart: " + error.message, "error");
             } else {
-                window.klasikNotify?.(`${quantity}x ${itemName} added to your cart!`);
+                window.klasikNotify?.(editingId ? `${itemName} updated.` : `${quantity}x ${itemName} added to your cart!`);
                 document.getElementById('customer-customization-modal').hidden = true;
+                window.klasikEditingCartId = null;
+                addToOrderBtn.textContent = 'Add to Cart';
                 const badge = document.getElementById('cart-count-badge');
-                if (badge) badge.textContent = String((Number(badge.textContent) || 0) + quantity);
+                if (badge && !editingId) badge.textContent = String((Number(badge.textContent) || 0) + quantity);
+                if (editingId) window.setTimeout(() => window.location.reload(), 250);
             }
         });
     }

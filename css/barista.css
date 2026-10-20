@@ -552,7 +552,7 @@
 .barista-sidebar { display: none; }
 .barista-shell { display: block; min-height: calc(100vh - 84px); }
 .barista-main { width: min(100%, 1600px); margin: 0 auto; padding: 34px clamp(16px, 3vw, 42px) 54px; }
-.dashboard-site-header { position: sticky; top: 0; z-index: 100; }
+.dashboard-site-header { position: fixed; top: 0; right: 0; left: 0; z-index: 1000; }
 .dashboard-site-header .primary-nav { gap: clamp(12px, 2vw, 28px); }
 .dashboard-primary-nav .nav-link { white-space: nowrap; }
 .dashboard-primary-nav .dashboard-logout { color: var(--blue-deep); font-weight: 700; }
@@ -596,3 +596,32 @@
 .barista-menu-status-panel .barista-menu-table-wrap { width: 100%; max-width: 100%; overflow-x: auto; }
 .barista-menu-table th, .barista-menu-table td { min-width: 120px; padding: 13px 16px; white-space: normal; overflow-wrap: anywhere; }
 .barista-menu-table th:first-child, .barista-menu-table td:first-child { min-width: 200px; }
+html, body { max-width: 100%; overflow-x: hidden; }
+html[data-theme="dark"] { --barista-bg:#171916; --barista-panel:#20231f; --barista-text:#f1eee8; --barista-muted:#b9b7b1; --barista-border:#3a3d37; }
+html[data-theme="dark"] .barista-body, html[data-theme="dark"] body { background:var(--barista-bg); color:var(--barista-text); }
+html[data-theme="dark"] .barista-panel, html[data-theme="dark"] .order-card, html[data-theme="dark"] .admin-order-summary, html[data-theme="dark"] .detail-panel, html[data-theme="dark"] .receipt-preview .receipt-box { background:var(--barista-panel); color:var(--barista-text); border-color:var(--barista-border); }
+html[data-theme="dark"] .barista-order-product, html[data-theme="dark"] .admin-order-product { background:#292c27; }
+html[data-theme="dark"] .barista-body input, html[data-theme="dark"] .barista-body textarea, html[data-theme="dark"] .barista-body select { background:#292c27; color:var(--barista-text); border-color:#55594f; }
+html[data-theme="dark"] .barista-order-filters button { border-color:var(--barista-border); background:#292c34; color:#e5e7eb; }
+html[data-theme="dark"] .barista-order-filters button[data-order-filter="Pending"] { border-color:#8a4e08; background:#382811; color:#fbbf24; }
+html[data-theme="dark"] .barista-order-filters button[data-order-filter="Preparing"] { border-color:#244b9b; background:#1d2c49; color:#93c5fd; }
+html[data-theme="dark"] .barista-order-filters button[data-order-filter="Ready for Pickup"] { border-color:#17643c; background:#163627; color:#86efac; }
+html[data-theme="dark"] .barista-order-filters button[data-order-filter="Completed"] { border-color:#4b5563; background:#30343b; color:#d1d5db; }
+html[data-theme="dark"] .barista-order-filters button.active { color:#fff; filter:brightness(1.15); }
+html[data-theme="dark"] .order-card.status-pending { background:#2b2418; }
+html[data-theme="dark"] .order-card.status-preparing { background:#1c2941; }
+html[data-theme="dark"] .order-card.status-ready-for-pickup { background:#183126; }
+html[data-theme="dark"] .order-card.status-completed { background:#25282d; }
+html[data-theme="dark"] .barista-order-empty, html[data-theme="dark"] .barista-menu-table-wrap { background:#20231f; color:var(--barista-text); border-color:var(--barista-border); }
+html[data-theme="dark"] .barista-order-filters button.active { border-color:#355780; background:#355780; color:#f1eee8; filter:none; }
+html[data-theme="dark"] .barista-pagination, html[data-theme="dark"] .admin-order-pagination { color:var(--barista-text); }
+html[data-theme="dark"] .barista-body select, html[data-theme="dark"] .barista-body select option { color-scheme:dark; background-color:#292c27; color:#f1eee8; }
+html[data-theme="dark"] .barista-body .site-toast-error { border-color:#79534b; background:#302321; color:#e9c0b7; }
+.barista-body .site-toast-error { border-color:#d7aaa2; background:#f8eeeb; color:#7b3d34; border-radius:4px; }
+html[data-theme="dark"] .barista-body select option:checked { background:#355780; color:#f1eee8; }
+html[data-theme="dark"] .barista-body .order-status-select option.status-awaiting-confirmation,
+html[data-theme="dark"] .barista-body .order-status-select option.status-confirmed,
+html[data-theme="dark"] .barista-body .order-status-select option.status-preparing,
+html[data-theme="dark"] .barista-body .order-status-select option.status-ready-for-pickup,
+html[data-theme="dark"] .barista-body .order-status-select option.status-completed,
+html[data-theme="dark"] .barista-body .order-status-select option.status-cancelled { background:#292c27; color:#e4ded4; }

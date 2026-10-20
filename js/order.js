@@ -1,4 +1,5 @@
 import { supabase } from './supabase.js';
+import { formatCustomizationData } from './customization-data.mjs';
 
 document.addEventListener('DOMContentLoaded', async () => {
     const itemsContainer = document.getElementById('customer-order-items');
@@ -30,7 +31,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
     const items = cartItems || [];
-    const selectedKeys = new Set(items.map(itemKey));
+    // Require an explicit selection each time Order Review is opened.
+    const selectedKeys = new Set();
 
     if (!items.length) {
         itemsContainer.innerHTML = '<p class="customer-empty-state">Your cart is currently empty. Browse the <a href="menu.html">menu</a> to add a drink.</p>';
@@ -41,9 +43,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const productNames = [...new Set(items.map((item) => item.item_name).filter(Boolean))];
     const { data: products, error: productError } = await supabase.from('menu_items')
-        .select('item_name, image_url').in('item_name', productNames);
+        .select('item_name, image_url, price, category, subcategory').in('item_name', productNames);
     if (productError) console.error('Could not load cart product images.', productError);
     const imageByName = new Map((products || []).map((product) => [String(product.item_name || '').trim().toLowerCase(), product.image_url]));
+    const basePriceByName = new Map((products || []).map((product) => [String(product.item_name || '').trim().toLowerCase(), Number(product.price)]));
+    const customizableByName = new Map((products || []).map((product) => [String(product.item_name || '').trim().toLowerCase(), !/pastr|pasta|cookie|cheesecake|smores|s'mores/i.test(`${product.category || ''} ${product.subcategory || ''} ${product.item_name || ''}`)]));
 
     const selectedTotal = () => items.reduce((sum, item, index) => (
         selectedKeys.has(itemKey(item, index)) ? sum + Number(item.price || 0) * Number(item.quantity || 1) : sum
@@ -66,22 +70,21 @@ document.addEventListener('DOMContentLoaded', async () => {
             const image = imageUrl
                 ? `<img class="customer-cart-image" src="${escapeHtml(imageUrl)}" alt="${escapeHtml(item.item_name)}" loading="lazy">`
                 : '<div class="customer-cart-image customer-cart-image-empty" aria-hidden="true">☕</div>';
-            const customization = item.customizations
-                ? `<p class="customer-cart-customizations">${escapeHtml(item.customizations)}</p>`
-                : '<p class="customer-cart-customizations">Standard recipe</p>';
+            const customization = `<p class="customer-cart-customizations">${escapeHtml(formatCustomizationData(item.customizations))}</p>`;
             return `<article class="customer-order-item customer-cart-item">
                 <button type="button" class="customer-cart-delete" data-cart-delete="${index}" aria-label="Remove ${escapeHtml(item.item_name)} from cart" title="Remove item">&#128465;</button>
-                <label class="customer-cart-select"><input type="checkbox" data-cart-select="${index}" ${selectedKeys.has(key) ? 'checked' : ''}><span>Include</span></label>
+                <label class="customer-cart-select"><input type="checkbox" data-cart-select="${index}" ${selectedKeys.has(key) ? 'checked' : ''}><span>Select</span></label>
                 ${image}
                 <div class="customer-cart-info">
                     <div class="customer-order-main"><strong>${escapeHtml(item.item_name)}</strong><span>${money(unitPrice)} each</span></div>
                     ${customization}
                     <div class="customer-cart-controls">
                         <div class="customer-inline-qty" aria-label="Change quantity for ${escapeHtml(item.item_name)}">
-                            <button type="button" data-cart-qty="decrease" data-cart-index="${index}" aria-label="Decrease quantity">−</button>
+                            <button type="button" data-cart-qty="decrease" data-cart-index="${index}" aria-label="Decrease quantity">&#8722;</button>
                             <span>${quantity}</span>
                             <button type="button" data-cart-qty="increase" data-cart-index="${index}" aria-label="Increase quantity">+</button>
                         </div>
+                        <button type="button" class="button button-outline button-small customer-cart-edit" data-cart-edit="${index}">Edit</button>
                         <strong class="customer-cart-line-total">${money(unitPrice * quantity)}</strong>
                     </div>
                 </div>
@@ -103,6 +106,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     itemsContainer.addEventListener('click', async (event) => {
+        const editButton = event.target.closest('[data-cart-edit]');
+        if (editButton) {
+            const item = items[Number(editButton.dataset.cartEdit)];
+            if (!item) return;
+            if (item.id == null) {
+                window.klasikNotify?.('This cart item cannot be edited because it has no row ID.', 'error');
+                return;
+            }
+            const imageUrl = imageByName.get(String(item.item_name || '').trim().toLowerCase()) || '';
+            const basePrice = basePriceByName.get(String(item.item_name || '').trim().toLowerCase());
+            const canCustomize = customizableByName.get(String(item.item_name || '').trim().toLowerCase()) !== false;
+            const openEditor = window.klasikOpenCartCustomization;
+            if (typeof openEditor !== 'function' || !openEditor(
+                item.item_name,
+                Number.isFinite(basePrice) ? basePrice : Number(item.price || 0),
+                imageUrl,
+                item.customizations || '',
+                item.id,
+                item.quantity,
+                canCustomize
+            )) {
+                window.klasikNotify?.('The item editor could not open. Please reload the page and try again.', 'error');
+            }
+            return;
+        }
         const deleteButton = event.target.closest('[data-cart-delete]');
         if (deleteButton) {
             const index = Number(deleteButton.dataset.cartDelete);
@@ -178,9 +206,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const grandTotal = selectedItems.reduce((sum, item) => sum + Number(item.price || 0) * Number(item.quantity || 1), 0);
-        const orderString = selectedItems.map((item) => (
-            `${item.quantity}x ${item.item_name}${item.customizations ? ` (${item.customizations})` : ''}`
-        )).join(', ');
+        const orderString = selectedItems.map((item) => {
+            const details = formatCustomizationData(item.customizations, '');
+            return `${item.quantity}x ${item.item_name}${details ? ` (${details})` : ''}`;
+        }).join(', ');
         placeOrderButton.disabled = true;
         placeOrderButton.textContent = 'Processing Order...';
         let customerName = user.user_metadata?.full_name
@@ -197,7 +226,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             image_url: imageByName.get(String(item.item_name || '').trim().toLowerCase()) || null,
             quantity: Math.max(1, Number.parseInt(item.quantity, 10) || 1),
             unit_price: Number(item.price || 0),
-            customizations: item.customizations || ''
+            customizations: formatCustomizationData(item.customizations, '')
         }));
         const { data: placedOrder, error: insertError } = await supabase.from('placed_orders').insert([{
             user_id: user.id,

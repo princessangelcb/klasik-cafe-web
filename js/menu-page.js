@@ -7,8 +7,7 @@ const MENU_CATEGORIES = [
   { id: 'matcha', label: 'Matcha Series' },
   { id: 'pastries', label: 'Pastry', children: [['smores', 'Smores'], ['cookies', 'Cookies'], ['cheesecakes', 'Cheesecakes']] },
   { id: 'snacks', label: 'Snacks' },
-  { id: 'pasta', label: 'Pasta' },
-  { id: 'add-ons', label: 'Add-ons' }
+  { id: 'pasta', label: 'Pasta' }
 ];
 
 const normalize = value => String(value ?? '').trim().toLowerCase().replace(/[_\s]+/g, '-');
@@ -110,7 +109,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       const textMatch = !query || [item.item_name, item.description, item.category, item.subcategory].some(value => String(value || '').toLowerCase().includes(query));
       return categoryMatch && subMatch && textMatch;
     });
-    root.querySelector('.menu-current-title').textContent = category?.label || 'Menu';
+    const activeSubLabel = category?.children?.find(([id]) => id === activeSub)?.[1];
+    root.querySelector('.menu-current-title').textContent = activeSubLabel || category?.label || 'Menu';
     root.querySelector('.menu-result-count').textContent = `${filtered.length} ${filtered.length === 1 ? 'item' : 'items'}`;
     grid.innerHTML = filtered.length ? filtered.map(item => `<article id="${escapeHtml(productSlug(item.item_name))}" class="product-card" data-product-id="${escapeHtml(item.id)}" data-product-name="${escapeHtml(item.item_name)}" data-category="${escapeHtml(item.category)}" data-subcategory="${escapeHtml(item.subcategory || '')}" data-best-seller="${item.is_best_seller === true}" data-available="${item.is_available !== false}">
       <div class="product-image"><span class="product-category">${escapeHtml((item.subcategory || item.category || '').toUpperCase())}</span>${item.is_best_seller ? '<span class="best-seller-label">BEST SELLER</span>' : ''}<img src="${escapeHtml(item.image_url || 'images/products/coffee/amerikano.jpg')}" alt="${escapeHtml(item.item_name)}" loading="lazy"></div>
