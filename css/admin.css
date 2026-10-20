@@ -854,6 +854,51 @@ html[data-theme="dark"] .admin-body select, html[data-theme="dark"] .admin-body 
 html[data-theme="dark"] .admin-body .site-toast-error { border-color:#79534b; background:#302321; color:#e9c0b7; }
 .admin-body .site-toast-error { border-color:#d7aaa2; background:#f8eeeb; color:#7b3d34; border-radius:4px; }
 html[data-theme="dark"] .admin-body select option:checked { background:#355780; color:#f1eee8; }
+
+/* Make the dashboard occupy the full mobile viewport; keep wide data inside wrappers. */
+@media (max-width: 768px) {
+  html,
+  body.admin-body {
+    width: 100%;
+    min-width: 320px;
+    max-width: 100%;
+  }
+
+  .admin-shell,
+  .admin-main {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin-inline: 0;
+  }
+
+  .admin-main {
+    padding: 22px 16px 40px;
+  }
+
+  .admin-body .stats-grid {
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-body .admin-panel,
+  .admin-body .admin-operations-grid,
+  .admin-body .stat-card {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .admin-body .table-wrap,
+  .admin-body .admin-table-wrap,
+  .admin-body .table-responsive {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
 html[data-theme="dark"] .admin-body .order-status-select option.status-awaiting-confirmation,
 html[data-theme="dark"] .admin-body .order-status-select option.status-confirmed,
 html[data-theme="dark"] .admin-body .order-status-select option.status-preparing,

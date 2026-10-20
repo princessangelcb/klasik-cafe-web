@@ -3,7 +3,18 @@ import { supabase } from './supabase.js';
 document.addEventListener('DOMContentLoaded', async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) { window.location.href = 'login.html'; return; }
-    const { data: profile } = await supabase.from('profiles').select('role').eq('email', session.user.email).maybeSingle();
+
+    const loadStaffProfile = async () => {
+        let { data: profile, error } = await supabase.from('profiles').select('role').eq('id', session.user.id).maybeSingle();
+        if ((!profile || error) && session.user.email) {
+            const fallback = await supabase.from('profiles').select('role').eq('email', session.user.email).maybeSingle();
+            if (fallback.data) { profile = fallback.data; error = fallback.error; }
+        }
+        return { data: profile, error };
+    };
+
+    const { data: profile, error } = await loadStaffProfile();
+    if (error) console.warn('Could not load the staff role from the profile row.', error);
     if (!profile || !['barista', 'admin'].includes(String(profile.role).toLowerCase())) {
         window.klasikNotify?.('Access denied. Staff only.', 'error'); window.location.href = 'index.html'; return;
     }
