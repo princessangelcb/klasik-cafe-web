@@ -39,8 +39,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       <div class="menu-search"><label for="menu-search-input">Search the menu</label><div class="menu-search-field">
         <span class="menu-search-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.6"></circle><path d="m16 16 4.5 4.5"></path></svg></span>
         <input id="menu-search-input" type="search" placeholder="Search drinks, pastries, and more..." autocomplete="off">
-        <div class="menu-search-feedback" aria-live="polite"></div>
-      </div></div>
+      </div><div class="menu-search-feedback" aria-live="polite"></div></div>
       <nav class="menu-category-nav" aria-label="Filter menu by category"><div class="menu-main-categories"></div></nav>
       <div class="menu-results-heading"><h2 class="menu-current-title"></h2><span class="menu-result-count"></span></div>
       <div class="product-grid menu-product-grid" aria-live="polite"></div>
@@ -72,8 +71,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function productSuggestionList(query) {
-    const wanted = normalize(query);
-    if (wanted.length < 2) return [];
+    const wanted = normalize(query).split('-').filter(Boolean);
+    if (!wanted.length || wanted.some(word => word.length < 2)) return [];
     const distance = (left, right) => {
       const row = Array.from({ length: right.length + 1 }, (_, index) => index);
       for (let i = 1; i <= left.length; i += 1) {
@@ -90,11 +89,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     return products.map(item => {
       const name = normalize(item.item_name);
       const words = name.split('-');
-      const closest = Math.min(...words.map(word => distance(wanted, word)));
-      const contains = name.includes(wanted) || wanted.includes(name);
-      const limit = wanted.length < 6 ? 1 : 2;
-      return { item, score: contains ? 0 : closest, limit };
-    }).filter(candidate => candidate.score <= candidate.limit)
+      const matches = wanted.map(queryWord => {
+        const exactOrPartial = words.some(word => word.includes(queryWord) || queryWord.includes(word));
+        const score = Math.min(...words.map(word => distance(queryWord, word)));
+        return { score: exactOrPartial ? 0 : score, limit: queryWord.length < 6 ? 1 : 2 };
+      });
+      return { item, score: matches.reduce((total, match) => total + match.score, 0), valid: matches.every(match => match.score <= match.limit) };
+    }).filter(candidate => candidate.valid)
       .sort((a, b) => a.score - b.score || String(a.item.item_name).localeCompare(String(b.item.item_name)))
       .slice(0, 4).map(candidate => candidate.item);
   }
@@ -104,13 +105,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     const query = searchText.trim().toLowerCase();
     const filtered = products.filter(item => {
       const { main: itemMain, sub: itemSub } = getProductMenuCategory(item);
-      const categoryMatch = category?.special ? item.is_best_seller === true : itemMain === activeMain;
-      const subMatch = category?.special || !category?.children?.length || !activeSub || itemSub === activeSub;
+      const categoryMatch = query || (category?.special ? item.is_best_seller === true : itemMain === activeMain);
+      const subMatch = query || category?.special || !category?.children?.length || !activeSub || itemSub === activeSub;
       const textMatch = !query || [item.item_name, item.description, item.category, item.subcategory].some(value => String(value || '').toLowerCase().includes(query));
       return categoryMatch && subMatch && textMatch;
     });
     const activeSubLabel = category?.children?.find(([id]) => id === activeSub)?.[1];
-    root.querySelector('.menu-current-title').textContent = activeSubLabel || category?.label || 'Menu';
+    root.querySelector('.menu-current-title').textContent = query ? 'Search Results' : activeSubLabel || category?.label || 'Menu';
     root.querySelector('.menu-result-count').textContent = `${filtered.length} ${filtered.length === 1 ? 'item' : 'items'}`;
     grid.innerHTML = filtered.length ? filtered.map(item => `<article id="${escapeHtml(productSlug(item.item_name))}" class="product-card" data-product-id="${escapeHtml(item.id)}" data-product-name="${escapeHtml(item.item_name)}" data-category="${escapeHtml(item.category)}" data-subcategory="${escapeHtml(item.subcategory || '')}" data-best-seller="${item.is_best_seller === true}" data-available="${item.is_available !== false}">
       <div class="product-image"><span class="product-category">${escapeHtml((item.subcategory || item.category || '').toUpperCase())}</span>${item.is_best_seller ? '<span class="best-seller-label">BEST SELLER</span>' : ''}<img src="${escapeHtml(item.image_url || 'images/products/coffee/amerikano.jpg')}" alt="${escapeHtml(item.item_name)}" loading="lazy"></div>

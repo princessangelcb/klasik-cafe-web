@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   themeToggle.className = "theme-toggle";
   const paintThemeIcon = () => {
     const dark = document.documentElement.dataset.theme === "dark";
-    themeToggle.innerHTML = dark ? '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>' : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15.5A8.5 8.5 0 0 1 8.5 3.5 8.5 8.5 0 1 0 20.5 15.5Z"/></svg>';
+    themeToggle.innerHTML = dark ? '<svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1.75v2.5M12 19.75v2.5M1.75 12h2.5m15.5 0h2.5M4.76 4.76l1.77 1.77m10.94 10.94 1.77 1.77m0-14.48-1.77 1.77M6.53 17.47l-1.77 1.77"/></svg>' : '<svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16.9 2.4a9.8 9.8 0 1 0 4.7 15.1A8.1 8.1 0 0 1 16.9 2.4Z"/><path class="moon-star" d="M18.7 3.1v3.2m-1.6-1.6h3.2"/></svg>';
     themeToggle.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
   };
   paintThemeIcon();

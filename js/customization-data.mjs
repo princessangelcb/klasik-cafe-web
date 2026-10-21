@@ -57,8 +57,8 @@ export function formatCustomizationData(value, standardLabel = 'Standard recipe'
   const state = parseCustomizationData(value);
   if (!state) return standardLabel;
   const parts = [
-    state.size && `Size: ${state.size}${state.size === 'Large' ? ' (+₱25)' : ''}`,
-    state.milk && `Milk: ${state.milk}`,
+    state.size && `Size: ${state.size}${state.size === 'Large' ? ' (22 oz, +₱25)' : state.size === 'Medium' ? ' (16 oz)' : ''}`,
+    state.milk && `Milk: ${state.milk}${state.milk === 'Oat Milk' ? ' (+₱25)' : ''}`,
     state.sweetness && `Sweetness: ${state.sweetness}`,
     state.ice && `Ice: ${state.ice}`,
     state.addons.length && `Add-ons: ${state.addons.map(addon => `${addon.name} (+₱${addon.price})`).join(', ')}`

@@ -79,14 +79,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const selectedAddons = () => Array.from(document.querySelectorAll("input[name='custom-addon']:checked"));
   const selectedSize = () => document.querySelector("input[name='custom-size']:checked")?.value || "Medium";
+  const selectedMilk = () => document.querySelector("input[name='custom-milk']:checked")?.value || "Regular";
   const addonCost = () => selectedAddons().reduce((sum, input) => sum + Number(input.dataset.price || 0), 0);
   const supportsDrinkCustomizations = (category = "") => /coffee|espesyal|matcha/i.test(String(category));
   const selectedCustomizations = () => ({
     ...(activeProduct?.customizable ? {
       size: selectedSize(),
-      milk: document.querySelector("input[name='custom-milk']:checked")?.value || "Regular",
-      sweetness: document.querySelector("input[name='custom-sweetness']:checked")?.value || "0%",
-      ice: document.querySelector("input[name='custom-ice']:checked")?.value || "Less Ice",
+      milk: selectedMilk(),
+      sweetness: document.querySelector("input[name='custom-sweetness']:checked")?.value || "100%",
+      ice: document.querySelector("input[name='custom-ice']:checked")?.value || "Regular Ice",
       addons: selectedAddons().map((input) => ({ name: input.value, price: Number(input.dataset.price || 0) })).sort((a, b) => a.name.localeCompare(b.name))
     } : {}),
     quantity: activeQuantity
@@ -310,7 +311,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const formatFavoriteMoney = (amount) => `\u20B1${Number(amount || 0).toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
   function selectedBasePrice() {
-    return Number(activeProduct?.price || 0) + (activeProduct?.customizable && selectedSize() === "Large" ? 25 : 0) + (activeProduct?.customizable ? addonCost() : 0);
+    return Number(activeProduct?.price || 0) + (activeProduct?.customizable && selectedSize() === "Large" ? 25 : 0) + (activeProduct?.customizable && selectedMilk() === "Oat Milk" ? 25 : 0) + (activeProduct?.customizable ? addonCost() : 0);
   }
 
   function updateModalTotal() {
@@ -336,8 +337,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.querySelectorAll("input[name='custom-addon']").forEach((input) => { input.checked = false; });
     const medium = document.querySelector("input[name='custom-size'][value='Medium']");
     if (medium) medium.checked = true;
-    const defaultSweetness = document.querySelector("input[name='custom-sweetness'][value='0%']");
-    const defaultIce = document.querySelector("input[name='custom-ice'][value='Less Ice']");
+    const regularMilk = document.querySelector("input[name='custom-milk'][value='Regular']");
+    const defaultSweetness = document.querySelector("input[name='custom-sweetness'][value='100%']");
+    const defaultIce = document.querySelector("input[name='custom-ice'][value='Regular Ice']");
+    if (regularMilk) regularMilk.checked = true;
     if (defaultSweetness) defaultSweetness.checked = true;
     if (defaultIce) defaultIce.checked = true;
     if (modalQty) modalQty.textContent = "1";

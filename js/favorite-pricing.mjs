@@ -19,7 +19,7 @@ export function getFavoritePricing(favorite, product) {
     if (typeof addon === "string") return sum + Number(legacyAddonPrices[addon] || 0);
     return sum + Number(addon.price || 0);
   }, 0);
-  const unit = basePrice + (customizations.size === "Large" ? 25 : 0) + addonsTotal;
+  const unit = basePrice + (customizations.size === "Large" ? 25 : 0) + (customizations.milk === "Oat Milk" ? 25 : 0) + addonsTotal;
   const quantity = Math.max(1, Number.parseInt(customizations.quantity, 10) || 1);
   return { unit, quantity, total: unit * quantity };
 }

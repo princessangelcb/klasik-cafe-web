@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const productCountBadge = document.getElementById('admin-product-count');
     const availableCountBadge = document.getElementById('admin-available-count');
     const tableBody = document.getElementById('admin-product-table-body');
+    const menuSearchInput = document.getElementById('admin-menu-search-input');
+    const menuSearchEmpty = document.getElementById('admin-menu-search-empty');
 
     // 1. Fetch and manage the order queue.
     const escapeOrderText = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -118,6 +120,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             menuItems.forEach(item => {
                 const row = document.createElement('tr');
                 row.dataset.productId = item.id;
+                row.dataset.searchText = `${item.item_name || ''} ${item.category || ''}`.toLowerCase();
                 row.style.borderBottom = '1px solid #eee';
                 row.innerHTML = `
                     <td class="menu-product-cell">
@@ -174,15 +177,22 @@ document.addEventListener('DOMContentLoaded', async () => {
             const menuPageLabel = document.getElementById('admin-products-page');
             const renderMenuPage = () => {
                 const rows = [...tableBody.querySelectorAll('tr')];
-                const pageCount = Math.max(1, Math.ceil(rows.length / menuPageSize));
+                const query = menuSearchInput?.value.trim().toLowerCase() || '';
+                const matchingRows = rows.filter(row => !query || row.dataset.searchText.includes(query));
+                const pageCount = Math.max(1, Math.ceil(matchingRows.length / menuPageSize));
                 menuPage = Math.max(1, Math.min(menuPage, pageCount));
-                rows.forEach((row, index) => {
-                    row.hidden = index < (menuPage - 1) * menuPageSize || index >= menuPage * menuPageSize;
+                rows.forEach(row => {
+                    const matchIndex = matchingRows.indexOf(row);
+                    row.hidden = matchIndex < 0 || matchIndex < (menuPage - 1) * menuPageSize || matchIndex >= menuPage * menuPageSize;
                 });
+                if (menuSearchEmpty) menuSearchEmpty.hidden = !query || matchingRows.length > 0;
                 if (menuPageLabel) menuPageLabel.textContent = `Page ${menuPage} of ${pageCount} · ${rows.length} items`;
+                if (menuPageLabel && query) menuPageLabel.textContent = `Page ${menuPage} of ${pageCount} · ${matchingRows.length} items`;
+                else if (menuPageLabel && !matchingRows.length) menuPageLabel.textContent = 'No matching products';
                 if (previousMenuPage) previousMenuPage.disabled = menuPage === 1;
                 if (nextMenuPage) nextMenuPage.disabled = menuPage === pageCount;
             };
+            menuSearchInput?.addEventListener('input', () => { menuPage = 1; renderMenuPage(); });
             previousMenuPage?.addEventListener('click', () => { menuPage -= 1; renderMenuPage(); });
             nextMenuPage?.addEventListener('click', () => { menuPage += 1; renderMenuPage(); });
             renderMenuPage();

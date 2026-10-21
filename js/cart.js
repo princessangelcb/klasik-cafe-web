@@ -61,8 +61,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 version: 1,
                 size: document.querySelector("input[name='custom-size']:checked")?.value || 'Medium',
                 milk: document.querySelector("input[name='custom-milk']:checked")?.value || 'Regular',
-                sweetness: document.querySelector("input[name='custom-sweetness']:checked")?.value || '0%',
-                ice: document.querySelector("input[name='custom-ice']:checked")?.value || 'Less Ice',
+                sweetness: document.querySelector("input[name='custom-sweetness']:checked")?.value || '100%',
+                ice: document.querySelector("input[name='custom-ice']:checked")?.value || 'Regular Ice',
                 addons: Array.from(document.querySelectorAll("input[name='custom-addon']:checked"), input => ({
                     name: input.value,
                     price: Number(input.dataset.price || 0)

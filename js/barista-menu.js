@@ -2,6 +2,8 @@ import { supabase } from './supabase.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   const tbody = document.getElementById('barista-menu-status-list');
+  const searchInput = document.getElementById('barista-menu-search-input');
+  const searchEmpty = document.getElementById('barista-menu-search-empty');
   if (!tbody) return;
   const { data: products, error } = await supabase.from('menu_items')
     .select('id, item_name, is_available, is_best_seller, sort_order').order('sort_order', { ascending: true, nullsFirst: false }).order('item_name');
@@ -13,13 +15,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   const menuItems = products || [];
 
   const render = () => {
-    if (!menuItems.length) { tbody.innerHTML = '<tr><td colspan="3">No menu items found.</td></tr>'; return; }
+    if (!menuItems.length) { tbody.innerHTML = '<tr><td colspan="3">No menu items found.</td></tr>'; if (searchEmpty) searchEmpty.hidden = true; return; }
     tbody.innerHTML = menuItems.map((product) => `
       <tr data-product-id="${escapeHtml(product.id)}">
         <td><button type="button" class="menu-drag-handle" aria-label="Drag to reorder ${escapeHtml(product.item_name)}" title="Drag to reorder">&#8942;&#8942;</button>${escapeHtml(product.item_name)}</td>
         <td>${switchMarkup(product, 'is_available', 'toggle-availability', 'Available', 'Not Available')}</td>
         <td>${switchMarkup(product, 'is_best_seller', 'toggle-bestseller', 'Best Seller', 'Not Best Seller')}</td>
       </tr>`).join('');
+    const query = searchInput?.value.trim().toLowerCase() || '';
+    const rows = [...tbody.querySelectorAll('tr[data-product-id]')];
+    let matchCount = 0;
+    rows.forEach(row => {
+      const matches = !query || row.textContent.toLowerCase().includes(query);
+      row.hidden = !matches;
+      if (matches) matchCount += 1;
+    });
+    if (searchEmpty) searchEmpty.hidden = !query || matchCount > 0;
   };
   function switchMarkup(product, field, className, onText, offText) {
     const checked = product[field] === true;
@@ -33,6 +44,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     return String(value ?? '').replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
   }
   render();
+  searchInput?.addEventListener('input', render);
   let draggedRow = null;
   let pointerDidReorder = false;
   tbody.addEventListener('dragstart', event => {

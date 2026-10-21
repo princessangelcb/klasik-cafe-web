@@ -908,3 +908,10 @@ html[data-theme="dark"] .admin-body .order-status-select option.status-preparing
 html[data-theme="dark"] .admin-body .order-status-select option.status-ready-for-pickup,
 html[data-theme="dark"] .admin-body .order-status-select option.status-completed,
 html[data-theme="dark"] .admin-body .order-status-select option.status-cancelled { background:#292c27; color:#e4ded4; }
+
+.admin-menu-search { width: min(100%, 460px); margin: 0 0 16px; }
+.admin-menu-search label { display: block; margin-bottom: 6px; color: var(--admin-text); font-size: 12px; font-weight: 700; }
+.admin-menu-search input { display: block; width: 100%; min-height: 42px; padding: 9px 12px; border: 1px solid var(--admin-border); border-radius: 8px; background: var(--admin-panel); color: var(--admin-text); font: inherit; }
+.admin-menu-search input::placeholder { color: var(--admin-muted); }
+.admin-menu-search-empty { margin: 0 0 12px; color: var(--admin-muted); font-size: 13px; }
+html[data-theme="dark"] .admin-menu-search input { border-color: var(--admin-border); background: #292c27; color: var(--admin-text); }

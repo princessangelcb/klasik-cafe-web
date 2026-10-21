@@ -670,3 +670,10 @@ html[data-theme="dark"] .barista-body .order-status-select option.status-cancell
     -webkit-overflow-scrolling: touch;
   }
 }
+
+.barista-menu-search { width: min(100%, 460px); margin: 12px 0 16px; }
+.barista-menu-search label { display: block; margin-bottom: 6px; color: var(--barista-text); font-size: 12px; font-weight: 700; }
+.barista-menu-search input { display: block; width: 100%; min-height: 42px; padding: 9px 12px; border: 1px solid var(--barista-border); border-radius: 8px; background: var(--barista-panel); color: var(--barista-text); font: inherit; }
+.barista-menu-search input::placeholder { color: var(--barista-muted); }
+.barista-menu-search p { margin: 8px 0 0; color: var(--barista-muted); font-size: 13px; }
+html[data-theme="dark"] .barista-menu-search input { border-color: var(--barista-border); background: #292c27; color: var(--barista-text); }
