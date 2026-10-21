@@ -714,6 +714,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     const feedbackRows = { reviews: [], suggestions: [] };
     const feedbackPageSize = 2;
     const feedbackPagers = {};
+    const usableFeedbackName = value => {
+        const name = String(value || '').trim();
+        return name && !/^(anonymous|customer|registered customer|user)$/i.test(name) ? name : '';
+    };
+    const profileFeedbackName = profile => usableFeedbackName([profile?.first_name, profile?.last_name].filter(Boolean).join(' '))
+        || usableFeedbackName(profile?.full_name);
 
     const showFeedbackError = (list, message) => {
         if (!list) return;
@@ -728,7 +734,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const header = document.createElement('div');
         header.className = 'admin-feedback-card-head';
         const author = document.createElement('strong');
-        author.textContent = row.customer_name || 'Customer';
+        author.textContent = usableFeedbackName(row.customer_name) || 'Name unavailable';
         header.append(author);
         if (rating !== null) {
             const score = document.createElement('span');
@@ -779,11 +785,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             let rows = data || [];
             const userIds = [...new Set(rows.map(row => row.user_id).filter(Boolean))];
             if (userIds.length) {
-                const { data: profiles, error: profileError } = await supabase.from('profiles').select('id, full_name').in('id', userIds);
+                const { data: profiles, error: profileError } = await supabase.from('profiles').select('id, full_name, first_name, last_name').in('id', userIds);
                 if (profileError) console.warn('Could not resolve full names for older reviews; showing their saved customer names.', profileError);
                 else {
-                    const fullNames = new Map((profiles || []).map(profile => [String(profile.id), profile.full_name]).filter(([, name]) => name));
-                    rows = rows.map(row => ({ ...row, customer_name: fullNames.get(String(row.user_id)) || row.customer_name || 'Customer' }));
+                    const fullNames = new Map((profiles || []).map(profile => [String(profile.id), profileFeedbackName(profile)]).filter(([, name]) => name));
+                    rows = rows.map(row => ({ ...row, customer_name: fullNames.get(String(row.user_id)) || usableFeedbackName(row.customer_name) || 'Name unavailable' }));
                 }
             }
             if (reviewCount) reviewCount.textContent = String(rows.length);
@@ -796,11 +802,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             let rows = data || [];
             const userIds = [...new Set(rows.map(row => row.user_id).filter(Boolean))];
             if (userIds.length) {
-                const { data: profiles, error: profileError } = await supabase.from('profiles').select('id, full_name').in('id', userIds);
+                const { data: profiles, error: profileError } = await supabase.from('profiles').select('id, full_name, first_name, last_name').in('id', userIds);
                 if (profileError) console.warn('Could not resolve full names for older suggestions; showing their saved customer names.', profileError);
                 else {
-                    const fullNames = new Map((profiles || []).map(profile => [String(profile.id), profile.full_name]).filter(([, name]) => name));
-                    rows = rows.map(row => ({ ...row, customer_name: fullNames.get(String(row.user_id)) || row.customer_name || 'Customer' }));
+                    const fullNames = new Map((profiles || []).map(profile => [String(profile.id), profileFeedbackName(profile)]).filter(([, name]) => name));
+                    rows = rows.map(row => ({ ...row, customer_name: fullNames.get(String(row.user_id)) || usableFeedbackName(row.customer_name) || 'Name unavailable' }));
                 }
             }
             if (suggestionCount) suggestionCount.textContent = String(rows.length);

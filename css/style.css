@@ -729,6 +729,50 @@ html[data-theme="dark"] .auth-page .auth-visual-caption h2 em { color:#fff; }
 .auth-page .brand-light { left:calc(50% + 60px); }
 @media (max-width:768px) { .auth-page .brand-light { left:calc(50% + 36px); } }
 
+/* Blue three-column About feature with a floating center drink. */
+.about-experience-section { padding-block: clamp(54px, 7vw, 88px); background: #f1f0eb; transition: background-color .2s ease; }
+.about-experience-card { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(190px, .58fr) minmax(0, 1fr); gap: clamp(24px, 3.5vw, 46px); align-items: center; min-height: 500px; padding: 58px clamp(32px, 4.5vw, 62px); border: 2px solid #a9bfff; border-radius: 34px; background: #1e3382; color: #fff; box-shadow: 0 22px 55px rgba(16, 29, 77, .22); }
+.about-experience-card::before { position: absolute; z-index: 0; inset: 9px; border: 1px solid rgba(225, 234, 255, .34); border-radius: 25px; content: ''; pointer-events: none; }
+.about-experience-column { position: relative; z-index: 1; }
+.about-experience-overline { margin: 0 0 23px; color: #c4d3ff; font-size: clamp(13px, 1.25vw, 16px); font-weight: 900; letter-spacing: .2em; line-height: 1.4; }
+.about-experience-column h2 { margin: 0 0 20px; color: #fff; font-family: var(--serif); font-size: clamp(34px, 3.5vw, 46px); font-weight: 500; line-height: 1.15; }
+.about-experience-column h2 em { color: #b8caff; font-style: normal; }
+.about-experience-left h2 .about-heading-line { display: block; white-space: nowrap; }
+.about-experience-left h2 .about-heading-accent { color: #b8caff; }
+.about-experience-left h2 { font-size: clamp(27px, 2.8vw, 36px); }
+.about-experience-column > p:not(.about-experience-overline) { margin: 0 0 18px; color: rgba(245, 248, 255, .86); font-size: 14px; line-height: 1.9; }
+.about-experience-center { position: relative; z-index: 2; align-self: stretch; min-height: 100%; }
+.about-experience-center img { position: absolute; top: 50%; left: 50%; display: block; width: min(38vw, 420px); height: calc(100% + 190px); max-width: none; object-fit: contain; transform: translate(-50%, -50%); filter: drop-shadow(0 20px 24px rgba(4, 12, 42, .42)); }
+.about-experience-button, .about-experience-link { display: inline-flex; min-height: 48px; align-items: center; gap: 10px; margin-top: 9px; padding: 0 21px; border: 1px solid rgba(224, 233, 255, .7); border-radius: 4px; color: #fff; font-size: 12px; font-weight: 700; text-decoration: none; transition: background .18s ease, color .18s ease, transform .18s ease; }
+.about-experience-button { border-color: #dce5ff; background: #e9efff; color: #1e3382; }
+.about-experience-button:hover, .about-experience-button:focus-visible { transform: translateY(-2px); background: #fff; }
+.about-experience-link:hover, .about-experience-link:focus-visible { transform: translateY(-2px); background: rgba(255, 255, 255, .12); }
+html[data-theme="dark"] .about-experience-section { background: #10172a; }
+html[data-theme="dark"] .about-experience-card { border-color: #7892b8; background: #17275f; }
+html[data-theme="dark"] .about-experience-card::before { border-color: rgba(220, 232, 255, .24); }
+@media (max-width: 900px) {
+  .about-experience-card { grid-template-columns: minmax(0, 1fr) minmax(145px, .46fr) minmax(0, 1fr); gap: 20px; min-height: 480px; padding-inline: 32px; }
+  .about-experience-column h2 { font-size: clamp(30px, 3.6vw, 40px); }
+  .about-experience-left h2 { font-size: clamp(24px, 3vw, 30px); }
+  .about-experience-center img { width: 37vw; }
+}
+@media (max-width: 700px) {
+  .about-experience-section { padding-block: 70px; }
+  .about-experience-card { grid-template-columns: minmax(0, 1fr); gap: 0; min-height: 0; padding: 42px 30px; border-radius: 28px; }
+  .about-experience-card::before { inset: 8px; border-radius: 18px; }
+  .about-experience-column { z-index: 1; }
+  .about-experience-column h2 { font-size: clamp(30px, 8vw, 38px); }
+  .about-experience-left h2 { font-size: clamp(22px, 6vw, 30px); }
+  .about-experience-overline { font-size: 12px; }
+  .about-experience-column > p:not(.about-experience-overline) { font-size: 13px; }
+  .about-experience-center { z-index: 0; height: 350px; min-height: 0; }
+  .about-experience-center img { position: relative; top: auto; left: 50%; width: min(88vw, 350px); height: 350px; transform: translateX(-50%); }
+  .about-experience-right { padding-top: 4px; }
+}
+@media (max-width: 390px) {
+  .about-experience-card { padding: 36px 23px; }
+}
+
 /* Keep the account panel visible outside the compact mobile nav list. */
 @media (max-width:700px) {
   .profile-dropdown-menu {

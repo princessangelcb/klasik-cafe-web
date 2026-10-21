@@ -474,17 +474,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
-    let namedReviews = reviews;
+    let namesByUserId = new Map();
     const reviewUserIds = [...new Set(reviews.map((review) => review.user_id).filter(Boolean))];
     if (reviewUserIds.length) {
       const { data: profiles, error: profileError } = await supabase.from("profiles").select("id, full_name, first_name, last_name").in("id", reviewUserIds);
       if (profileError) console.warn("Could not resolve full names for reviews; showing saved customer names.", profileError);
       else {
-        const fullNames = new Map((profiles || []).map((profile) => [String(profile.id), [profile.first_name, profile.last_name].filter(Boolean).join(" ") || profile.full_name]).filter(([, name]) => name));
-        namedReviews = reviews.map((review) => ({ ...review, customer_name: fullNames.get(String(review.user_id)) || review.customer_name || "Customer" }));
+        namesByUserId = new Map((profiles || []).map((profile) => [String(profile.id), registeredProfileName(profile)]).filter(([, name]) => name));
       }
     }
 
+    const namedReviews = reviews.map((review) => ({
+      ...review,
+      customer_name: namesByUserId.get(String(review.user_id)) || usableCustomerName(review.customer_name) || "Name unavailable"
+    }));
     list.innerHTML = namedReviews.map((review) => {
         const dateStr = new Date(review.created_at).toISOString().slice(0, 10);
         return `<article class="customer-review-item">
@@ -529,7 +532,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const savedSuggestion = String(entry.suggestion || '');
         const suggestionText = savedSuggestion.includes('\n\n') ? savedSuggestion.slice(savedSuggestion.indexOf('\n\n') + 2) : savedSuggestion;
         return `<article class="customer-history-item">
-            <strong>${escapeHtml(entry.customer_name || currentCustomerName)}</strong>
+            <strong>${escapeHtml(usableCustomerName(currentCustomerName) || usableCustomerName(entry.customer_name) || "Name unavailable")}</strong>
             <p>${escapeHtml(suggestionText)}</p>
             <small>${escapeHtml(dateStr)}</small>
         </article>`;
@@ -714,16 +717,30 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
   [reviewInput, suggestionInput].forEach((field) => field?.addEventListener("input", refreshFeedbackButtons));
 
+  const usableCustomerName = (value) => {
+    const name = String(value || "").trim();
+    return name && !/^(anonymous|customer|registered customer|user)$/i.test(name) ? name : "";
+  };
+
+  const registeredProfileName = (profile) => usableCustomerName([profile?.first_name, profile?.last_name].filter(Boolean).join(" "))
+    || usableCustomerName(profile?.full_name);
+
   const customerFullName = async (user) => {
     const metadata = user?.user_metadata || {};
-    const fullName = [metadata.first_name, metadata.last_name].filter(Boolean).join(" ") || metadata.full_name || metadata.name;
-    if (fullName?.trim()) return fullName.trim();
-    if (user?.email) {
-      const { data: profile, error } = await supabase.from("profiles").select("full_name").eq("email", user.email).maybeSingle();
-      if (error) console.warn("Could not load the customer's full name from profiles.", error);
-      if (profile?.full_name?.trim()) return profile.full_name.trim();
+    const metadataName = usableCustomerName([metadata.first_name || metadata.firstName || metadata.given_name, metadata.last_name || metadata.lastName || metadata.family_name].filter(Boolean).join(" "))
+      || usableCustomerName(metadata.full_name || metadata.fullName || metadata.name);
+    let profile = null;
+    if (user?.id) {
+      const result = await supabase.from("profiles").select("full_name, first_name, last_name").eq("id", user.id).maybeSingle();
+      if (result.error) console.warn("Could not load the customer's registered name by user id.", result.error);
+      profile = result.data;
     }
-    return "Customer";
+    if (!profile && user?.email) {
+      const result = await supabase.from("profiles").select("full_name, first_name, last_name").eq("email", user.email).maybeSingle();
+      if (result.error) console.warn("Could not load the customer's registered name by email.", result.error);
+      profile = result.data;
+    }
+    return registeredProfileName(profile) || metadataName;
   };
 
   submitReview?.addEventListener("click", async () => {
@@ -738,6 +755,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (reviewMessage) reviewMessage.textContent = "";
     try {
       const customerName = await customerFullName(user);
+      if (!customerName) {
+        if (reviewMessage) reviewMessage.textContent = "We couldn't find your registered name. Please add your name in Account Settings, then try again.";
+        return;
+      }
       const { error } = await supabase.from("reviews").insert([{
         user_id: user.id,
         customer_name: customerName,
@@ -777,6 +798,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (suggestionStatus) suggestionStatus.textContent = "";
     try {
       const customerName = await customerFullName(user);
+      if (!customerName) {
+        if (suggestionStatus) suggestionStatus.textContent = "We couldn't find your registered name. Please add your name in Account Settings, then try again.";
+        return;
+      }
       const { error } = await supabase.from("suggestions").insert([{
         user_id: user.id,
         customer_name: customerName,

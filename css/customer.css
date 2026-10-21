@@ -2488,6 +2488,10 @@ html[data-theme="dark"] #featured-best-sellers .product-image .product-favorite-
   height: 400px;
   min-height: 400px;
 }
+#featured-best-sellers .product-card {
+  height: 350px;
+  min-height: 350px;
+}
 .menu-browser .product-info,
 #featured-best-sellers .product-info {
   display: flex;
@@ -2520,6 +2524,10 @@ html[data-theme="dark"] #featured-best-sellers .product-image .product-favorite-
     height: 360px;
     min-height: 360px;
     padding-bottom: 12px;
+  }
+  #featured-best-sellers .product-card {
+    height: 310px;
+    min-height: 310px;
   }
   .menu-browser .product-info,
   #featured-best-sellers .product-info { flex: 1 1 auto; }
