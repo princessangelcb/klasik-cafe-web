@@ -625,3 +625,48 @@ html[data-theme="dark"] .barista-body .order-status-select option.status-prepari
 html[data-theme="dark"] .barista-body .order-status-select option.status-ready-for-pickup,
 html[data-theme="dark"] .barista-body .order-status-select option.status-completed,
 html[data-theme="dark"] .barista-body .order-status-select option.status-cancelled { background:#292c27; color:#e4ded4; }
+
+/* Keep the dashboard fitted to the phone viewport and contain wide order/menu data. */
+@media (max-width: 768px) {
+  html,
+  body.barista-body {
+    width: 100vw;
+    min-width: 320px;
+    max-width: 100vw;
+    overflow-x: clip;
+  }
+
+  .barista-body .dashboard-site-header,
+  .barista-shell,
+  .barista-main {
+    display: block;
+    width: 100vw;
+    min-width: 0;
+    max-width: 100vw;
+    margin-inline: 0;
+  }
+
+  .barista-main {
+    box-sizing: border-box;
+    padding: 22px 16px 40px;
+  }
+
+  .barista-body .stats-grid,
+  .barista-body .barista-workspace-grid,
+  .barista-body .barista-panel {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .barista-body .stats-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .barista-body .barista-menu-table-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}

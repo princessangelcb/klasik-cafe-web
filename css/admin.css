@@ -859,21 +859,24 @@ html[data-theme="dark"] .admin-body select option:checked { background:#355780; 
 @media (max-width: 768px) {
   html,
   body.admin-body {
-    width: 100%;
+    width: 100vw;
     min-width: 320px;
-    max-width: 100%;
+    max-width: 100vw;
+    overflow-x: clip;
   }
 
+  .admin-body .dashboard-site-header,
   .admin-shell,
   .admin-main {
     display: block;
-    width: 100%;
+    width: 100vw;
     min-width: 0;
-    max-width: 100%;
+    max-width: 100vw;
     margin-inline: 0;
   }
 
   .admin-main {
+    box-sizing: border-box;
     padding: 22px 16px 40px;
   }
 
