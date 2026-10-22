@@ -26,14 +26,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // 2. Check the user's role from the 'profiles' table
+            // Look up the profile by its Auth user ID, which is the profiles
+            // table's stable key. Looking up by email can miss the row if the
+            // profile email differs or is null.
             const { data: profileData, error: profileError } = await supabase
                 .from('profiles')
                 .select('role')
-                .eq('email', email)
-                .single();
+                .eq('id', data.user.id)
+                .maybeSingle();
 
-            const role = profileData ? profileData.role.toLowerCase() : 'customer';
+            if (profileError) {
+                window.klasikNotify?.(`Signed in, but could not read your account role: ${profileError.message}`, 'error');
+                return;
+            }
+
+            if (!profileData) {
+                window.klasikNotify?.('Your account profile is missing. Please contact an administrator.', 'error');
+                return;
+            }
+
+            const role = String(profileData.role || 'customer').trim().toLowerCase();
 
             // 3. Route to the right dashboard
             if (role === 'admin') {
