@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1320" viewBox="0 0 1800 1320" role="img" aria-labelledby="title desc">
+  <title id="title">KLASIK CAFE Project Wireframe</title>
+  <desc id="desc">A feature map of the public storefront, customer account and ordering flows, and staff dashboards for KLASIK CAFE.</desc>
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#1f2b50}.title{font-size:38px;font-weight:700;letter-spacing:.5px}.subtitle{font-size:16px;fill:#68728d}.section{font-size:20px;font-weight:700;letter-spacing:1px}.label{font-size:17px;font-weight:700}.copy{font-size:14px;fill:#59637b}.tiny{font-size:12px;fill:#737c91}.card{fill:#fff;stroke:#bac3d6;stroke-width:2}.panel{fill:#f8f9fc;stroke:#d5dbea;stroke-width:1.5}.pill{fill:#e9edf8;stroke:#cbd4e8}.arrow{fill:none;stroke:#8c98b2;stroke-width:2.5;marker-end:url(#arrow)}.dash{stroke-dasharray:7 6}.navy{fill:#263d83}.coffee{fill:#9b6745}.white{fill:#fff}
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#8c98b2"/></marker>
+  </defs>
+  <rect width="1800" height="1320" fill="#f3f5fa"/>
+  <rect x="0" y="0" width="1800" height="135" fill="#fff"/>
+  <text x="58" y="65" class="title">KLASIK CAFE</text>
+  <text x="60" y="98" class="subtitle">PROJECT WIREFRAME · SITE MAP & FEATURE FLOWS</text>
+  <rect x="1510" y="38" width="230" height="46" rx="23" class="pill"/><text x="1625" y="67" text-anchor="middle" class="label">16 PAGE VIEWS</text>
+
+  <!-- Main experience columns -->
+  <rect x="45" y="165" width="515" height="700" rx="20" class="card"/>
+  <rect x="45" y="165" width="515" height="58" rx="20" class="navy"/>
+  <path d="M45 203h515v20H45z" class="navy"/>
+  <text x="75" y="202" class="section white">01 · PUBLIC STOREFRONT</text>
+
+  <rect x="75" y="250" width="455" height="148" rx="14" class="panel"/>
+  <text x="98" y="282" class="label">Home · index.html</text>
+  <text x="98" y="309" class="copy">Hero / coffee story / featured menu / location</text>
+  <text x="98" y="333" class="copy">Cafe info / opening hours / contact / navigation</text>
+  <rect x="98" y="352" width="96" height="27" rx="13" class="pill"/><text x="146" y="371" text-anchor="middle" class="tiny">Browse menu</text>
+  <rect x="205" y="352" width="112" height="27" rx="13" class="pill"/><text x="261" y="371" text-anchor="middle" class="tiny">Login / Sign up</text>
+
+  <rect x="75" y="422" width="455" height="126" rx="14" class="panel"/>
+  <text x="98" y="455" class="label">Menu · menu.html</text>
+  <text x="98" y="482" class="copy">Browse/search categories · product details</text>
+  <text x="98" y="506" class="copy">Availability &amp; best seller tags · add to cart</text>
+  <text x="98" y="530" class="copy">Favorites · customization / order options</text>
+
+  <rect x="75" y="572" width="218" height="124" rx="14" class="panel"/>
+  <text x="96" y="605" class="label">Sign up</text>
+  <text x="96" y="631" class="copy">Name · username · email</text>
+  <text x="96" y="653" class="copy">Password · confirmation</text>
+  <text x="96" y="675" class="copy">Email confirmation</text>
+  <rect x="312" y="572" width="218" height="124" rx="14" class="panel"/>
+  <text x="333" y="605" class="label">Login</text>
+  <text x="333" y="631" class="copy">Email + password</text>
+  <text x="333" y="653" class="copy">Role based routing</text>
+  <text x="333" y="675" class="copy">Admin · Barista · Customer</text>
+
+  <rect x="75" y="720" width="455" height="105" rx="14" class="panel"/>
+  <text x="98" y="753" class="label">Password recovery</text>
+  <text x="98" y="780" class="copy">Forgot password · email reset link · set new password</text>
+  <text x="98" y="804" class="tiny">forgot-password.html → update-password.html</text>
+
+  <rect x="642" y="165" width="515" height="700" rx="20" class="card"/>
+  <rect x="642" y="165" width="515" height="58" rx="20" class="coffee"/>
+  <path d="M642 203h515v20H642z" class="coffee"/>
+  <text x="672" y="202" class="section white">02 · CUSTOMER ACCOUNT</text>
+
+  <rect x="672" y="250" width="455" height="116" rx="14" class="panel"/>
+  <text x="695" y="282" class="label">Customer home · customer.html</text>
+  <text x="695" y="309" class="copy">Welcome / browse menu / cart / placed orders</text>
+  <text x="695" y="333" class="copy">Order history / reviews &amp; suggestions shortcuts</text>
+  <text x="695" y="354" class="tiny">Profile · account settings · change password · logout</text>
+
+  <rect x="672" y="390" width="218" height="144" rx="14" class="panel"/>
+  <text x="695" y="423" class="label">Cart · orders.html</text>
+  <text x="695" y="450" class="copy">Edit quantities</text>
+  <text x="695" y="473" class="copy">Customize items</text>
+  <text x="695" y="496" class="copy">Review total</text>
+  <text x="695" y="519" class="copy">Place order</text>
+  <rect x="909" y="390" width="218" height="144" rx="14" class="panel"/>
+  <text x="932" y="423" class="label">Orders &amp; receipts</text>
+  <text x="932" y="450" class="copy">Placed orders · status</text>
+  <text x="932" y="473" class="copy">Order history</text>
+  <text x="932" y="496" class="copy">Digital receipt</text>
+  <text x="932" y="519" class="tiny">placed-orders · order-history · receipt</text>
+
+  <rect x="672" y="558" width="218" height="125" rx="14" class="panel"/>
+  <text x="695" y="591" class="label">Favorites</text>
+  <text x="695" y="618" class="copy">Save / remove menu items</text>
+  <text x="695" y="642" class="copy">Quick add to cart</text>
+  <text x="695" y="666" class="tiny">favorites.html</text>
+  <rect x="909" y="558" width="218" height="125" rx="14" class="panel"/>
+  <text x="932" y="591" class="label">Feedback</text>
+  <text x="932" y="618" class="copy">Rate &amp; review experience</text>
+  <text x="932" y="642" class="copy">Submit / view suggestions</text>
+  <text x="932" y="666" class="tiny">reviews.html</text>
+
+  <rect x="672" y="708" width="455" height="117" rx="14" class="panel"/>
+  <text x="695" y="741" class="label">Account profile · account-settings.html</text>
+  <text x="695" y="768" class="copy">View name, username, email, role · change password · logout</text>
+  <text x="695" y="795" class="tiny">Protected pages require a signed in user</text>
+
+  <!-- Staff column -->
+  <rect x="1239" y="165" width="515" height="700" rx="20" class="card"/>
+  <rect x="1239" y="165" width="515" height="58" rx="20" class="navy"/>
+  <path d="M1239 203h515v20h-515z" class="navy"/>
+  <text x="1269" y="202" class="section white">03 · STAFF WORKSPACE</text>
+  <rect x="1269" y="250" width="455" height="265" rx="14" class="panel"/>
+  <text x="1292" y="283" class="label">Admin dashboard · admin.html</text>
+  <text x="1292" y="313" class="copy">KPI cards: products · availability · orders · reviews · suggestions</text>
+  <text x="1292" y="341" class="copy">Menu management: add/edit/delete · search · paging</text>
+  <text x="1292" y="369" class="copy">Product image upload · availability · best seller</text>
+  <text x="1292" y="397" class="copy">Orders: view / update status / complete</text>
+  <text x="1292" y="425" class="copy">Review &amp; suggestion moderation</text>
+  <text x="1292" y="453" class="copy">Invite staff · manage admin/barista roles</text>
+  <text x="1292" y="481" class="copy">Cafe information · receipt details settings</text>
+
+  <rect x="1269" y="540" width="455" height="183" rx="14" class="panel"/>
+  <text x="1292" y="573" class="label">Barista dashboard · barista.html</text>
+  <text x="1292" y="603" class="copy">Order queue with status filters</text>
+  <text x="1292" y="631" class="copy">Pending → Preparing → Ready for Pickup → Completed</text>
+  <text x="1292" y="659" class="copy">Order detail &amp; live counts</text>
+  <text x="1292" y="687" class="copy">Menu availability &amp; best seller controls</text>
+
+  <rect x="1269" y="748" width="455" height="77" rx="14" class="panel"/>
+  <text x="1292" y="780" class="label">Role access</text>
+  <text x="1292" y="806" class="copy">Admin manages cafe · Barista handles prep · Customer orders</text>
+
+  <!-- Flow connectors -->
+  <path d="M560 450H642" class="arrow"/>
+  <path d="M530 634H642" class="arrow"/>
+  <path d="M1157 470H1239" class="arrow"/>
+  <path d="M1157 635H1239" class="arrow"/>
+
+  <!-- shared backend layer -->
+  <rect x="45" y="908" width="1709" height="335" rx="20" fill="#e9edf7" stroke="#c4cde0" stroke-width="2"/>
+  <text x="78" y="951" class="section">SHARED DATA &amp; SERVICE LAYER</text>
+  <text x="78" y="980" class="copy">Supabase Auth + Postgres + Storage · data flows between customer ordering and staff operations</text>
+
+  <rect x="78" y="1015" width="305" height="156" rx="14" class="card"/>
+  <text x="100" y="1048" class="label">Authentication &amp; profiles</text>
+  <text x="100" y="1076" class="copy">Sign up / login / reset</text>
+  <text x="100" y="1100" class="copy">Profile metadata + role lookup</text>
+  <text x="100" y="1124" class="copy">Customer · barista · admin</text>
+
+  <rect x="410" y="1015" width="305" height="156" rx="14" class="card"/>
+  <text x="432" y="1048" class="label">Catalog</text>
+  <text x="432" y="1076" class="copy">Menu items / categories</text>
+  <text x="432" y="1100" class="copy">Availability / featured items</text>
+  <text x="432" y="1124" class="copy">Product images in Storage</text>
+
+  <rect x="742" y="1015" width="305" height="156" rx="14" class="card"/>
+  <text x="764" y="1048" class="label">Customer activity</text>
+  <text x="764" y="1076" class="copy">Cart / favorites / orders</text>
+  <text x="764" y="1100" class="copy">Order items / status / receipts</text>
+  <text x="764" y="1124" class="copy">Reviews / suggestions</text>
+
+  <rect x="1074" y="1015" width="305" height="156" rx="14" class="card"/>
+  <text x="1096" y="1048" class="label">Cafe configuration</text>
+  <text x="1096" y="1076" class="copy">Address / hours / contacts</text>
+  <text x="1096" y="1100" class="copy">About text / receipt settings</text>
+  <text x="1096" y="1124" class="copy">Admin maintained</text>
+
+  <rect x="1406" y="1015" width="310" height="156" rx="14" class="card"/>
+  <text x="1428" y="1048" class="label">Live operations</text>
+  <text x="1428" y="1076" class="copy">Order queue updates</text>
+  <text x="1428" y="1100" class="copy">Customer status visibility</text>
+  <text x="1428" y="1124" class="copy">Admin / barista dashboards</text>
+
+  <path d="M900 865V895" class="arrow dash"/>
+  <text x="900" y="1220" text-anchor="middle" class="tiny">Representative page and feature map based on the project’s HTML and JavaScript files</text>
+</svg>
